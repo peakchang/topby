@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어떤 파일들이 들어올까??</title>
+</head>
+<body>
+    ,ㅁ넝리ㅓㅁ닝러민어리ㅑㅁ넝럼니ㅑㅇ러ㅣㅑㅁ어리멍ㄹ
+
+    <style>
+        table{width:100%; border: 1px solid #444444; border-collapse: collapse; margin-top:30px;}
+        th, td{border: 1px solid #444444; padding: 15px;}
+    </style>
+    <table>
+        {% for wh in wh_datas %}
+        <tr>
+            <td> {{ wh.webhookdata }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+</body>
+</html>
