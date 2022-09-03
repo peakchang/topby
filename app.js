@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
@@ -17,6 +18,7 @@ const webhookRouter = require('./routes/webhook');
 const { sequelize } = require('./models');
 
 const app = express();
+var xhub = require('express-x-hub');
 
 console.log(process.env.PORT);
 app.set('port', process.env.PORT || 8001);
