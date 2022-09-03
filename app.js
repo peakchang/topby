@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 
-
+app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
