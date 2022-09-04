@@ -1,0 +1,79 @@
+
+@font-face {
+    font-family: 'KOHIBaeumOTF';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/KOHIBaeumOTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'GmarketSansBold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Pretendard-SemiBold';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  /* 기타 전체 적용 */
+  .ontop_menu{background-color: black;}
+  .navbar{background-color: black;}
+  .imgcontent {max-width: 2000px; margin: 0 auto; overflow: hidden;}
+  .imgin{width: 2000px; position: relative; left: 50%; margin-left: -1000px;}
+  .nav-item span{font-family: 'GmarketSansMedium'; font-size: 22px; cursor: pointer;}
+  
+  .highlight_subject{font-family: 'GmarketSansBold'; font-size: 50px; text-align: center;}
+  .logo_img{max-width:180px;}
+  
+  /* 스와이퍼 CSS */
+  .swiper {width: 100%;  padding-top: 50px; padding-bottom: 50px;
+    /* max-width: 1200px; */
+  }
+  .swiper-slide { background-position: center; background-size: cover; width: 400px; height: 364px;}
+  .swiper-slide img { display: block; width: 100%; }
+  
+  /* 매직그리드 */
+  .magicgrid_sc{margin-top: 40px; margin-bottom: 40px;}
+  .onitem{width: 350px; background-color: antiquewhite; display: flex; justify-content: center; align-items: center; border-radius: 8px;}
+  .onitem img{width: 100%;}
+  
+  
+  /* 신청폼 */
+  .onform{text-align: center; font-family: 'Pretendard-SemiBold'; background-color: #eaecee; padding: 3rem 1rem;}
+  .say_go{font-size: 30px;}
+  .say_go_sub{font-size: 20px;}
+  .customer_info{text-align: center;}
+  .customer_info input{width:100%; max-width: 400px; margin: 0 auto; border:1px solid #d2d2d2; padding: 8px 0; padding-left: 2%; font-size: 16px; }
+  .ft_in {text-align: center;}
+  .ft_in img{width: 100%; max-width: 800px;}
+  .customer_ta textarea {width:100%; max-width: 400px; margin: 0 auto; border:1px solid #d2d2d2; font-size: 16px; padding: 10px; resize: none;}
+  .onsubmit button{width:100%; max-width: 400px; background-color: #AA1212; border: 1px solid #AA1212; color: white; font-size: 25px; padding: 12px 0;}
+  
+  /* 푸터 */
+  #ft {position: relative; border-top: 1px solid #EAEAEA; margin-top: 15px;}
+  #ft span {display: inline-block; margin-right: 16px; font-family: 'Pretendard-Light'; font-size: 14px;}
+  #ft img {display:inline-block; width: 120px; margin-top:15px;}
+  .ft_logo_img{text-align: center;}
+  
+  
+  
+  
+  
+  
+  @media screen and (max-width: 910px) {
+    .swiper-slide { width: 300px; height: 270px; }
+    .onitem{width: 160px; }
+    .highlight_subject{font-size: 32px;}
+    .say_go{font-size: 20px;}
+    .say_go_sub{font-size: 14px;}
+    #ft {text-align: center;}
+  }

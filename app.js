@@ -13,7 +13,7 @@ const hpp = require('hpp');
 
 dotenv.config();
 
-
+const mainRouter = require('./routes/main');
 const webhookRouter = require('./routes/webhook');
 const { sequelize } = require('./models');
 
@@ -71,11 +71,8 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(session(sessionOption));
 
-app.get('/', (req, res, next) => {
-    console.log('alsdjfliajsdfjaf');
-    res.send('asldjfiajsdfjailsjdfliajsdlfj')
-});
 
+app.use('/', mainRouter);
 app.use('/webhook', webhookRouter);
 
 app.use((req, res, next) => {
