@@ -14,11 +14,16 @@ const hpp = require('hpp');
 dotenv.config();
 
 const mainRouter = require('./routes/main');
+const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
 const { sequelize } = require('./models');
+const passportConfig = require('./passport');
+
 
 const app = express();
 var xhub = require('express-x-hub');
+
+passportConfig(); // 패스포트 설정
 
 console.log(process.env.PORT);
 app.set('port', process.env.PORT || 8001);
@@ -70,9 +75,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session(sessionOption));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.use('/', mainRouter);
+app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
 
 app.use((req, res, next) => {
