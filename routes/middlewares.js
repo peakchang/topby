@@ -3,8 +3,11 @@ exports.isLoggedIn = (req, res, next) => {
         next();
     } else {
         // res.status(403).send('로그인 필요');
-        err_chk = 'notLogin'
-        res.status(403).render('error', { err_chk })
+        console.log('***************************************');
+        console.log(req._parsedOriginalUrl.pathname);
+        console.log(req.baseUrl);
+        errData = {err_chk : 'notLogin', move : req.baseUrl}
+        res.status(403).render('error', { errData })
     }
 };
 
@@ -12,7 +15,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         next();
     } else {
-        const message = encodeURIComponent('로그인한 상태입니다.');
+        const message = encodeURIComponent('isLogged');
         res.redirect(`/?error=${message}`);
     }
 };

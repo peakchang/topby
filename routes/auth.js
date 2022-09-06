@@ -32,12 +32,11 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
 
 
 router.get('/login', isNotLoggedIn, (req, res, next) => {
-    console.log(req.params);
-    console.log(req.query);
     let loginErr = req.query
     res.render('auth/login', { loginErr });
 });
 router.post('/login', isNotLoggedIn, (req, res, next) => {
+    let movePath = req.query
     passport.authenticate('local', (authError, user, info) => {
         if (authError) {
             console.error(authError);
@@ -45,7 +44,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         }
         if (!user) {
             console.log(req.user);
-            return res.redirect(`/auth/login/?loginError=${info.message}`)
+            return res.redirect(`/auth/login/?loginError=${info.message}&move=${movePath.move}`)
         }
         return req.login(user, (loginError) => {
             console.log(user);
@@ -54,9 +53,13 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
                 console.error(loginError);
                 return next(loginError);
             }
-            res.redirect('/')
+            if(movePath.move){
+                res.redirect(movePath.move)
+            }else{
+                res.redirect('/')
+            }
         });
-    })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
+    })(req, res, next) // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
 
 router.get('/logout', isLoggedIn, (req, res) => {

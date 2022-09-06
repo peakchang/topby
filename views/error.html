@@ -7,12 +7,14 @@
     <title>Document</title>
 </head>
 <body>
-    {% if err_chk == 'notLogin' %}
+    {% if errData.err_chk == 'notLogin' %}
+    {{ errData.move }}
     <script>
+        const movePath = "{{ errData.move }}"
         alert('로그인이 필요합니다.');
-        location.replace('/auth/login');
+        location.replace(`/auth/login?move=${movePath}`);
     </script>
-    {% elif err_chk == 'notPage' %}
+    {% elif errData.err_chk == 'noPage' %}
     페이지를 찾을수 없습니다.
     {% endif %}
 </body>

@@ -96,8 +96,8 @@ app.use((req, res, next) => {
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
     res.status(err.status || 500);
-    err_chk = 'notPage'
-    res.render('error', { err_chk });
+    errData = {err_chk : 'noPage'}
+    res.render('error', { errData });
   });
 
   module.exports = app;
