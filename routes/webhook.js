@@ -24,6 +24,7 @@ router.get(['/facebook', '/instagram'], function (req, res) {
 });
 
 router.post('/facebook', function (req, res) {
+    console.log(req);
     console.log('Facebook request body:', req.body);
 
     console.log('request header X-Hub-Signature validated');
