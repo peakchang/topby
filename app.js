@@ -13,6 +13,7 @@ const hpp = require('hpp');
 
 dotenv.config();
 
+const crmRouter = require('./routes/crm');
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
@@ -65,7 +66,7 @@ const sessionOption = {
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        secure: true,
+        secure: false,
     },
 };
 
@@ -80,6 +81,7 @@ app.use(passport.session());
 
 
 app.use('/', mainRouter);
+app.use('/crm', crmRouter);
 app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
 

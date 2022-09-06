@@ -5,25 +5,33 @@ const router = express.Router();
 
 
 
-router.get('/', (req, res, next) =>{
+router.get('/', (req, res, next) => {
     console.log('*************************************************************************************************');
     console.log(req.session);
     console.log(req.cookies);
     console.log(req.user);
     console.log(req.isAuthenticated());
-    res.render('topby_main');
+    try {
+        console.log(req.user.nick);
+        userInfo = { 'userid': req.user.userid, 'userNick': req.user.nick }
+    } catch {
+        userInfo = {}
+    }
+
+    res.render('topby/topby_main', { userInfo });
 })
 
-router.post('/', (req, res, next) =>{
-    res.render('topby_main');
+router.post('/', (req, res, next) => {
+    console.log(req);
+    res.render('topby/topby_main');
 })
 
-router.get('/policy', (req, res, next) =>{
-    res.render('topby_policy');
+router.get('/policy', (req, res, next) => {
+    res.render('topby/topby_policy');
 })
 
-router.post('/policy', (req, res, next) =>{
-    res.render('topby_policy');
+router.post('/policy', (req, res, next) => {
+    res.render('topby/topby_policy');
 })
 
 
