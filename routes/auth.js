@@ -11,7 +11,6 @@ router.get('/join', isNotLoggedIn, (req, res, next) => {
 })
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
-    console.log('여기는 맞는거지????');
     const { userid, nick, password } = req.body;
     try {
         const exUser = await User.findOne({ where: { userid } });
@@ -24,7 +23,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
             nick,
             password: hash,
         });
-        return res.redirect('/');
+        return res.redirect('/auth/login');
     } catch (error) {
         console.error(error);
         return next(error);
@@ -33,8 +32,10 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
 
 
 router.get('/login', isNotLoggedIn, (req, res, next) => {
-    console.log(req.user);
-    res.render('auth/login');
+    console.log(req.params);
+    console.log(req.query);
+    let loginErr = req.query
+    res.render('auth/login', { loginErr });
 });
 router.post('/login', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (authError, user, info) => {
@@ -48,7 +49,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         }
         return req.login(user, (loginError) => {
             console.log(user);
-            
+
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
@@ -60,9 +61,11 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
 
 router.get('/logout', isLoggedIn, (req, res) => {
     console.log(req.user);
-    // req.logout();
     req.session.destroy();
-    res.redirect('/');
+    req.logout(() => {
+        res.redirect('/');
+    });
+
 });
 
 router.get('/kakao', passport.authenticate('kakao'));

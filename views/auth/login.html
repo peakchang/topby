@@ -4,7 +4,7 @@
 
 
 
-<div class="w-full max-w-xs mx-auto mt-20">
+<div class="w-full max-w-xs mx-auto mt-20 suit-font">
     <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" method="post">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
@@ -13,6 +13,9 @@
             <input
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="username" name="userid" type="text" placeholder="아이디">
+            {% if loginErr.loginError == 'nosub' %}
+            <span class="text-red-600 text-sm">가입되지 않은 아이디 입니다.</span>
+            {% endif %}
         </div>
 
         <div class="mb-4">
@@ -22,14 +25,19 @@
             <input
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="password" name="password" type="password" placeholder="비밀번호">
+
+            {% if loginErr.loginError == 'noMatchPwd' %}
+            <span class="text-red-600 text-sm">비밀번호가 일치하지 않습니다.</span>
+            {% endif %}
         </div>
 
         <div class="flex items-center justify-between">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 로그인
             </button>
-            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
-                비밀번호를 잊으셨나요?
+            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/join">
+                회원가입
             </a>
         </div>
     </form>

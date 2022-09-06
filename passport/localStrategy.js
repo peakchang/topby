@@ -19,7 +19,7 @@ module.exports = () => {
           console.log('세번째 관문 통과함??');
           done(null, exUser);
         } else {
-          done(null, false, { message: '비밀번호가 일치하지 않습니다.' });
+          done(null, false, { message: 'noMatchPwd' });
         }
       } else {
         done(null, false, { message: 'nosub' });

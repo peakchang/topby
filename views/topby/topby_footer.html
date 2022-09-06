@@ -16,6 +16,12 @@
         <span>주소 : 서울시 구로구 부광로88 B동 1010호 </span>
         <span>사업자번호 : 240-06-01900 </span>
         <span>전화 : 1644-9714</span>
+
+        
+        {% if userInfo.user.userid %}
+        <span><a class="nav-link" href="/crm">CRM 바로가기</a></span>
+        
+        {% endif %}
       </div>
 
     </div>
@@ -24,22 +30,22 @@
 
 
 <script>
-  window.fbAsyncInit = function() {
+  window.fbAsyncInit = function () {
     FB.init({
-      appId      : '640402924415523',
-      xfbml      : true,
-      version    : 'v14.0'
+      appId: '640402924415523',
+      xfbml: true,
+      version: 'v14.0'
     });
     FB.AppEvents.logPageView();
   };
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
 </script>
 
 </body>

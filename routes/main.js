@@ -7,13 +7,14 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     console.log('*************************************************************************************************');
-    console.log(req.session);
-    console.log(req.cookies);
-    console.log(req.user);
-    console.log(req.isAuthenticated());
+    // console.log(req.session);
+    // console.log(req.cookies);
+    // console.log(req.user);
+    // console.log(req.isAuthenticated());
+    
     try {
         console.log(req.user.nick);
-        userInfo = { 'userid': req.user.userid, 'userNick': req.user.nick }
+        userInfo = { 'user': req.user, 'req': req };
     } catch {
         userInfo = {}
     }

@@ -16,6 +16,11 @@ module.exports = class User extends Sequelize.Model {
         type: Sequelize.STRING(100),
         allowNull: true,
       },
+      rate: {
+        type: Sequelize.INTEGER(3),
+        allowNull: false,
+        defaultValue: 1,
+      },
       provider: {
         type: Sequelize.STRING(10),
         allowNull: false,
