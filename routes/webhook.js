@@ -1,6 +1,6 @@
 const express = require('express');
 const { Webhookdata } = require('../models');
-
+const fs = require('fs');
 const router = express.Router();
 
 var token = process.env.TOKEN || 'token';
@@ -8,7 +8,29 @@ var received_updates = [];
 
 
 router.get('/', function (req, res) {
+    console.log(JSON.stringify(req));
+
+    // fs.writeFile('/public/test.txt', JSON.stringify(req), (err) => {
+    //     if (err === null) {
+    //         console.log('success');
+    //     } else {
+    //         console.log('fail');
+    //     }
+    // })
+    // res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
+});
+router.post('/', async (req, res) => {
     console.log(req);
+    for (const outPut in req) {
+        console.log(`값 : ${outPut}`);
+    }
+    // fs.writeFile('/public/test.txt', req, (err) => {
+    //     if (err === null) {
+    //         console.log('success');
+    //     } else {
+    //         console.log('fail');
+    //     }
+    // })
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 
@@ -24,12 +46,13 @@ router.get(['/facebook', '/instagram'], function (req, res) {
 });
 
 router.post('/facebook', function (req, res) {
+    console.log('**********************************');
     console.log(req);
     console.log('Facebook request body:', req.body);
 
     console.log('request header X-Hub-Signature validated');
     // Process the Facebook updates here
-    received_updates.unshift(req.body);
+    // received_updates.unshift(req.body);
     res.sendStatus(200);
 });
 
