@@ -1,9 +1,6 @@
 const express = require('express');
-<<<<<<< HEAD
-const { Webhookdata } = require('../models');
-=======
 const Webhookdata = require('../models/webhook');
->>>>>>> 7c1d4ed7db6f29cd5d152a83f89348acd7bee08c
+
 const fs = require('fs');
 const router = express.Router();
 
@@ -12,7 +9,6 @@ var received_updates = [];
 
 
 router.get('/', function (req, res) {
-<<<<<<< HEAD
     console.log(JSON.stringify(req));
 
     // fs.writeFile('/public/test.txt', JSON.stringify(req), (err) => {
@@ -26,12 +22,11 @@ router.get('/', function (req, res) {
 });
 router.post('/', async (req, res) => {
     console.log(req);
-=======
+
 
 });
 router.post('/', async (req, res) => {
     console.log('1st chk here!!!');
->>>>>>> 7c1d4ed7db6f29cd5d152a83f89348acd7bee08c
     for (const outPut in req) {
         console.log(`값 : ${outPut}`);
     }
@@ -62,16 +57,8 @@ router.get(['/facebook', '/instagram'], function (req, res) {
     }
 });
 
-<<<<<<< HEAD
-router.post('/facebook', function (req, res) {
-    console.log('**********************************');
-    console.log(req);
-    console.log('Facebook request body:', req.body);
-=======
 router.post('/facebook', async (req, res) => {
     console.log('4th chk here!!!');
->>>>>>> 7c1d4ed7db6f29cd5d152a83f89348acd7bee08c
-
     console.log('Facebook request body:', req.body);
     console.log(JSON.stringify(req.body));
     console.log('request header X-Hub-Signature validated');
