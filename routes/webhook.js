@@ -70,7 +70,7 @@ router.post('/facebook', async (req, res) => {
         webhookdata : getData
     });
     // Process the Facebook updates here111111111111111111
-    // received_updates.unshift(req.body);
+    received_updates.unshift(req.body);
     res.sendStatus(200);
     res.send('페이스북 받는곳~~~~~')
 });
