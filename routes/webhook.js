@@ -8,7 +8,7 @@ var received_updates = [];
 
 
 router.get('/', function (req, res) {
-
+    res.send('웹훅 페이지가 준비 되었습니다.')
 });
 router.post('/', async (req, res) => {
     console.log('1st chk here!!!');
@@ -52,7 +52,7 @@ router.post('/facebook', async (req, res) => {
     await Webhookdata.create({
         webhookdata : getData
     });
-    // Process the Facebook updates here
+    // Process the Facebook updates here111111111111111111
     // received_updates.unshift(req.body);
     res.sendStatus(200);
     res.send('페이스북 받는곳~~~~~')
