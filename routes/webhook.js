@@ -9,7 +9,6 @@ var received_updates = [];
 
 
 router.get('/', (req, res) => {
-    res.send('웹훅 페이지가 준비 되었습니다.')
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 router.post('/', (req, res) => {
