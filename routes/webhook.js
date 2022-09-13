@@ -62,10 +62,12 @@ router.get(['/facebook', '/instagram'], function (req, res) {
 
 router.post('/facebook', (req, res) => {
     console.log('4th chk here!!!');
-    console.log('Facebook request body:', req.body);
+    let getData = req.body
+    console.log('Facebook request body:', getData);
     // console.log(JSON.stringify(req.body));
     console.log('request header X-Hub-Signature validated');
-    // let getData = JSON.stringify(req.body)
+    let setData = JSON.stringify(getData)
+    console.log(setData);
     // await Webhookdata.create({
     //     webhookdata : getData
     // });
