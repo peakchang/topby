@@ -8,42 +8,21 @@ var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
 
-router.get('/', function (req, res) {
-    // console.log(JSON.stringify(req));
-
+router.get('/', (req, res) => {
     res.send('웹훅 페이지가 준비 되었습니다.')
-
-    
-
-    // fs.writeFile('/public/test.txt', JSON.stringify(req), (err) => {
-    //     if (err === null) {
-    //         console.log('success');
-    //     } else {
-    //         console.log('fail');
-    //     }
-    // })
-    // res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
-router.post('/', async (req, res) => {
-    console.log(req);
-
+router.post('/', (req, res) => {
+    res.send('웹훅 페이지가 준비 되었습니다.')
 });
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     console.log('1st chk here!!!');
     for (const outPut in req) {
         console.log(`값 : ${outPut}`);
     }
-    // fs.writeFile('/public/test.txt', req, (err) => {
-    //     if (err === null) {
-    //         console.log('success');
-    //     } else {
-    //         console.log('fail');
-    //     }
-    // })
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 
-router.get(['/facebook', '/instagram'], function (req, res) {
+router.get(['/facebook', '/instagram'], (req, res) => {
     console.log('2nd chk here!!!');
     console.log(req.query['hub.mode']);
     console.log(req.query['hub.verify_token']);
@@ -64,10 +43,7 @@ router.post('/facebook', (req, res) => {
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
-    // console.log(JSON.stringify(req.body));
     console.log('request header X-Hub-Signature validated');
-    let setData = JSON.stringify(getData)
-    console.log(setData);
     // await Webhookdata.create({
     //     webhookdata : getData
     // });
