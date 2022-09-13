@@ -1,5 +1,6 @@
 const express = require('express');
 const Webhookdata = require('../models/webhook');
+
 const fs = require('fs');
 const router = express.Router();
 
@@ -9,6 +10,21 @@ var received_updates = [];
 
 router.get('/', function (req, res) {
     res.send('웹훅 페이지가 준비 되었습니다.')
+
+    console.log(JSON.stringify(req));
+
+    // fs.writeFile('/public/test.txt', JSON.stringify(req), (err) => {
+    //     if (err === null) {
+    //         console.log('success');
+    //     } else {
+    //         console.log('fail');
+    //     }
+    // })
+    // res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
+});
+router.post('/', async (req, res) => {
+    console.log(req);
+
 });
 router.post('/', async (req, res) => {
     console.log('1st chk here!!!');
@@ -44,7 +60,6 @@ router.get(['/facebook', '/instagram'], function (req, res) {
 
 router.post('/facebook', async (req, res) => {
     console.log('4th chk here!!!');
-
     console.log('Facebook request body:', req.body);
     console.log(JSON.stringify(req.body));
     console.log('request header X-Hub-Signature validated');
