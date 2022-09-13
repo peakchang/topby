@@ -9,9 +9,11 @@ var received_updates = [];
 
 
 router.get('/', function (req, res) {
+    // console.log(JSON.stringify(req));
+
     res.send('웹훅 페이지가 준비 되었습니다.')
 
-    console.log(JSON.stringify(req));
+    
 
     // fs.writeFile('/public/test.txt', JSON.stringify(req), (err) => {
     //     if (err === null) {
