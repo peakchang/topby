@@ -44,6 +44,7 @@ router.post('/facebook', (req, res) => {
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
+    console.log(getData.entry[0].changes);
     // await Webhookdata.create({
     //     webhookdata : getData
     // });
