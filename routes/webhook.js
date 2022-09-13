@@ -60,29 +60,29 @@ router.get(['/facebook', '/instagram'], function (req, res) {
     }
 });
 
-router.post('/facebook', async (req, res) => {
+router.post('/facebook', (req, res) => {
     console.log('4th chk here!!!');
     console.log('Facebook request body:', req.body);
     console.log(JSON.stringify(req.body));
     console.log('request header X-Hub-Signature validated');
     let getData = JSON.stringify(req.body)
-    await Webhookdata.create({
-        webhookdata : getData
-    });
+    // await Webhookdata.create({
+    //     webhookdata : getData
+    // });
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
     res.sendStatus(200);
     res.send('페이스북 받는곳~~~~~')
 });
 
-router.post('/instagram', async (req, res) => {
+router.post('/instagram', (req, res) => {
     console.log('Instagram request body:');
     console.log(req.body);
     // Process the Instagram updates here
     let getData = JSON.stringify(req.body)
-    await Webhookdata.create({
-        webhookdata : getData
-    });
+    // await Webhookdata.create({
+    //     webhookdata : getData
+    // });
     received_updates.unshift(req.body);
     res.sendStatus(200);
 });
