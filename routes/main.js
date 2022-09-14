@@ -23,8 +23,9 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
+    console.log('진짜 여기로 오는걸까나~~~~~~~~~?????????');
     console.log(req.body);
-    res.render('topby/topby_main');
+    res.send(200);
 })
 
 router.get('/policy', (req, res, next) => {
