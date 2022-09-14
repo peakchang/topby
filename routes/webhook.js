@@ -9,18 +9,6 @@ var received_updates = [];
 
 
 router.get('/', (req, res) => {
-    console.log(JSON.stringify(received_updates, null, 2));
-    res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
-});
-router.post('/', (req, res) => {
-    console.log('1st chk here!!!');
-    for (const outPut in req) {
-        console.log(`값 : ${outPut}`);
-    }
-    res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
-});
-
-router.get(['/facebook', '/instagram'], (req, res) => {
     console.log('2nd chk here!!!');
     console.log(req.query['hub.mode']);
     console.log(req.query['hub.verify_token']);
@@ -33,27 +21,14 @@ router.get(['/facebook', '/instagram'], (req, res) => {
         res.send(req.query['hub.challenge']);
     } else {
         console.log('3rd chk here!!! - is real false??');
-        res.sendStatus(400);
+        res.send('웹 훅 인증 대기 페이지 입니다!!!')
     }
+    // console.log(JSON.stringify(received_updates, null, 2));
+    // res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 
-router.post('/facebook', async (req, res) => {
-    console.log('2nd chk here!!!');
-    console.log(req.query['hub.mode']);
-    console.log(req.query['hub.verify_token']);
 
-    if (
-        req.query['hub.mode'] == 'subscribe' &&
-        req.query['hub.verify_token'] == token
-    ) {
-        console.log('3rd chk here!!! - is real true??');
-        res.send(req.query['hub.challenge']);
-    } else {
-        console.log('3rd chk here!!! - is real false??');
-        res.sendStatus(400);
-    }
-
-
+router.post('/' , async (req,res) => {
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
@@ -72,32 +47,71 @@ router.post('/facebook', async (req, res) => {
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
     res.sendStatus(200);
-});
-
-router.post('/instagram', (req, res) => {
-    console.log('Instagram request body:');
-    console.log(req.body);
-    // Process the Instagram updates here
-    // let getData = JSON.stringify(req.body)
-    // await Webhookdata.create({
-    //     webhookdata : getData
-    // });
-    received_updates.unshift(req.body);
-    res.sendStatus(200);
-});
+})
 
 
 
 
 
+// router.post('/facebook', async (req, res) => {
+//     console.log('4th chk here!!!');
+//     let getData = req.body
+//     console.log('Facebook request body:', getData);
+//     console.log('request header X-Hub-Signature validated');
+//     console.log(getData.entry[0].changes);
+//     setData = JSON.stringify(getData)
+//     console.log(setData);
+//     try {
+//         await Webhookdata.create({
+//             webhookdata : setData
+//         });
+//     } catch (error) {
+//         console.log('에러가 났습니다요~~~~~~~~');
+//     }
+    
+//     // Process the Facebook updates here111111111111111111
+//     received_updates.unshift(req.body);
+//     res.sendStatus(200);
+// });
+
+// router.post('/instagram', (req, res) => {
+//     console.log('Instagram request body:');
+//     console.log(req.body);
+//     // Process the Instagram updates here
+//     // let getData = JSON.stringify(req.body)
+//     // await Webhookdata.create({
+//     //     webhookdata : getData
+//     // });
+//     received_updates.unshift(req.body);
+//     res.sendStatus(200);
+// });
+
+// router.post('/', (req, res) => {
+//     console.log('1st chk here!!!');
+//     for (const outPut in req) {
+//         console.log(`값 : ${outPut}`);
+//     }
+//     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
+// });
 
 
 
+// router.get(['/facebook', '/instagram'], (req, res) => {
+//     console.log('2nd chk here!!!');
+//     console.log(req.query['hub.mode']);
+//     console.log(req.query['hub.verify_token']);
 
-
-
-
-
+//     if (
+//         req.query['hub.mode'] == 'subscribe' &&
+//         req.query['hub.verify_token'] == token
+//     ) {
+//         console.log('3rd chk here!!! - is real true??');
+//         res.send(req.query['hub.challenge']);
+//     } else {
+//         console.log('3rd chk here!!! - is real false??');
+//         res.sendStatus(400);
+//     }
+// });
 
 
 // router.get('/', async (req, res, next) => {
