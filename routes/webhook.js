@@ -38,14 +38,36 @@ router.get(['/facebook', '/instagram'], (req, res) => {
 });
 
 router.post('/facebook', async (req, res) => {
+    console.log('2nd chk here!!!');
+    console.log(req.query['hub.mode']);
+    console.log(req.query['hub.verify_token']);
+
+    if (
+        req.query['hub.mode'] == 'subscribe' &&
+        req.query['hub.verify_token'] == token
+    ) {
+        console.log('3rd chk here!!! - is real true??');
+        res.send(req.query['hub.challenge']);
+    } else {
+        console.log('3rd chk here!!! - is real false??');
+        res.sendStatus(400);
+    }
+
+
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
     console.log(getData.entry[0].changes);
-    await Webhookdata.create({
-        webhookdata : getData
-    });
+
+    try {
+        await Webhookdata.create({
+            webhookdata : getData
+        });
+    } catch (error) {
+        console.error(error);
+    }
+    
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
     res.sendStatus(200);

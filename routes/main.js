@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     console.log('*************************************************************************************************');
+    
     // console.log(req.session);
     // console.log(req.cookies);
     // console.log(req.user);
