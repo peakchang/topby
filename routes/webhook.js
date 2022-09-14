@@ -9,6 +9,7 @@ var received_updates = [];
 
 
 router.get('/', (req, res) => {
+    console.log(JSON.stringify(received_updates, null, 2));
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 router.post('/', (req, res) => {
@@ -36,15 +37,15 @@ router.get(['/facebook', '/instagram'], (req, res) => {
     }
 });
 
-router.post('/facebook', (req, res) => {
+router.post('/facebook', async (req, res) => {
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
     console.log(getData.entry[0].changes);
-    // await Webhookdata.create({
-    //     webhookdata : getData
-    // });
+    await Webhookdata.create({
+        webhookdata : getData
+    });
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
     res.sendStatus(200);
