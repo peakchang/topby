@@ -26,16 +26,23 @@
                     <th class="border border-slate-300 py-2 text-center">전화번호</th>
                     <th class="border border-slate-300 py-2 text-center">비고</th>
                 </tr>
+
+                {% for data in wData %}
                 <tr>
                     <td class="border border-slate-300 py-2 text-center">0</td>
-                    <td class="border border-slate-300 py-2 text-center">테스트고객</td>
-                    <td class="border border-slate-300 py-2 text-center">010-2222-1111</td>
+                    <td class="border border-slate-300 py-2 text-center">Testing....</td>
+                    <td class="border border-slate-300 py-2 text-center">TestNum</td>
                     <td class="border border-slate-300 py-2 text-center px-3">
                         <div>
-                            <input type="text" id="small-input" class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <input type="text" id="small-input" class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ data.webhookdata }}">
                         </div>
                     </td>
                 </tr>
+                
+                
+                {% endfor %}
+
+
             </table>
         </div>
     </div>
