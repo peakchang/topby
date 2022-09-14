@@ -47,7 +47,7 @@ router.post('/facebook', (req, res) => {
     // });
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
-    // res.sendStatus(200);
+    res.sendStatus(200);
     res.send('페이스북 받는곳~~~~~')
 });
 
@@ -60,7 +60,7 @@ router.post('/instagram', (req, res) => {
     //     webhookdata : getData
     // });
     received_updates.unshift(req.body);
-    // res.sendStatus(200);
+    res.sendStatus(200);
     res.send('인스타 받는곳~~~~~')
 });
 
