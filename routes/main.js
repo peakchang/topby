@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    console.log('진짜 여기로 오는걸까나~~~~~~~~~?????????');
+    console.log('진짜 여기로 오는걸까나~~~~~~~~~????????? 궁금하다요~~~~~~~');
     console.log(req.body);
     res.send(200);
 })
