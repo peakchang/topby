@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    console.log(req);
+    console.log(req.body);
     res.render('topby/topby_main');
 })
 
