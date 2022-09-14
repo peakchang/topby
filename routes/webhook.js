@@ -65,6 +65,7 @@ router.post('/facebook', async (req, res) => {
             webhookdata : getData
         });
     } catch (error) {
+        console.log('에러가 났습니다요~~~~~~~~');
         console.error(error);
     }
     
