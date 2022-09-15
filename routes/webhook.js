@@ -8,6 +8,12 @@ var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
 
+router.post('/zap' , (req,res) => {
+    console.log(req.body);
+    res.send('웹훅 수신!')
+});
+
+
 router.get('/', (req, res) => {
     console.log('2nd chk here!!!');
     console.log(req.query['hub.mode']);
