@@ -42,7 +42,6 @@ router.post('/' , (req,res) => {
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
-    console.log(getData.entry[0].changes);
     setData = JSON.stringify(getData)
     console.log(setData);
     // try {
