@@ -54,8 +54,10 @@ router.post('/' , (req,res) => {
     // }
     
     // Process the Facebook updates here111111111111111111
-    received_updates.unshift(req.body);
-    res.sendStatus(200);
+    // received_updates.unshift(req.body);
+    // res.sendStatus(200);
+    console.log('success!!!!!');
+    res.send('zapzaapapapapapapap')
 })
 
 
