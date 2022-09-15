@@ -18,6 +18,10 @@ router.post('/zap/' , (req,res) => {
 });
 
 router.get('/', (req, res) => {
+    let testVal = [ {ad_id: '23851065075770490',ad_name: '광고 이름', adset_id: '23851065075780490'}];
+    console.log(testVal);
+    console.log(testVal[0].ad_id);
+
     console.log('2nd chk here!!!');
     console.log(req.query['hub.mode']);
     console.log(req.query['hub.verify_token']);
@@ -42,7 +46,7 @@ router.post('/' , async (req,res) => {
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
-    setId = getData.ad_id;
+    setId = getData[0].ad_id;
     console.log(setId);
     console.log(typeof(setId));
     // setData = JSON.stringify(getData)
