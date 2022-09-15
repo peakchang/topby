@@ -42,11 +42,14 @@ router.post('/' , async (req,res) => {
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
-    setData = JSON.stringify(getData)
-    console.log(setData);
+    setId = getData.ad_id;
+    console.log(setId);
+    console.log(typeof(setId));
+    // setData = JSON.stringify(getData)
+    // console.log(setData);
     try {
         await Webhookdata.create({
-            webhookdata : setData
+            webhookdata : setId
         });
     } catch (error) {
         console.log('에러가 났습니다요~~~~~~~~');
