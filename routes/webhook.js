@@ -8,11 +8,14 @@ var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
 
-router.post('/zap' , (req,res) => {
+router.post('/zap/' , (req,res) => {
     console.log(req.body);
     res.send('웹훅 수신!')
 });
 
+router.post('/zap/' , (req,res) => {
+    res.send('웹훅 GET PAGE!!!!!')
+});
 
 router.get('/', (req, res) => {
     console.log('2nd chk here!!!');
@@ -34,7 +37,7 @@ router.get('/', (req, res) => {
 });
 
 
-router.post('/' , async (req,res) => {
+router.post('/' , (req,res) => {
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
@@ -42,13 +45,13 @@ router.post('/' , async (req,res) => {
     console.log(getData.entry[0].changes);
     setData = JSON.stringify(getData)
     console.log(setData);
-    try {
-        await Webhookdata.create({
-            webhookdata : setData
-        });
-    } catch (error) {
-        console.log('에러가 났습니다요~~~~~~~~');
-    }
+    // try {
+    //     await Webhookdata.create({
+    //         webhookdata : setData
+    //     });
+    // } catch (error) {
+    //     console.log('에러가 났습니다요~~~~~~~~');
+    // }
     
     // Process the Facebook updates here111111111111111111
     received_updates.unshift(req.body);
