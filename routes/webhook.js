@@ -46,18 +46,16 @@ router.post('/' , async (req,res) => {
     let getData = req.body
     console.log('Facebook request body:', getData);
     console.log('request header X-Hub-Signature validated');
-    setId = getData[0].ad_id;
-    console.log(setId);
-    console.log(typeof(setId));
-    // setData = JSON.stringify(getData)
+    console.log(getData.extry[0].changes);
+    // setData = JSON.stringify(getData);
     // console.log(setData);
-    try {
-        await Webhookdata.create({
-            webhookdata : setId
-        });
-    } catch (error) {
-        console.log('에러가 났습니다요~~~~~~~~');
-    }
+    // try {
+    //     await Webhookdata.create({
+    //         webhookdata : setId
+    //     });
+    // } catch (error) {
+    //     console.log('에러가 났습니다요~~~~~~~~');
+    // }
     
     // Process the Facebook updates here111111111111111111
     // received_updates.unshift(req.body);
