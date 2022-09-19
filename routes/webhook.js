@@ -35,7 +35,57 @@ doRequest = (url) => {
 router.get('/', async (req, res) => {
 
 
+    // let leadsUrl = `https://graph.facebook.com/v15.0/402862271812849?access_token=${process.env.ACCESS_TOKEN}`
+    // let getLeadsData = await doRequest({ uri: leadsUrl });
+    // console.log(JSON.parse(getLeadsData));
+
+
+    // let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
+    // let getformUrlData = await doRequest({ uri: formUrl });
+    // console.log(JSON.parse(getformUrlData));
+
+
+    let leadsUrl = `https://graph.facebook.com/v15.0/474249967950779?access_token=${process.env.ACCESS_TOKEN}`
+    let LeadsData = await doRequest({ uri: leadsUrl });
     
+    
+    
+
+
+    let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
+    let formData = await doRequest({ uri: formUrl });
+    
+
+    let getLeadsData = JSON.parse(LeadsData)
+    let getFormData = JSON.parse(formData)
+    // console.log(getLeadsData);
+    // console.log(getFormData);
+    // 이름
+    let get_name = getLeadsData.field_data[0].values[0];
+    let temp_phone = getLeadsData.field_data[1].values[0]
+    let get_phone = temp_phone.replace('+82', '0')
+    let get_created_ime = getLeadsData.created_time
+    let get_form_name = getFormData.name
+
+    console.log(get_name);
+    console.log(get_phone);
+    console.log(get_created_ime);
+    console.log(get_form_name);
+
+    
+
+    
+
+
+
+
+
+    // request.get({
+    //     uri: `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
+    // }, (err, res, body) => {
+    //     let getLeadsData = JSON.parse(body)
+    //     console.log(getLeadsData);
+    // })
 
     // console.log('--------------------------------------------');
     // console.log(test.request);
@@ -84,25 +134,38 @@ router.post('/', async (req, res) => {
 
 
     let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-    let getLeadsData = await doRequest({ uri: leadsUrl });
-    console.log(JSON.parse(getLeadsData));
-
+    let LeadsData = await doRequest({ uri: leadsUrl });
 
     let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-    let getformUrlData = await doRequest({ uri: formUrl });
-    console.log(JSON.parse(getformUrlData));
+    let formData = await doRequest({ uri: formUrl });
+
+    let getLeadsData = JSON.parse(LeadsData)
+    let getFormData = JSON.parse(formData)
+    
+    // 이름
+    let get_name = getLeadsData.field_data[0].values[0];
+    let get_phone = getLeadsData.field_data[1].values[0]
+    let get_created_ime = getLeadsData.created_time
+    let get_form_name = getFormData.name
+    
+    let getAllData = `${get_name} / ${get_phone} / ${get_created_ime} / ${get_form_name}`;
+    console.log(getAllData);
+    //     console.log(getLeadsData.field_data[0].values[0]);
+    //     console.log(getLeadsData.field_data[1].values[0]);
+    //     console.log(getLeadsData.created_time);
+
 
 
 
     // setData = JSON.stringify(getData);
     // console.log(setData);
-    // try {
-    //     await Webhookdata.create({
-    //         webhookdata : setId
-    //     });
-    // } catch (error) {
-    //     console.log('에러가 났습니다요~~~~~~~~');
-    // }
+    try {
+        await Webhookdata.create({
+            webhookdata : getAllData
+        });
+    } catch (error) {
+        console.log('에러가 났습니다요~~~~~~~~');
+    }
 
     // Process the Facebook updates here111111111111111111
     // received_updates.unshift(req.body);
