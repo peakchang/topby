@@ -35,14 +35,7 @@ doRequest = (url) => {
 router.get('/', async (req, res) => {
 
 
-    let leadsUrl = `https://graph.facebook.com/v15.0/402862271812849?access_token=${process.env.ACCESS_TOKEN}`
-    let getLeadsData = await doRequest({ uri: leadsUrl });
-    console.log(JSON.parse(getLeadsData));
-
-
-    let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
-    let getformUrlData = await doRequest({ uri: formUrl });
-    console.log(JSON.parse(getformUrlData));
+    
 
     // console.log('--------------------------------------------');
     // console.log(test.request);
@@ -76,7 +69,7 @@ router.get('/', async (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     console.log('4th chk here!!!');
     let getData = req.body
     console.log('Facebook request body:', getData);
@@ -88,6 +81,16 @@ router.post('/', (req, res) => {
     console.log(leadsId);
     console.log(formId);
     console.log('-------------------------');
+
+
+    let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
+    let getLeadsData = await doRequest({ uri: leadsUrl });
+    console.log(JSON.parse(getLeadsData));
+
+
+    let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
+    let getformUrlData = await doRequest({ uri: formUrl });
+    console.log(JSON.parse(getformUrlData));
 
 
 
