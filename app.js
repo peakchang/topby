@@ -27,7 +27,7 @@ var xhub = require('express-x-hub');
 passportConfig(); // 패스포트 설정
 
 console.log(process.env.PORT);
-app.set('port', process.env.PORT || 8001);
+app.set('port', process.env.PORT || 3030);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
     express: app,

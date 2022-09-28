@@ -144,21 +144,14 @@ router.post('/', async (req, res) => {
     
     // 이름
     let get_name = getLeadsData.field_data[0].values[0];
-    let get_phone = getLeadsData.field_data[1].values[0]
+    let temp_phone = getLeadsData.field_data[1].values[0]
+    let get_phone = temp_phone.replace('+82', '0')
     let get_created_ime = getLeadsData.created_time
     let get_form_name = getFormData.name
     
     let getAllData = `${get_name} / ${get_phone} / ${get_created_ime} / ${get_form_name}`;
     console.log(getAllData);
-    //     console.log(getLeadsData.field_data[0].values[0]);
-    //     console.log(getLeadsData.field_data[1].values[0]);
-    //     console.log(getLeadsData.created_time);
-
-
-
-
-    // setData = JSON.stringify(getData);
-    // console.log(setData);
+    
     try {
         await Webhookdata.create({
             webhookdata : getAllData
