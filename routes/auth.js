@@ -17,6 +17,9 @@ router.get('/join', isNotLoggedIn, (req, res, next) => {
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
 
     var { userid_inp, nick, password } = req.body;
+    console.log(userid_inp);
+    console.log(nick);
+    console.log(password);
     try {
         let getUserSql = `SELECT * FROM users WHERE userid = '${userid_inp}'`;
         let getUser = await sql_con.promise().query(getUserSql)
@@ -25,6 +28,8 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
         if (exUser == []) {
             return res.redirect('/auth/join?error=exist');
         }
+
+        console.log('체크는 정상이신가~~~~~~');
 
         const hash = await bcrypt.hash(password, 12);
         let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
