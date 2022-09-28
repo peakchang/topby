@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    // console.log(`네번째 관문 ${user.id}`);
+    console.log(`네번째 관문 ${user.id}`);
     done(null, user.id); // 세션에 유저의 id만 저장
   });
 
