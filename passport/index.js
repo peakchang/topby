@@ -1,21 +1,20 @@
 const passport = require('passport');
 const local = require('./localStrategy');
 const User = require('../models/user');
+const sql_con = require('../db_lib');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    // console.log(`네번째 관문 ${user.id}`);
     done(null, user.id); // 세션에 유저의 id만 저장
   });
-
-  // {id: 3, 'connect.sid' : s%23412324234234}
   passport.deserializeUser((id, done) => {
-    console.log("5번째 관문은?");
-    User.findOne({
-      where: { id },
+    let getUserSql = `SELECT * FROM users WHERE id = '?'`;
+    sql_con.query(getUserSql, [id], (err, result) => {
+      if (err) console.log('mysql 에러');
+      var json = JSON.stringify(result[0]);
+      userinfo = JSON.parse(json);
+      done(null, userinfo);
     })
-      .then(user => done(null, user)) // req.user, req.authenticated()
-      .catch(err => done(err));
   });
 
   local();

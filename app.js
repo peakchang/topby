@@ -7,11 +7,15 @@ const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const dateFilter = require('nunjucks-date-filter');
+
 const helmet = require('helmet');
 const hpp = require('hpp');
 
-
 dotenv.config();
+
+const { tableSetting } = require('./db_lib/set_tables.js');
+tableSetting()
 
 const crmRouter = require('./routes/crm');
 const mainRouter = require('./routes/main');
@@ -24,15 +28,23 @@ const passportConfig = require('./passport');
 const app = express();
 var xhub = require('express-x-hub');
 
+
+
 passportConfig(); // 패스포트 설정
 
-console.log(process.env.PORT);
-app.set('port', process.env.PORT || 3030);
+app.set('port', process.env.PORT || 3060);
 app.set('view engine', 'html');
-nunjucks.configure('views', {
+
+function setUpNunjucks(expressApp) {
+  let nunjucks_env = nunjucks.configure('views', {
+    autoescape: true,
     express: app,
     watch: true,
-});
+  });
+  nunjucks_env.addFilter('date', dateFilter);
+}
+
+setUpNunjucks();
 
 sequelize.sync({ force: false })
   .then(() => {
@@ -45,8 +57,8 @@ sequelize.sync({ force: false })
 
 if (process.env.NODE_ENV === 'production') {
     app.use(morgan('combined'));
-    // app.use(helmet());
-    // app.use(hpp());
+    app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+    app.use(hpp());
 } else {
     app.use(morgan('dev'));
 }
@@ -54,19 +66,27 @@ if (process.env.NODE_ENV === 'production') {
 
 
 app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET }));
-app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/img', express.static(path.join(__dirname, 'uploads')));
+app.use('/lib', express.static(path.join(__dirname, 'db_lib')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
+if (process.env.NODE_ENV === 'production') {
+  var https_status = true
+} else {
+  var https_status = false
+}
 const sessionOption = {
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        secure: false,
+        secure: https_status,
     },
 };
 

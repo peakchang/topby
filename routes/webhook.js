@@ -4,11 +4,14 @@ const Webhookdata = require('../models/webhook');
 const fs = require('fs');
 const router = express.Router();
 const request = require('request');
-const needle = require('needle');
+const mysql_conn = require('../db_lib');
 
 var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 router.post('/zap/', (req, res) => {
     console.log(req.body);
@@ -34,23 +37,8 @@ doRequest = (url) => {
 
 router.get('/', async (req, res) => {
 
-
-    // let leadsUrl = `https://graph.facebook.com/v15.0/402862271812849?access_token=${process.env.ACCESS_TOKEN}`
-    // let getLeadsData = await doRequest({ uri: leadsUrl });
-    // console.log(JSON.parse(getLeadsData));
-
-
-    // let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
-    // let getformUrlData = await doRequest({ uri: formUrl });
-    // console.log(JSON.parse(getformUrlData));
-
-
     let leadsUrl = `https://graph.facebook.com/v15.0/474249967950779?access_token=${process.env.ACCESS_TOKEN}`
     let LeadsData = await doRequest({ uri: leadsUrl });
-    
-    
-    
-
 
     let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
     let formData = await doRequest({ uri: formUrl });
@@ -58,52 +46,12 @@ router.get('/', async (req, res) => {
 
     let getLeadsData = JSON.parse(LeadsData)
     let getFormData = JSON.parse(formData)
-    // console.log(getLeadsData);
-    // console.log(getFormData);
     // 이름
     let get_name = getLeadsData.field_data[0].values[0];
     let temp_phone = getLeadsData.field_data[1].values[0]
     let get_phone = temp_phone.replace('+82', '0')
     let get_created_ime = getLeadsData.created_time
     let get_form_name = getFormData.name
-
-    console.log(get_name);
-    console.log(get_phone);
-    console.log(get_created_ime);
-    console.log(get_form_name);
-
-    
-
-    
-
-
-
-
-
-    // request.get({
-    //     uri: `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
-    // }, (err, res, body) => {
-    //     let getLeadsData = JSON.parse(body)
-    //     console.log(getLeadsData);
-    // })
-
-    // console.log('--------------------------------------------');
-    // console.log(test.request);
-    // console.log('--------------------------------------------');
-
-
-
-
-
-
-    let testVal = [{ ad_id: '23851065075770490', ad_name: '광고 이름', adset_id: '23851065075780490' }];
-    // console.log(testVal);
-    // console.log(testVal[0].ad_id);
-
-    // console.log('2nd chk here!!!');
-    // console.log(req.query['hub.mode']);
-    // console.log(req.query['hub.verify_token']);
-
     if (
         req.query['hub.mode'] == 'subscribe' &&
         req.query['hub.verify_token'] == token
@@ -122,16 +70,9 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     console.log('4th chk here!!!');
     let getData = req.body
-    console.log('Facebook request body:', getData);
-    console.log('request header X-Hub-Signature validated');
-    console.log(getData.entry[0].changes);
-
     let leadsId = getData.entry[0].changes[0].value.leadgen_id
     let formId = getData.entry[0].changes[0].value.form_id
-    console.log(leadsId);
-    console.log(formId);
-    console.log('-------------------------');
-
+    var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
     let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
     let LeadsData = await doRequest({ uri: leadsUrl });
@@ -145,26 +86,39 @@ router.post('/', async (req, res) => {
     // 이름
     let get_name = getLeadsData.field_data[0].values[0];
     let temp_phone = getLeadsData.field_data[1].values[0]
-    let get_phone = temp_phone.replace('+82', '0')
-    let get_created_ime = getLeadsData.created_time
-    let get_form_name = getFormData.name
-    
-    let getAllData = `${get_name} / ${get_phone} / ${get_created_ime} / ${get_form_name}`;
-    console.log(getAllData);
-    
-    try {
-        await Webhookdata.create({
-            webhookdata : getAllData
-        });
-    } catch (error) {
-        console.log('에러가 났습니다요~~~~~~~~');
+    if (temp_phone.includes('+820')) {
+        var get_phone = temp_phone.replace('+820', '0')
+    } else {
+        var get_phone = temp_phone.replace('+82', '0')
     }
+    let get_created_time = getLeadsData.created_time
+    let get_form_name = getFormData.name
 
-    // Process the Facebook updates here111111111111111111
-    // received_updates.unshift(req.body);
+    if (get_form_name.includes('인터넷')) {
+        var form_type_in = '인터넷'
+        console.log('인터넷 포함!!');
+        await sendSms(get_phone, sendMsg)
+    } else if (get_form_name.includes('분양')) {
+        console.log('분양 포함!!');
+        var form_type_in = '분양'
+    } else {
+        var form_type_in = '미정'
+        console.log('암것도 포함 안됨!!');
+    }
+    
+    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}`;
+    console.log(getAllData);
+
+    let allDataSql = 'INSERT INTO application_form (webhookdata) VALUES (?)';
+    await mysql_conn.promise().query(allDataSql, [getAllData]);
+
+    let getArr = [get_form_name, form_type_in, get_name, get_phone, nowDateTime];
+    let formInertSql = `INSERT INTO application_form (form_name, form_type_in, mb_name, mb_phone, created_at) VALUES (?,?,?,?,?);`;
+
+    await mysql_conn.promise().query(formInertSql, getArr)
+
     res.sendStatus(200);
     console.log('success!!!!!');
-    // res.send('zapzaapapapapapapap')
 })
 
 

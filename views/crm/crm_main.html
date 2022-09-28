@@ -11,40 +11,58 @@
 
         .table_area {
             width: 100%;
-            min-width: 800px;
+            min-width: 400px;
         }
     }
 </style>
 
 <div class="container">
-    <div class="table_wrap">
-        <div class="table_area">
-            <table class="border-collapse border border-slate-400 w-full mt-8 text-xs suit-font">
-                <tr>
-                    <th class="border border-slate-300 py-2 text-center">접수번호</th>
-                    <th class="border border-slate-300 py-2 text-center">고객명</th>
-                    <th class="border border-slate-300 py-2 text-center">전화번호</th>
-                    <th class="border border-slate-300 py-2 text-center">비고</th>
-                </tr>
+    <form method="post">
 
-                {% for data in wData %}
-                <tr>
-                    <td class="border border-slate-300 py-2 text-center">0</td>
-                    <td class="border border-slate-300 py-2 text-center">Testing....</td>
-                    <td class="border border-slate-300 py-2 text-center">TestNum</td>
-                    <td class="border border-slate-300 py-2 text-center px-3">
-                        <div>
-                            <input type="text" id="small-input" class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ data.webhookdata }}">
-                        </div>
-                    </td>
-                </tr>
-                
-                
-                {% endfor %}
+        <button>업데이트</button>
 
+        <div class="table_wrap">
+            <div class="table_area">
+                <table class="border-collapse border border-slate-400 w-full mt-8 text-xs suit-font">
+                    <tr>
+                        <th class="border border-slate-300 py-2 text-center">DB 종류</th>
+                        <th class="border border-slate-300 py-2 text-center">상태값 셋팅</th>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">분양 DB 상태값</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div>
+                                <input type="text" name="estate_status"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    value="{{ result.estate_status }}">
+                            </div>
+                        </td>
+                    </tr>
 
-            </table>
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">렌티 DB 상태값</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div>
+                                <input type="text" name="renty_status"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    value="{{ result.renty_status }}">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">진행중 현장</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div>
+                                <input type="text" name="estate_list"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    value="{{ result.estate_list }}">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 {% endblock %}
