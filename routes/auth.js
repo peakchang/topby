@@ -2,7 +2,11 @@ const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
-const User = require('../models/user');
+const sql_con = require('../db_lib/');
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
 
 const router = express.Router();
 
@@ -11,24 +15,54 @@ router.get('/join', isNotLoggedIn, (req, res, next) => {
 })
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
-    const { userid, nick, password } = req.body;
+
+    var { userid_inp, nick, password } = req.body;
+    console.log(userid_inp);
+    console.log(nick);
+    console.log(password);
     try {
-        const exUser = await User.findOne({ where: { userid } });
-        if (exUser) {
-            return res.redirect('/join?error=exist');
+        let getUserSql = `SELECT * FROM users WHERE userid = '${userid_inp}'`;
+        let getUser = await sql_con.promise().query(getUserSql)
+
+        const exUser = getUser[0]
+        if (exUser == []) {
+            return res.redirect('/auth/join?error=exist');
         }
+
+        console.log('체크는 정상이신가~~~~~~');
+
         const hash = await bcrypt.hash(password, 12);
-        await User.create({
-            userid,
-            nick,
-            password: hash,
-        });
+        let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+        let makeUserQuery = `INSERT INTO users (userid, nick, password, created_at) VALUES(?, ?, ?, ?);`;
+        let valArr = [userid_inp, nick, hash, nowTime]
+        await sql_con.promise().query(makeUserQuery, valArr)
+
         return res.redirect('/auth/login');
     } catch (error) {
         console.error(error);
         return next(error);
     }
 });
+
+// router.post('/join', isNotLoggedIn, async (req, res, next) => {
+//     const { userid, nick, password } = req.body;
+//     try {
+//         const exUser = await User.findOne({ where: { userid } });
+//         if (exUser) {
+//             return res.redirect('/join?error=exist');
+//         }
+//         const hash = await bcrypt.hash(password, 12);
+//         await User.create({
+//             userid,
+//             nick,
+//             password: hash,
+//         });
+//         return res.redirect('/auth/login');
+//     } catch (error) {
+//         console.error(error);
+//         return next(error);
+//     }
+// });
 
 
 router.get('/login', isNotLoggedIn, (req, res, next) => {
@@ -53,9 +87,9 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
                 console.error(loginError);
                 return next(loginError);
             }
-            if(movePath.move){
+            if (movePath.move) {
                 res.redirect(movePath.move)
-            }else{
+            } else {
                 res.redirect('/')
             }
         });

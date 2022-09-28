@@ -1,0 +1,215 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+<style>
+    @media screen and (max-width: 992px) {
+        .table_wrap {
+            width: 100%;
+            overflow: auto;
+        }
+
+        .table_area {
+            width: 100%;
+            min-width: 800px;
+        }
+    }
+</style>
+
+<!-- {% for i in range(2,7) %}
+{{i}}
+{% endfor %} -->
+<!-- <a href="?pnum=3">sdfsdf</a> -->
+
+<div class="container">
+    <form>
+        <div class="my-4">
+
+            <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+                <option value="">전체선택</option>
+                {% for estate in all_data.estate_list %}
+                <option value="{{estate}}" {% if all_data.est==estate %} selected {% endif %}>{{estate}}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
+
+            {% if all_data.est %}
+            <button type="button" class="ml-2 text-sm py-1 px-4 bg-green-500 text-white rounded-lg start_copy">DB 선택 및
+                상태변경</button>
+            {% endif %}
+
+        </div>
+        <div class="table_wrap">
+            <div class="table_area">
+                <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
+                    <tr>
+                        <th class="border border-slate-300 text-center">
+                            <input type="checkbox" name="" id="" class="all_chk">
+                        </th>
+                        <th class="border border-slate-300 py-2 text-center">접수번호</th>
+                        <th class="border border-slate-300 py-2 text-center">고객명</th>
+                        <th class="border border-slate-300 py-2 text-center">전화번호</th>
+                        <th class="border border-slate-300 py-2 text-center">비고</th>
+                        <th class="border border-slate-300 py-2 text-center">상태</th>
+                        <th class="border border-slate-300 py-2 text-center">접수 시간</th>
+                    </tr>
+
+                    {% for data in all_data.wdata %}
+                    <tr class="dblist">
+                        <td class="border border-slate-300 text-center">
+                            <input type="checkbox" name="data_id" value="{{ data.id }}" id="" class="on_chk">
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
+                        <td class="border border-slate-300 py-2 text-center"> {{ data.mb_name }} </td>
+                        <td class="border border-slate-300 py-2 text-center">{{ data.mb_phone_chk }} </td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            {{ data.form_name }}
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center px-3">{{ data.mb_status }}</td>
+                        <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.created_at |
+                            date("YY/MM/DD HH:mm:ss") }}</td>
+                    </tr>
+                    {% endfor %}
+
+
+                </table>
+            </div>
+
+
+            <nav aria-label="Page navigation example" class="text-center mt-4">
+                <ul class="inline-flex items-center -space-x-px mx-auto">
+                    <li>
+                        <button type="button"
+                            class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 move_page prev">
+                            <span class="sr-only">Previous</span>
+                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </li>
+
+                    {% for i in range(all_data.pagingStartCount, all_data.pagingEndCount) %}
+                    {% if i == all_data.nowCount %}
+                    <li><button type="submit" name="pnum" value="{{i}}"
+                            class="py-2 px-3 leading-tight text-gray-500 bg-blue-300 border border-gray-300">{{i}}</button>
+                    </li>
+                    {% else %}
+                    <li><button type="submit" name="pnum" value="{{i}}"
+                            class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300">{{i}}</button>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+
+
+                    <li>
+                        <button type="button"
+                            class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 move_page next">
+                            <span class="sr-only">Next</span>
+                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </form>
+</div>
+
+<div style="height: 100%; width: 100%; background-color: rgba(93, 90, 90, 0.8); z-index: 999999; position: fixed; left: 0px; top: 0px;"
+    class="flex justify-center items-center cursor-pointer estate_copy_modal px-2">
+    <div class="relative bg-white rounded p-3 text-center w-full md:w-2/3 lg:w-2/4 "
+        style="max-height: 60vh; z-index: 52;">
+        <span class="absolute top-1 right-3 text-4xl text-red-600 close_modal">
+            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+        </span>
+
+
+        <div class="review_detail_modal_content overflow-auto p-3 copy_target"
+            style="height: 100%; max-height: 500px; min-height: 100px;">
+        </div>
+        <button type="button" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg copy_start">복사 및 업데이트
+            하기</button>
+        <input type="hidden">
+
+    </div>
+</div>
+
+<script>
+
+    $('.estate_copy_modal').hide()
+    $('.close_modal').click(function (e) {
+        $('.estate_copy_modal').hide()
+    })
+
+    $('.start_copy').click(function (e) {
+        var setDbList = '';
+        var alldblist = document.querySelectorAll('.dblist')
+        for (let i = 0; i < alldblist.length; i++) {
+            if (alldblist[i].children[5].innerHTML == "") {
+                var setDbList = setDbList + alldblist[i].children[2].innerHTML + '//' + alldblist[i].children[3].innerHTML + '<br>';
+            }
+        }
+        document.querySelector('.copy_target').innerHTML = setDbList
+        $('.estate_copy_modal').show()
+    })
+
+    $('.copy_start').click(function (e) {
+        var copy_target = document.querySelector('.copy_target').innerHTML
+        var copy_target = copy_target.replace(/\<br\>/g, '\r\n')
+        var copy_target = copy_target.replace(/\/\//g, '\t')
+
+        const $textarea = document.createElement("textarea");
+        document.body.appendChild($textarea);
+        $textarea.value = copy_target;
+        $textarea.select()
+        document.execCommand('copy');
+
+        alert('복사 되었습니다.')
+
+        var alldblist = document.querySelectorAll('.dblist')
+        var set_db_list = [];
+        for (let i = 0; i < alldblist.length; i++) {
+            if (alldblist[i].children[5].innerHTML == "") {
+                set_db_list.push(alldblist[i].children[0].firstElementChild.value)
+            }
+        }
+        console.log(set_db_list);
+
+        axios.post('/crm/estate_work/delete', { set_db_list: set_db_list })
+            .then((res) => {
+                console.log('성공!!!');
+                location.reload()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+
+    })
+
+
+
+
+    $('.all_chk').change(function (e) {
+        console.log(this.checked);
+        if (this.checked == true) {
+            document.querySelectorAll('.on_chk').forEach(e => {
+                e.checked = true;
+            });
+        } else {
+            document.querySelectorAll('.on_chk').forEach(e => {
+                e.checked = false;
+            });
+        }
+    })
+
+</script>
+{% endblock %}
