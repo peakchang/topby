@@ -2,7 +2,6 @@ const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
-const User = require('../models/user');
 const sql_con = require('../db_lib/');
 const moment = require('moment');
 require('moment-timezone');
@@ -83,9 +82,9 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
                 console.error(loginError);
                 return next(loginError);
             }
-            if(movePath.move){
+            if (movePath.move) {
                 res.redirect(movePath.move)
-            }else{
+            } else {
                 res.redirect('/')
             }
         });
