@@ -30,15 +30,13 @@
                         <th class="border border-slate-300 py-2 text-center">데이터</th>
                     </tr>
 
-                    {% for data in wgAllData %}
+                    {% for data in alldata %}
                     <tr class="dblist">
-                        <td>
+                        <td class="border border-slate-300 p-2">
                             {{data.webhookdata}}
                         </td>
                     </tr>
                     {% endfor %}
-
-
                 </table>
             </div>
         </div>

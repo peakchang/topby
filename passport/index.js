@@ -1,6 +1,5 @@
 const passport = require('passport');
 const local = require('./localStrategy');
-const User = require('../models/user');
 const sql_con = require('../db_lib');
 
 module.exports = () => {

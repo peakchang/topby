@@ -1,34 +1,29 @@
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const sql_con = require('../db_lib');
+const { executeQuery } = require('../db_lib/dbset.js');
 
 const router = express.Router();
 
 
 
 router.get('/all_data', async (req, res, next) => {
-    let whSql = `SELECT * FROM webhookdatas;`;
-    let whData = await sql_con.promise().query(whSql);
-    let wgAllData = whData[0];
-
-    console.log(wgAllData);
-    res.render('crm/work_alldata', {wgAllData})
+    let allSearchSql = `SELECT * FROM webhookdatas;`;
+    let alldatas = await sql_con.promise().query(allSearchSql)
+    let alldata = alldatas[0]
+    console.log(alldata);
+    res.render('crm/work_alldata', { alldata });
 })
 
 
 router.post('/estate_work/delete', async (req, res, next) => {
-    console.log('alisjdflajsdfjasildjf');
-    console.log(req.body.set_db_list);
     const set_db_list = req.body.set_db_list;
     const getStatusSql = `SELECT * FROM form_status WHERE id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log();
     const estate_status_list = getStatusText[0][0].estate_status.split(',')
     const estate_status = estate_status_list[1];
-    console.log(estate_status);
-    // console.log(estate_list);
-
-    for await(const on_db_id of set_db_list) {
+    
+    for await (const on_db_id of set_db_list) {
         console.log(on_db_id);
         let updateSql = `UPDATE application_form SET mb_status = '${estate_status}' WHERE id=${on_db_id}`;
         await sql_con.promise().query(updateSql)
@@ -76,10 +71,10 @@ router.use('/estate_work', async (req, res, next) => {
             var pagingEndCount = pagingStartCount + 5;
         }
     }
-    if(req.query.est){
+    if (req.query.est) {
         var getEst = `AND form_name LIKE '%${req.query.est}%'`;
         all_data.est = req.query.est
-    }else{
+    } else {
         var getEst = "";
     }
     console.log(getEst);
@@ -88,7 +83,7 @@ router.use('/estate_work', async (req, res, next) => {
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
     var maxCount = Math.ceil(allCount / pageCount) + 1;
-    if(pagingEndCount > maxCount){
+    if (pagingEndCount > maxCount) {
         var pagingEndCount = maxCount;
     }
     const setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${getEst} ORDER BY id DESC LIMIT ${startCount}, ${pageCount};`;
@@ -96,7 +91,7 @@ router.use('/estate_work', async (req, res, next) => {
     var wData = tempData[0];
 
     var pageChkCount = allCount - (pageCount * (nowCount - 1));
-    for await(const data of wData) {
+    for await (const data of wData) {
         data.chkCount = pageChkCount;
         data.mb_phone_chk = phNumBar(data.mb_phone);
         // data.created_at.setHours(data.created_at.getHours()+9);
@@ -116,16 +111,7 @@ router.use('/estate_work', async (req, res, next) => {
 
 
 router.get('/renty_work', async (req, res, next) => {
-    const allDbSql = "SELECT * FROM application_form ;";
-    // const tempData = await sql_con.promise().query(allDbSql)
-    // const wData = tempData[0];
-    var wData = ''
-    await sql_con.query(allDbSql, function (err, result, field) {
-        console.log(field);
-        wData = result;
-    })
-    console.log(wData);
-    res.render('crm/work_renty', { wData });
+    res.render('crm/work_renty',);
 })
 
 
@@ -155,9 +141,9 @@ router.use('/', async (req, res, next) => {
 function phNumBar(value) {
     value = value.replace(/[^0-9]/g, "");
     return value.replace(
-      /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,
-      "$1-$2-$3"
+        /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,
+        "$1-$2-$3"
     );
-  }
+}
 
 module.exports = router;

@@ -21,7 +21,6 @@ const crmRouter = require('./routes/crm');
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
-const { sequelize } = require('./models');
 const passportConfig = require('./passport');
 
 
@@ -45,15 +44,6 @@ function setUpNunjucks(expressApp) {
 }
 
 setUpNunjucks();
-
-// sequelize.sync({ force: false })
-//   .then(() => {
-//     console.log('데이터베이스 연결 성공');
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });
-
 
 if (process.env.NODE_ENV === 'production') {
     app.use(morgan('combined'));
