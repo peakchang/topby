@@ -107,7 +107,7 @@ router.post('/', async (req, res) => {
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}`;
     console.log(getAllData);
 
-    let allDataSql = 'INSERT INTO application_form (webhookdata) VALUES (?)';
+    let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
     await mysql_conn.promise().query(allDataSql, [getAllData]);
 
     let getArr = [get_form_name, form_type_in, get_name, get_phone, nowDateTime];
