@@ -29,11 +29,18 @@ exports.tableSetting = async () => {
         form_name VARCHAR(50),
         form_type_in VARCHAR(50),
         form_location VARCHAR(50) DEFAULT '기본',
+
+
+
         itn_item  VARCHAR(50),
         tv_item VARCHAR(50),
         item_other VARCHAR(255),
+
+
         mb_name VARCHAR(50) NOT NULL,
         mb_phone VARCHAR(50) NOT NULL,
+
+
         mb_phone_cpn VARCHAR(50),
         mb_regnum VARCHAR(50),
         mb_email VARCHAR(50),
@@ -50,7 +57,11 @@ exports.tableSetting = async () => {
         mb_gift_bankname VARCHAR(50),
         mb_gift_accountnum VARCHAR(50),
         mb_gift_name VARCHAR(50),
+
+
         mb_status VARCHAR(20),
+
+
         form_memo_1 VARCHAR(255),
         form_memo_2 VARCHAR(255),
         form_memo_3 VARCHAR(255),
@@ -61,6 +72,9 @@ exports.tableSetting = async () => {
         form_memo_8 VARCHAR(255),
         form_memo_9 VARCHAR(255),
         form_memo_10 VARCHAR(255),
+
+
+
         created_at DATETIME
         );`
     try {

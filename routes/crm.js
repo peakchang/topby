@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 router.get('/all_data', async (req, res, next) => {
-    let allSearchSql = `SELECT * FROM webhookdatas;`;
+    let allSearchSql = `SELECT * FROM webhookdatas ORDER BY id DESC;`;
     let alldatas = await sql_con.promise().query(allSearchSql)
     let alldata = alldatas[0]
     console.log(alldata);
@@ -22,7 +22,7 @@ router.post('/estate_work/delete', async (req, res, next) => {
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].estate_status.split(',')
     const estate_status = estate_status_list[1];
-    
+
     for await (const on_db_id of set_db_list) {
         console.log(on_db_id);
         let updateSql = `UPDATE application_form SET mb_status = '${estate_status}' WHERE id=${on_db_id}`;

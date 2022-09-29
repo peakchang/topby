@@ -1,9 +1,10 @@
 const express = require('express');
 const fs = require('fs');
+const { mailSender } = require('../db_lib/back_lib.js');
 const router = express.Router();
 const request = require('request');
 const mysql_conn = require('../db_lib');
-
+const { sendSms } = require('../db_lib/back_lib');
 var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
@@ -54,19 +55,15 @@ router.get('/', async (req, res) => {
         req.query['hub.mode'] == 'subscribe' &&
         req.query['hub.verify_token'] == token
     ) {
-        // console.log('3rd chk here!!! - is real true??');
         res.send(req.query['hub.challenge']);
     } else {
-        // console.log('3rd chk here!!! - is real false??');
         res.send('웹 훅 인증 대기 페이지 입니다!!!')
     }
-    // console.log(JSON.stringify(received_updates, null, 2));
-    // res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 
 
 router.post('/', async (req, res) => {
-    console.log('4th chk here!!!');
+    const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     let getData = req.body
     let leadsId = getData.entry[0].changes[0].value.leadgen_id
     let formId = getData.entry[0].changes[0].value.form_id
@@ -103,6 +100,11 @@ router.post('/', async (req, res) => {
         var form_type_in = '미정'
         console.log('암것도 포함 안됨!!');
     }
+
+    const mailSubject = `${form_type_in} 고객명 ${get_name} 접수되었습니다.`;
+    const mailContent = `${form_type_in} 고객명 ${get_name} 접수되었습니다\n\ ${get_form_name} 폼에서 접수되었습니다.`;
+    mailSender.sendEmail('adpeak@naver.com',mailSubject, mailContent);
+    mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
     
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}`;
     console.log(getAllData);
