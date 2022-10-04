@@ -1,8 +1,8 @@
 const express = require('express');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { isLoggedIn, isNotLoggedIn, chkRateManager } = require('./middlewares');
 const sql_con = require('../db_lib');
 const { executeQuery } = require('../db_lib/dbset.js');
-
+const bcrypt = require('bcrypt');
 const router = express.Router();
 
 
@@ -106,11 +106,51 @@ router.use('/estate_work', async (req, res, next) => {
 })
 
 
+router.get('/user_manage', async (req, res, next) => {
+    const masterLoadSql = `SELECT * FROM users WHERE rate = 5;`;
+    const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
+    const master_load = masterLoadTemp[0];
+
+    const userLoadSql = `SELECT * FROM users WHERE rate < 5;`;
+    const userListTemp = await sql_con.promise().query(userLoadSql);
+    const user_list = userListTemp[0];
+
+    const locationListSql = `SELECT estate_list FROM form_status WHERE id = 1;`;
+    const locationListTemp = await sql_con.promise().query(locationListSql);
+    const location_list = locationListTemp[0][0].estate_list.split(',')
+    console.log(location_list);
+
+    res.render('crm/user_manage', {master_load, user_list, location_list});
+})
+
+router.post('/user_manage', async (req, res, next) => {
+    console.log(req.body);
+    if(req.body.pwd_val){
+        const hash = await bcrypt.hash(req.body.pwd_val, 12);
+        const valArr = [hash, req.body.id_val]
+        const pwdUpdateSql = `UPDATE users SET password = ? WHERE id = ?;`;
+        await sql_con.promise().query(pwdUpdateSql, valArr);
+    }else if(req.body.rate_val){
+        const valArr = [req.body.rate_val, req.body.id_val]
+        const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
+        await sql_con.promise().query(rateUpdateSql, valArr);
+    }else if(req.body.location_val){
+        console.log(req.body.location_val);
+        const valArr = [req.body.location_val, req.body.id_val]
+        const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
+        console.log(locationUpdateSql);
+        await sql_con.promise().query(locationUpdateSql, valArr);
+
+    }
+    res.send(200)
+})
+
 
 
 
 
 router.get('/renty_work', async (req, res, next) => {
+
     res.render('crm/work_renty',);
 })
 
@@ -122,12 +162,12 @@ router.use('/', async (req, res, next) => {
         const chkSql = `SELECT * FROM form_status WHERE id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
-            let insertArr = [req.body.renty_status, req.body.estate_status, req.body.estate_list];
-            let insertSql = `INSERT INTO form_status (renty_status, estate_status, estate_list) VALUES (?, ?, ?);`;
+            let insertArr = [req.body.estate_status, req.body.estate_list];
+            let insertSql = `INSERT INTO form_status (estate_status, estate_list) VALUES (?, ?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
-            let updatetArr = [req.body.renty_status, req.body.estate_status, req.body.estate_list];
-            let updateSql = `UPDATE form_status SET renty_status=?, estate_status=?, estate_list=? WHERE id=1`;
+            let updatetArr = [req.body.estate_status, req.body.estate_list];
+            let updateSql = `UPDATE form_status SET estate_status=?, estate_list=? WHERE id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }

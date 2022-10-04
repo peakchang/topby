@@ -10,9 +10,8 @@ router.get('/', (req, res, next) => {
     
     // console.log(req.session);
     // console.log(req.cookies);
-    // console.log(req.user);
-    // console.log(req.isAuthenticated());
-    
+    console.log(req.user);
+    console.log(req.isAuthenticated());
     try {
         console.log(req.user.nick);
         userInfo = { 'user': req.user, 'req': req };

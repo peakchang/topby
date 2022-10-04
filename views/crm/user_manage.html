@@ -1,0 +1,189 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+<style>
+    @media screen and (max-width: 992px) {
+        .table_wrap {
+            width: 100%;
+            overflow: auto;
+        }
+
+        .table_area {
+            width: 100%;
+            min-width: 800px;
+        }
+    }
+</style>
+<div class="container mt-5 mb-5">
+    <form>
+        <div class="table_wrap">
+            <div class="table_area">
+                <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
+                    <tr>
+                        <th class="border border-slate-300 py-2 text-center">아이디</th>
+                        <th class="border border-slate-300 py-2 text-center">닉네임</th>
+                        <th class="border border-slate-300 py-2 text-center">등급</th>
+                        <th class="border border-slate-300 py-2 text-center">비번 변경</th>
+                        <th class="border border-slate-300 py-2 text-center">관리 현장</th>
+                        <th class="border border-slate-300 py-2 text-center">가입일</th>
+                    </tr>
+
+                    {% for master in master_load %}
+                    <tr class="dblist">
+                        <input type="hidden" name="" value="{{ master.id }}">
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{master.userid}}
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{master.nick}}
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            마스터
+                        </td>
+
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="password" class="border border-gray-400 py-1 px-3 rounded">
+                            <button type="button"
+                                class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center"></td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{master.created_at | date("YY/MM/DD HH:mm:ss")}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
+                    {% for user in user_list %}
+                    <tr class="dblist">
+                        <input type="hidden" name="" value="{{ user.id }}">
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{user.userid}}
+
+
+
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{user.nick}}
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            <select name="" id="" class="rounded border border-slate-300 py-1 px-3">
+                                <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>일반</option>
+                                <option value="2" {% if user.rate==2 %} SELECTED {% endif %}>분양사</option>
+                                <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
+                                <option value="4" {% if user.rate==4 %} SELECTED {% endif %}>미정</option>
+                                <option value="5" {% if user.rate==5 %} SELECTED {% endif %}>관리자</option>
+                            </select>
+
+                            <button type="button"
+                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_rate">변경</button>
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="password" class="border border-gray-400 py-1 px-3 rounded">
+                            <button type="button"
+                                class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+
+                            <div class="mb-1 now_location">
+                                {{user.manage_estate}}
+                            </div>
+                            <div
+                                class="hidden absolute z-10 w-64 text-sm font-light text-gray-500 bg-white rounded-lg border border-gray-200 shadow-sm transition-opacity duration-300 mt-7">
+                                <div>
+                                    <ul class="p-1 space-y-1 text-sm text-gray-700">
+                                        {% for location in location_list %}
+                                        <li>
+                                            <div class="flex p-2 rounded">
+                                                <div class="flex items-center h-5">
+                                                    <input id="chk{{loop.index}}" type="checkbox" value="{{location}}"
+                                                        class="bg-gray-100 border-gray-300" {% if user.manage_estate %}
+                                                        {% set melist=user.manage_estate.split(',') %} {% if location in
+                                                        melist %} checked {% endif %} {% endif %}>
+                                                </div>
+                                                <div class="ml-2 text-sm">
+                                                    <label for="chk{{loop.index}}" class="font-medium text-gray-900">
+                                                        <div>{{location}}</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <button type="button"
+                                        class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center set_location">적용하기</button>
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                class="text-white mb-3 bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center location_list_toggle">변경하기</button>
+
+
+
+                        </td>
+                        <td class="border border-slate-300 p-2 text-center">
+                            {{user.created_at | date("YY/MM/DD HH:mm:ss")}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    $('.change_pwd').click(function () {
+        const pwd_val = this.previousElementSibling.value;
+        const id_val = this.parentNode.parentNode.firstElementChild.value
+        axios.post('/crm/user_manage', { pwd_val, id_val })
+            .then((res) => {
+                console.log('성공!!!');
+                location.reload()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    })
+
+    $('.change_rate').click(function () {
+        const rate_val = this.previousElementSibling.value;
+        const id_val = this.parentNode.parentNode.firstElementChild.value
+        axios.post('/crm/user_manage', { rate_val, id_val })
+            .then((res) => {
+                console.log('성공!!!');
+                location.reload()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    })
+    $('.location_list_toggle').click(function(e) {
+        $(this.previousElementSibling).toggle()
+    })
+
+    $('.set_location').click(function(e){
+        const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
+        const chkList = $(this.previousElementSibling.children).find('input');
+        var locationArr = [];
+        for (let i = 0; i < chkList.length; i++) {
+            if(chkList[i].checked == true){
+                locationArr.push(chkList[i].value)
+            }
+        }
+        document.querySelector('.now_location').innerHTML = locationArr.join()
+        const location_val = locationArr.join();
+        axios.post('/crm/user_manage', { location_val, id_val })
+            .then((res) => {
+                console.log('성공!!!');
+                location.reload()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        
+    })
+</script>
+{% endblock %}
