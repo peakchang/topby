@@ -71,7 +71,9 @@ exports.mailSender = {
 exports.setDbData = async (pnum, est, eslist) => {
   let all_data = {};
   var pageCount = 15;
+  console.log(pnum);
   if (!pnum) {
+    console.log('여기 들어오는거 아니야???');
     var startCount = 0;
     var nowCount = 1;
     var pagingStartCount = 1;
@@ -87,6 +89,9 @@ exports.setDbData = async (pnum, est, eslist) => {
       var pagingEndCount = pagingStartCount + 5;
     }
   }
+
+  console.log(pagingStartCount);
+
   if (est) {
     var getEst = `AND form_name LIKE '%${est}%'`;
     all_data.est = est
@@ -95,32 +100,40 @@ exports.setDbData = async (pnum, est, eslist) => {
   }
 
   var setLocation = "";
-  if(eslist && !est){
+  if (eslist && !est) {
     for (let i = 0; i < eslist.length; i++) {
-      if(i == 0){
+      if (i == 0) {
         var setJull = 'AND'
-      }else{
+      } else {
         var setJull = 'OR'
       }
       setLocation = setLocation + `${setJull} form_name LIKE '%${eslist[i]}%'`;
     }
   }
-  // [pagecount, startCount, pagingEndCount, ]
 
   const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst};`;
-  // const allCountSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setLocation} ${getEst} GROUP BY a.mb_phone;`;
-  console.log('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*');
-  console.log(allCountSql);
-  const allCountQuery = await sql_con.promise().query(allCountSql)
-  // console.log(allCountQuery);
-  const allCount = Object.values(allCountQuery[0][0])[0]
-  // const allCount = allCountQuery[0].length
-  console.log(allCount);
-  
 
-  
-  // const setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} ORDER BY id DESC LIMIT ${startCount}, ${pageCount};`;
-  const setDbSql = `SELECT * FROM application_form LEFT JOIN memos ON application_form.mb_phone = memos.mo_phone ${setLocation} ${getEst} GROUP BY application_form.mb_phone ORDER BY application_form.id DESC LIMIT ${startCount}, ${pageCount};`;
+  console.log('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*');
+  // console.log(allCountSql);
+  const allCountQuery = await sql_con.promise().query(allCountSql)
+  const allCount = Object.values(allCountQuery[0][0])[0]
+  console.log(allCount);
+
+  var maxPagingEndCount = Math.ceil(allCount / pageCount);
+  console.log(maxPagingEndCount);
+  console.log(pagingEndCount);
+  if(pagingEndCount > maxPagingEndCount && pagingEndCount < 6){
+    var pagingStartCount = maxPagingEndCount - 4;
+    var pagingEndCount = maxPagingEndCount + 1;
+  }
+
+
+  if (eslist) {
+    var setDbSql = `SELECT * FROM application_form AS a  LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setLocation} ${getEst} GROUP BY a.mb_phone ORDER BY a.id DESC LIMIT ${startCount}, ${pageCount};`;
+  } else {
+    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} ORDER BY id DESC LIMIT ${startCount}, ${pageCount};`;
+  }
+
   console.log(setDbSql);
   const tempData = await sql_con.promise().query(setDbSql)
   var wData = tempData[0];
@@ -139,6 +152,7 @@ exports.setDbData = async (pnum, est, eslist) => {
   all_data.pagingStartCount = pagingStartCount;
   all_data.pagingEndCount = pagingEndCount;
   all_data.nowCount = nowCount;
+  console.log(all_data.pagingStartCount);
 
   return all_data
 }

@@ -1,5 +1,6 @@
 const express = require('express');
 
+const sql_con = require('../db_lib');
 const router = express.Router();
 
 
@@ -41,5 +42,13 @@ router.post('/policy', (req, res, next) => {
 })
 
 
+router.use('/test', async (req, res, next) => {
+    // const testSql = `UPDATE users SET rate = 5 WHERE userid = 'master';`;
+    const testSql = `SELECT * FROM users;`;
+    const results = await sql_con.promise().query(testSql)
+    console.log(results[0]);
+
+    res.send('sldjfaldsjfliajsdlfjasdf')
+})
 
 module.exports = router;

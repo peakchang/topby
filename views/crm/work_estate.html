@@ -76,8 +76,9 @@
                 </table>
             </div>
 
-
+            
             <nav aria-label="Page navigation example" class="text-center mt-4">
+                {{ all_data.pagingStartCount }}sdfsdf
                 <ul class="inline-flex items-center -space-x-px mx-auto">
                     <li>
                         <button type="button"
@@ -91,7 +92,6 @@
                             </svg>
                         </button>
                     </li>
-
                     {% for i in range(all_data.pagingStartCount, all_data.pagingEndCount) %}
                     {% if i == all_data.nowCount %}
                     <li><button type="submit" name="pnum" value="{{i}}"
