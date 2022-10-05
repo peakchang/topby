@@ -3,15 +3,19 @@ const express = require('express');
 const router = express.Router();
 
 
+router.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
 
 
 router.get('/', (req, res, next) => {
     console.log('*************************************************************************************************');
-    
+
     // console.log(req.session);
     // console.log(req.cookies);
-    console.log(req.user);
-    console.log(req.isAuthenticated());
+    // console.log(req.user);
+    // console.log(req.isAuthenticated());
     try {
         console.log(req.user.nick);
         userInfo = { 'user': req.user, 'req': req };

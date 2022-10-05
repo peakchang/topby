@@ -112,7 +112,9 @@
                                         {% endfor %}
                                     </ul>
                                     <button type="button"
-                                        class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center set_location">적용하기</button>
+                                        class="text-white mb-3 bg-green-500 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center set_location">적용</button>
+                                    <button type="button"
+                                        class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center del_location">삭제</button>
                                 </div>
                             </div>
 
@@ -160,16 +162,16 @@
                 console.error(err);
             });
     })
-    $('.location_list_toggle').click(function(e) {
+    $('.location_list_toggle').click(function (e) {
         $(this.previousElementSibling).toggle()
     })
 
-    $('.set_location').click(function(e){
+    $('.set_location').click(function (e) {
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
         const chkList = $(this.previousElementSibling.children).find('input');
         var locationArr = [];
         for (let i = 0; i < chkList.length; i++) {
-            if(chkList[i].checked == true){
+            if (chkList[i].checked == true) {
                 locationArr.push(chkList[i].value)
             }
         }
@@ -183,7 +185,19 @@
             .catch((err) => {
                 console.error(err);
             });
-        
+
+    })
+
+    document.querySelector('.del_location').addEventListener('click', function(){
+        const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
+        axios.post('/crm/user_manage', { delval:'on', id_val })
+            .then((res) => {
+                console.log('성공!!!');
+                location.reload()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     })
 </script>
 {% endblock %}

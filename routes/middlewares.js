@@ -1,11 +1,9 @@
 exports.isLoggedIn = (req, res, next) => {
+    console.log('미들웨어에는 들어오는것인가????');
     if (req.isAuthenticated()) {
         next();
     } else {
         // res.status(403).send('로그인 필요');
-        console.log('***************************************');
-        console.log(req._parsedOriginalUrl.pathname);
-        console.log(req.baseUrl);
         errData = { err_chk: 'notLogin', move: req.baseUrl }
         res.status(403).render('error', { errData })
     }
@@ -21,16 +19,17 @@ exports.isNotLoggedIn = (req, res, next) => {
 };
 
 exports.chkRateManager = (req, res, next) => {
+    const movePath = req._parsedOriginalUrl.pathname
     try {
         if (req.isAuthenticated() && parseInt(req.user.rate) > 1) {
             next();
         } else {
-            const message = encodeURIComponent('noright');
-            res.redirect(`/auth/login?error=${message}`);
+            const message = encodeURIComponent(movePath);
+            res.redirect(`/auth/login?move=${message}`);
         }
     } catch (error) {
-        const message = encodeURIComponent('noright');
-        res.redirect(`/auth/login?error=${message}`);
+        const message = encodeURIComponent(movePath);
+        res.redirect(`/auth/login?move=${message}`);
     }
 
 
