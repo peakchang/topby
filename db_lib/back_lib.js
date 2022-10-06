@@ -147,7 +147,7 @@ exports.setDbData = async (pnum, est, eslist) => {
   if (eslist) {
     var setDbSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setManagerLocation} ${getEst} GROUP BY a.mb_phone ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`;
   } else {
-    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
+    var setDbSql = `SELECT af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
   }
   console.log(setDbSql);
 
