@@ -106,14 +106,14 @@ exports.tableSetting = async () => {
 
 
     let make_application_form = `CREATE TABLE IF NOT EXISTS application_form(
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        af_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         form_name VARCHAR(50),
         form_type_in VARCHAR(50),
         form_location VARCHAR(50) DEFAULT '기본',
         mb_name VARCHAR(50) NOT NULL,
         mb_phone VARCHAR(50) NOT NULL,
         mb_status VARCHAR(20),
-        created_at DATETIME
+        af_created_at DATETIME
         );`
     try {
         sql_con.query(make_application_form, (err, result) => { });
@@ -161,4 +161,14 @@ exports.tableSetting = async () => {
     }
 
     // ALTER TABLE form_status CHANGE id fs_id INT;
+
+
+
+
+    // ALTER TABLE memos CHANGE id mo_id INT;
+    // ALTER TABLE form_status CHANGE id fs_id INT;
+    // ALTER TABLE application_form CHANGE id af_id INT;
+    // ALTER TABLE application_form CHANGE created_at af_created_at DATETIME;
+    // ALTER TABLE memos CHANGE created_at me_created_at;
+    // ALTER TABLE memos CHANGE id mo_id INT;
 };
