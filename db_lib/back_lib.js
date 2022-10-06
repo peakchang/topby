@@ -95,7 +95,7 @@ exports.setDbData = async (pnum, est, eslist) => {
     }
   }
 
-  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY mb_phone;`;
+  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at;`;
   console.log(allCountSql);
   console.log('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*');
   const allCountQuery = await sql_con.promise().query(allCountSql)
@@ -145,9 +145,9 @@ exports.setDbData = async (pnum, est, eslist) => {
   console.log(`DB검색 카운트는 ${startCount} / 페이지 시작 카운트는 ${pagingStartCount} / 페이지 끝 카운트는 ${pagingEndCount} / 최대 페이지 카운트는 ${maxPagingEndCount}`);
 
   if (eslist) {
-    var setDbSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setManagerLocation} ${getEst} GROUP BY a.mb_phone ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`;
+    var setDbSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setManagerLocation} ${getEst} GROUP BY a.af_id, a.form_name, a.form_type_in, a.form_location, a.mb_name, a.mb_phone, a.mb_status, a.af_created_at, m.mo_id, m.mo_phone, m.mo_manager, m.mo_memo, m.mo_created_at ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`;
   } else {
-    var setDbSql = `SELECT af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
+    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
   }
   console.log(setDbSql);
 
