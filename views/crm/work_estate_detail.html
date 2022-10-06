@@ -1,11 +1,74 @@
 {% include "crm/db_head.html" %}
 
 <body>
-    <div class="testget">klsjdlfjsf</div>
+    <div class="container w-11/12 mt-2 rounded-md text-sm suit-font">
+        <form method="post">
+            <table class="border-collapse border border-slate-400 w-full  rounded">
+
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장</th>
+                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].form_name }}</td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">이름</th>
+                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].mb_name }}</td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">전화번호</th>
+                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].mb_phone }}</td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">상태</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <select name="" id="" class="border border-pink-800 px-2 py-1 rounded">
+                            <option value="">상태값 선택</option>
+                            {% for status_list in estate_status_list %}
+                            <option value="{{ status_list }}" {% if status_list==load_info[0].mb_status %}SELECTED{%
+                                endif %}>{{ status_list }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="ml-1 bg-pink-600 text-white py-1 px-2 rounded">변경</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">접수시간</th>
+                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].af_created_at |
+                        date("YY/MM/DD HH:mm:ss") }}</td>
+                </tr>
+            </table>
+
+            <div>
+
+                <div class="flex mt-3">
+                    <input type="text"
+                        class="block p-2 w-9/12 text-sm text-gray-900 bg-gray-50 border rounded-l-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="메모를 입력하세요">
+                    <button type="submit"
+                        class="text-white w-1/4 right-2.5 bg-cyan-600 hover:bg-cyan-800 font-medium rounded-r-lg text-sm px-4 py-1"
+                        style="bottom: 5px;">등록</button>
+                </div>
+            </div>
+
+
+
+
+            <table class="border-collapse border border-slate-400 w-full text-sm suit-font rounded mt-2">
+                {% for info in load_info %}
+                <tr>
+                    <td class="border border-slate-300 p-2 text-center">{{ info.mo_memo }}</td>
+                    <td class="border border-slate-300 p-2 text-center">{{ info.mo_created_at |
+                        date("YY/MM/DD HH:mm:ss") }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </form>
+    </div>
 </body>
 
 <script>
-$('.testget').click(function(e){
-    console.log('aslidjfliasjdfljaf');
-})
+    $('.testget').click(function (e) {
+        console.log('aslidjfliasjdfljaf');
+    })
 </script>

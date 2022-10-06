@@ -8,17 +8,36 @@ exports.tableSetting = async () => {
 
 
     let make_memos_form = `CREATE TABLE IF NOT EXISTS memos(
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        mo_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         mo_phone VARCHAR(50),
         mo_manager VARCHAR(50),
         mo_memo VARCHAR(255),
-        created_at DATETIME DEFAULT NOW()
+        mo_created_at DATETIME DEFAULT NOW()
     );`;
     try {
         sql_con.query(make_memos_form, async (err, result) => { });
     } catch (err) {
         console.error(err);
     }
+
+
+    // ALTER TABLE memos CHANGE id mo_id INT;
+
+
+
+
+
+    // ALTER TABLE memos ADD COLUMN me_created_at ON UPDATE CURRENT_TIMESTAMP;
+    // ALTER TABLE memos DROP COLUMN created_at;
+    // alter table memos rename {column} created_at to me_created_at;
+    // ALTER TABLE memos RENAME {COLUMN} memo_created_at TO mo_created_at;
+    // ALTER TABLE memos RENAME (COLUMN id TO mo_id);
+    // ALTER TABLE memos CHANGE `id` `mo_id`;
+    // ALTER TABLE memos CHANGE id mo_id INT;
+
+    // DROP TABLE memos;
+
+    // ALTER TABLE memos CHANGE 'created_at' 'me_created_at';
 
     // UPDATE users SET rate = 5 WHERE userid = 'master';
 
@@ -102,6 +121,11 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
+    // ALTER TABLE application_form CHANGE id af_id INT;
+    // ALTER TABLE application_form CHANGE created_at af_created_at DATETIME;
+
+
+
 
 
     let makereviewTable = `CREATE TABLE IF NOT EXISTS reviews(
@@ -117,8 +141,8 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
-    let setSql = `ALTER TABLE reviews MODIFY rv_created_at DEFAULT ON UPDATE CURRENT_TIMESTAMP;`
-    sql_con.query(setSql, (err, result) => { });
+    // let setSql = `ALTER TABLE reviews MODIFY rv_created_at DEFAULT ON UPDATE CURRENT_TIMESTAMP;`
+    // sql_con.query(setSql, (err, result) => { });
 
     // 여기부터 하나씩 실행
     // ALTER TABLE reviews MODIFY COLUMN rv_created_at DATETIME DEFAULT NOW(); // 성공
@@ -135,4 +159,6 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+    // ALTER TABLE form_status CHANGE id fs_id INT;
 };

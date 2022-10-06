@@ -24,32 +24,44 @@ router.get('/all_data', async (req, res, next) => {
 
 router.post('/estate_work/delete', async (req, res, next) => {
     const set_db_list = req.body.set_db_list;
-    const getStatusSql = `SELECT * FROM form_status WHERE id=1;`;
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].estate_status.split(',')
     const estate_status = estate_status_list[1];
 
     for await (const on_db_id of set_db_list) {
         console.log(on_db_id);
-        let updateSql = `UPDATE application_form SET mb_status = '${estate_status}' WHERE id=${on_db_id}`;
+        let updateSql = `UPDATE application_form SET mb_status = '${estate_status}' WHERE af_id=${on_db_id}`;
         await sql_con.promise().query(updateSql)
     }
     res.send(200);
 })
 
-
 router.use('/estate_work/detail/:id', async (req, res, next) => {
-    res.render('crm/work_estate_detail');
+    if(req.method == 'POST'){
+        console.log(req.params.id);
+    }
+    
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.mb_phone = m.mo_phone WHERE a.af_id = ?`;
+    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    const load_info = LoadInfoTemp[0];
+
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    const estate_status_list = getStatusText[0][0].estate_status.split(',')
+    res.render('crm/work_estate_detail', { load_info , estate_status_list});
 })
+
 
 
 router.use('/estate_work', async (req, res, next) => {
 
     // 1이면 0부터 / 2 이면 15부터 / 3이면 30부터
     // 옵션값 구하기
-    const getStatusSql = `SELECT * FROM form_status WHERE id=1;`;
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-    
+
     // console.log(all_data.estate_list);
 
     const all_data = await setDbData(req.query.pnum, req.query.est)
@@ -62,13 +74,13 @@ router.use('/estate_work', async (req, res, next) => {
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
-    const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql,[req.user.id])
+    const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id])
     const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
 
     const all_data = await setDbData(req.query.pnum, req.query.est, getUserEstateList)
     all_data.estate_list = getUserEstateList;
 
-    const testSql = `SELECT * FROM users JOIN memos ON  users.mo_phone = memos.mb_phone;`;
+    const testSql = `SELECT * FROM users JOIN memos ON users.mo_phone = memos.mb_phone;`;
     // SELECT * FROM application_form LEFT JOIN memos ON application_form.mb_phone = memos.mo_phone GROUP BY application_form.mb_phone;
     console.log(testSql);
     res.render('crm/work_estate_manager', { all_data });
@@ -84,7 +96,7 @@ router.get('/user_manage', async (req, res, next) => {
     const userListTemp = await sql_con.promise().query(userLoadSql);
     const user_list = userListTemp[0];
 
-    const locationListSql = `SELECT estate_list FROM form_status WHERE id = 1;`;
+    const locationListSql = `SELECT estate_list FROM form_status WHERE fs_id = 1;`;
     const locationListTemp = await sql_con.promise().query(locationListSql);
     const location_list = locationListTemp[0][0].estate_list.split(',')
     console.log(location_list);
@@ -120,12 +132,21 @@ router.post('/user_manage', async (req, res, next) => {
 
 
 router.post('/memo_manage', async (req, res, next) => {
-    console.log(req.user);
-    console.log(req.body);
-    const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val];
-    const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo) VALUES (?,?,?);`;
-    await sql_con.promise().query(memoInsertSql, memoArr);
-    res.send(200)
+    if (req.body.memo_val) {
+        const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val];
+        const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo) VALUES (?,?,?);`;
+        await sql_con.promise().query(memoInsertSql, memoArr);
+        res.send(200)
+    }else if(req.body.load_memo){
+        console.log(req.body.ph_val);
+        const memoLoadSql = `SELECT * FROM memos WHERE mo_phone = ? ORDER BY mo_id DESC`;
+        const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.ph_val]);
+        const memoLoad = memoLoadTemp[0]
+        res.send(memoLoad)
+
+    }
+
+    
 })
 
 
@@ -147,7 +168,7 @@ router.use('/', async (req, res, next) => {
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }
-    const resultSql = `SELECT * FROM form_status WHERE id=1;`;
+    const resultSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
     res.render('crm/crm_main', { result });
