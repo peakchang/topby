@@ -112,6 +112,8 @@ router.post('/', async (req, res) => {
     let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
     await mysql_conn.promise().query(allDataSql, [getAllData]);
 
+    console.log('여기까지는 정상인가요??')
+
     let getArr = [get_form_name, form_type_in, get_name, get_phone, nowDateTime];
     let formInertSql = `INSERT INTO application_form (form_name, form_type_in, mb_name, mb_phone, af_created_at) VALUES (?,?,?,?,?);`;
 
