@@ -163,7 +163,7 @@ router.use('/test_axios', async(req, res, next) => {
 router.use('/', async (req, res, next) => {
     if (req.method == 'POST') {
         // 검증
-        const chkSql = `SELECT * FROM form_status WHERE id=1;`;
+        const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
             let insertArr = [req.body.estate_status, req.body.estate_list];
@@ -171,7 +171,7 @@ router.use('/', async (req, res, next) => {
             await sql_con.promise().query(insertSql, insertArr);
         } else {
             let updatetArr = [req.body.estate_status, req.body.estate_list];
-            let updateSql = `UPDATE form_status SET estate_status=?, estate_list=? WHERE id=1`;
+            let updateSql = `UPDATE form_status SET estate_status=?, estate_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }
