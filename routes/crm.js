@@ -85,7 +85,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     const all_data = await setDbData(req.query.pnum, req.query.est, getUserEstateList)
     all_data.estate_list = getUserEstateList;
 
-    const testSql = `SELECT * FROM users JOIN memos ON users.mo_phone = memos.mb_phone;`;
+    // const testSql = `SELECT * FROM users JOIN memos ON users.mo_phone = memos.mb_phone;`;
+    const testSql = `SELECT * FROM memos ORDER BY mo_id DESC GROUP BY mo_phone ;`
     // SELECT * FROM application_form LEFT JOIN memos ON application_form.mb_phone = memos.mo_phone GROUP BY application_form.mb_phone;
     console.log(testSql);
     res.render('crm/work_estate_manager', { all_data });
