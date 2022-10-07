@@ -139,6 +139,7 @@ exports.setDbData = async (pnum, est, eslist) => {
   } else {
     var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY mb_phone ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
   }
+  console.log(setDbSql);
 
   const tempData = await sql_con.promise().query(setDbSql)
   var wData = tempData[0];

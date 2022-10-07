@@ -7,6 +7,9 @@ const router = express.Router();
 
 const { setDbData } = require('../db_lib/back_lib.js');
 
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 router.use((req, res, next) => {
     res.locals.user = req.user;
@@ -136,8 +139,9 @@ router.post('/user_manage', async (req, res, next) => {
 router.post('/memo_manage', async (req, res, next) => {
     if (req.body.memo_val) {
         console.log(req.body);
-        const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val];
-        const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo) VALUES (?,?,?);`;
+        let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+        const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val, nowTime];
+        const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?);`;
         await sql_con.promise().query(memoInsertSql, memoArr);
         res.send(200)
     }else if(req.body.load_memo){
