@@ -70,7 +70,7 @@ exports.mailSender = {
 
 exports.setDbData = async (pnum, est, eslist) => {
   let all_data = {};
-  var pageCount = 15;
+  var pageCount = 30;
 
 
   if (est) {

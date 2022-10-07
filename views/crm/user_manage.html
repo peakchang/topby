@@ -140,27 +140,29 @@
     $('.change_pwd').click(function () {
         const pwd_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.firstElementChild.value
-        axios.post('/crm/user_manage', { pwd_val, id_val })
-            .then((res) => {
+
+        $.ajax({
+            method: 'post', url: '/crm/user_manage', data: { pwd_val, id_val }, success: function (e) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            }, error: function (err) {
+                console.log(err);
+            }
+        })
     })
 
     $('.change_rate').click(function () {
         const rate_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.firstElementChild.value
-        axios.post('/crm/user_manage', { rate_val, id_val })
-            .then((res) => {
+
+        $.ajax({
+            method: 'post', url: '/crm/user_manage', data: { rate_val, id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            }, error: function (err) {
+                console.log(err);
+            }
+        })
     })
     $('.location_list_toggle').click(function (e) {
         $(this.previousElementSibling).toggle()
@@ -177,27 +179,27 @@
         }
         document.querySelector('.now_location').innerHTML = locationArr.join()
         const location_val = locationArr.join();
-        axios.post('/crm/user_manage', { location_val, id_val })
-            .then((res) => {
+        $.ajax({
+            method: 'post', url: '/crm/user_manage', data: { location_val, id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-
+            }, error: function (err) {
+                console.log(err);
+            }
+        })
     })
 
-    document.querySelector('.del_location').addEventListener('click', function(){
+    document.querySelector('.del_location').addEventListener('click', function () {
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
-        axios.post('/crm/user_manage', { delval:'on', id_val })
-            .then((res) => {
+
+        $.ajax({
+            method: 'post', url: '/crm/user_manage', data: { delval: 'on', id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            }, error: function (err) {
+                console.log(err);
+            }
+        })
     })
 </script>
 {% endblock %}
