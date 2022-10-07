@@ -23,7 +23,9 @@ router.get('/all_data', async (req, res, next) => {
 
 
 router.post('/estate_work/delete', async (req, res, next) => {
-    const set_db_list = req.body.set_db_list;
+    console.log('아니 씨발 여기는 맞잖아???');
+    console.log(req.body['set_db_list[]']);
+    const set_db_list = req.body['set_db_list[]'];
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].estate_status.split(',')
@@ -133,12 +135,13 @@ router.post('/user_manage', async (req, res, next) => {
 
 router.post('/memo_manage', async (req, res, next) => {
     if (req.body.memo_val) {
+        console.log(req.body);
         const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val];
         const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo) VALUES (?,?,?);`;
         await sql_con.promise().query(memoInsertSql, memoArr);
         res.send(200)
     }else if(req.body.load_memo){
-        console.log(req.body.ph_val);
+        console.log(req.body);
         const memoLoadSql = `SELECT * FROM memos WHERE mo_phone = ? ORDER BY mo_id DESC`;
         const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.ph_val]);
         const memoLoad = memoLoadTemp[0]

@@ -71,7 +71,6 @@ exports.mailSender = {
 exports.setDbData = async (pnum, est, eslist) => {
   let all_data = {};
   var pageCount = 15;
-  console.log(pnum);
 
 
   if (est) {
@@ -95,21 +94,16 @@ exports.setDbData = async (pnum, est, eslist) => {
     }
   }
 
-  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at;`;
-  console.log(allCountSql);
-  console.log('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*');
+  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY mb_phone;`;
   const allCountQuery = await sql_con.promise().query(allCountSql)
-  console.log(allCountQuery[0]);
   const allCount = allCountQuery[0].length
   // const allCount = Object.values(allCountQuery[0][0])[0]
   // console.log("전체 갯수는?" + allCount);
 
 
   var maxPagingEndCount = Math.ceil(allCount / pageCount);
-  console.log(maxPagingEndCount);
 
   if (!pnum) {
-    console.log('첫번째 조건, 페이지 초기화 일때');
     var startCount = 0;
     var nowCount = 1;
     var pagingStartCount = 1;
@@ -119,11 +113,9 @@ exports.setDbData = async (pnum, est, eslist) => {
       var pagingEndCount = 6;
     }
   } else {
-    console.log('2번 조건, 페이지가 움직일때');
     var startCount = (pnum - 1) * pageCount;
     var nowCount = pnum
     if (pnum <= 3) {
-      console.log('2-1 조건, 페이지가 앞쪽 (3페이지 미만) 일때');
       var pagingStartCount = 1;
       if (maxPagingEndCount < 6) {
         var pagingEndCount = maxPagingEndCount + 1;
@@ -131,29 +123,25 @@ exports.setDbData = async (pnum, est, eslist) => {
         var pagingEndCount = 6;
       }
     } else if (parseInt(pnum) + 2 >= maxPagingEndCount) {
-      console.log('2-2 조건, 페이지가 끝쪽 (최대 페이지에 인접) 일때' + (pnum + 2));
 
       var pagingEndCount = maxPagingEndCount + 1;
       var pagingStartCount = pagingEndCount - 5;
     } else {
-      console.log('2-2 조건, 페이지가 중간 일때');
       var pagingStartCount = pnum - 2;
       var pagingEndCount = pagingStartCount + 5;
     }
   }
 
-  console.log(`DB검색 카운트는 ${startCount} / 페이지 시작 카운트는 ${pagingStartCount} / 페이지 끝 카운트는 ${pagingEndCount} / 최대 페이지 카운트는 ${maxPagingEndCount}`);
+  // console.log(`DB검색 카운트는 ${startCount} / 페이지 시작 카운트는 ${pagingStartCount} / 페이지 끝 카운트는 ${pagingEndCount} / 최대 페이지 카운트는 ${maxPagingEndCount}`);
 
   if (eslist) {
     var setDbSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setManagerLocation} ${getEst} GROUP BY a.mb_phone ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`;
   } else {
-    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_id, form_name, form_type_in, form_location, mb_name, mb_phone, mb_status, af_created_at ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
+    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY mb_phone ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
   }
-  console.log(setDbSql);
 
   const tempData = await sql_con.promise().query(setDbSql)
   var wData = tempData[0];
-  console.log(wData);
   var pageChkCount = allCount - (pageCount * (nowCount - 1));
   for await (const data of wData) {
     data.chkCount = pageChkCount;
@@ -165,7 +153,6 @@ exports.setDbData = async (pnum, est, eslist) => {
   all_data.pagingStartCount = pagingStartCount;
   all_data.pagingEndCount = pagingEndCount;
   all_data.nowCount = nowCount;
-  console.log(all_data.pagingStartCount);
 
   return all_data
 }

@@ -157,8 +157,8 @@
         const ph_val = this.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
         var nowEle = this;
         const load_memo = "on";
-        $.ajax({ method: 'post', url: '/crm/memo_manage', data: { ph_val, load_memo },
-            success: function (data) {
+        $.ajax({
+            method: 'post', url: '/crm/memo_manage', data: { ph_val, load_memo }, success: function (data) {
                 const setDataArea = nowEle.parentNode.parentNode.firstElementChild.firstElementChild.children[2];
                 const chkData = setDataArea.innerHTML.replace(/[\s\n]/g, '')
                 if (chkData == '') {
@@ -184,8 +184,7 @@
         const ph_val = this.parentNode.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
 
         $.ajax({
-            method: 'post', url: '/crm/memo_manage', data: { id_val, ph_val, memo_val },
-            success: function (data) {
+            method: 'post', url: '/crm/memo_manage', data: { id_val, ph_val, memo_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             },
@@ -245,8 +244,7 @@
 
 
         $.ajax({
-            method: 'post', url: '/crm/estate_work/delete', data: { set_db_list },
-            success: function (data) {
+            method: 'post', url: '/crm/estate_work/delete', data: { set_db_list }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             },

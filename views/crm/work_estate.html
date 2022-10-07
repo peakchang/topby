@@ -58,7 +58,7 @@
                     {% for data in all_data.wdata %}
                     <tr class="dblist">
                         <td class="border border-slate-300 text-center">
-                            <input type="checkbox" name="data_id" value="{{ data.id }}" id="" class="on_chk">
+                            <input type="checkbox" name="data_id" value="{{ data.af_id }}" id="" class="on_chk">
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
                         <td class="border border-slate-300 py-2 text-center"> {{ data.mb_name }} </td>
@@ -76,7 +76,7 @@
                 </table>
             </div>
 
-            
+
             <nav aria-label="Page navigation example" class="text-center mt-4">
                 <ul class="inline-flex items-center -space-x-px mx-auto">
                     <li>
@@ -183,19 +183,14 @@
         }
         console.log(set_db_list);
 
-        axios.post('/crm/estate_work/delete', { set_db_list: set_db_list })
-            .then((res) => {
-                console.log('성공!!!');
+        $.ajax({
+            method: 'post', url: '/crm/estate_work/delete', data: { set_db_list }, success: function (data) {
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-
+            }, error: function (err) {
+                console.log(err);
+            }
+        })
     })
-
-
-
 
     $('.all_chk').change(function (e) {
         console.log(this.checked);
