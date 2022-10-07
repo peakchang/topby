@@ -47,7 +47,7 @@ router.use('/estate_work/detail/:id', async (req, res, next) => {
         console.log(req.params.id);
     }
     
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.mb_phone = m.mo_phone WHERE a.af_id = ?`;
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
     const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
     const load_info = LoadInfoTemp[0];
 
