@@ -155,6 +155,8 @@ exports.setDbData = async (pnum, est, eslist) => {
   all_data.pagingEndCount = pagingEndCount;
   all_data.nowCount = nowCount;
 
+  console.log(wData);
+
   return all_data
 }
 
