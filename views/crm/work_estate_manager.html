@@ -86,7 +86,7 @@
                         <td class="border border-slate-300 py-2 text-center px-3">
                             {{ data.mb_status }}
                         </td>
-                        <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.created_at |
+                        <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.af_created_at |
                             date("YY/MM/DD HH:mm:ss") }}</td>
                     </tr>
                     {% endfor %}
@@ -143,30 +143,37 @@
     </form>
 </div>
 
-
+<div class="testaxios">alsdjfasdf</div>
 <script>
 
-    $('.open_memo').click(function (e) {
+    document.querySelector('.testaxios').addEventListener('click', function (e) {
 
+
+
+    })
+
+
+    $('.open_memo').click(function (e) {
         const ph_val = this.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
+        var nowEle = this;
         const load_memo = "on";
-        console.log(ph_val);
-        axios.post('/crm/memo_manage', { ph_val, load_memo })
-            .then((res) => {
-                const setDataArea = this.parentNode.parentNode.firstElementChild.firstElementChild.children[2];
-                const chkData = setDataArea.innerHTML.replace(/[\s\n]/g,'')
-                if(chkData == ''){
+        $.ajax({ method: 'post', url: '/crm/memo_manage', data: { ph_val, load_memo },
+            success: function (data) {
+                const setDataArea = nowEle.parentNode.parentNode.firstElementChild.firstElementChild.children[2];
+                const chkData = setDataArea.innerHTML.replace(/[\s\n]/g, '')
+                if (chkData == '') {
                     var loadMemoList = '';
-                    for (var k = 0; k < res.data.length; k++) {
-                        var loadMemoList = `${loadMemoList}<li>${res.data[k].mo_memo}</li>`;
+                    for (var k = 0; k < data.length; k++) {
+                        var loadMemoList = `${loadMemoList}<li>${data[k].mo_memo}</li>`;
                     }
                 }
                 $(setDataArea).append(loadMemoList)
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-        console.log(ph_val);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+
         $('.memo_list').hide()
         $(this.parentNode.previousElementSibling).toggle()
     })
@@ -175,14 +182,17 @@
         const memo_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value;
         const ph_val = this.parentNode.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
-        axios.post('/crm/memo_manage', { id_val, ph_val, memo_val })
-            .then((res) => {
+
+        $.ajax({
+            method: 'post', url: '/crm/memo_manage', data: { id_val, ph_val, memo_val },
+            success: function (data) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
         console.log(ph_val);
     })
 
@@ -233,19 +243,19 @@
         }
         console.log(set_db_list);
 
-        axios.post('/crm/estate_work/delete', { set_db_list: set_db_list })
-            .then((res) => {
+
+        $.ajax({
+            method: 'post', url: '/crm/estate_work/delete', data: { set_db_list },
+            success: function (data) {
                 console.log('성공!!!');
                 location.reload()
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
 
     })
-
-
-
 
     $('.all_chk').change(function (e) {
         console.log(this.checked);

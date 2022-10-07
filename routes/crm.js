@@ -150,6 +150,10 @@ router.post('/memo_manage', async (req, res, next) => {
 })
 
 
+router.use('/test_axios', async(req, res, next) => {
+
+    res.send('니미 개 병신같은 엑시오스 씹새끼가')
+})
 
 
 
