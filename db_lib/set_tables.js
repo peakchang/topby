@@ -9,6 +9,7 @@ exports.tableSetting = async () => {
 
     let make_memos_form = `CREATE TABLE IF NOT EXISTS memos(
         mo_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        mo_depend_id VARCHAR(10),
         mo_phone VARCHAR(50),
         mo_manager VARCHAR(50),
         mo_memo VARCHAR(255),
@@ -19,7 +20,7 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
-    
+
     let make_users_form = `CREATE TABLE IF NOT EXISTS users(
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         userid VARCHAR(50) UNIQUE,
@@ -48,6 +49,10 @@ exports.tableSetting = async () => {
         af_mb_name VARCHAR(50) NOT NULL,
         af_mb_phone VARCHAR(50) NOT NULL,
         af_mb_status VARCHAR(20),
+        af_mb_sensitive VARCHAR(50),
+        af_mb_reserve_time DATETIME,
+        af_mb_visit_status VARCHAR(50),
+        af_mb_price INT(11),
         af_created_at DATETIME
         );`
     try {
@@ -57,7 +62,7 @@ exports.tableSetting = async () => {
     }
 
     let makereviewTable = `CREATE TABLE IF NOT EXISTS reviews(
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        rv_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         rv_name VARCHAR(50),
         rv_phone VARCHAR(50),
         rv_content TEXT,
@@ -79,7 +84,6 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
-
     
 
 

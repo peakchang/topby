@@ -74,7 +74,7 @@ exports.setDbData = async (pnum, est, eslist) => {
 
 
   if (est) {
-    var getEst = `AND form_name LIKE '%${est}%'`;
+    var getEst = `AND af_form_name LIKE '%${est}%'`;
     all_data.est = est
   } else {
     var getEst = "";
@@ -89,12 +89,12 @@ exports.setDbData = async (pnum, est, eslist) => {
       } else {
         var setJull = 'OR'
       }
-      setLocation = setLocation + `${setJull} form_name LIKE '%${eslist[i]}%'`;
+      setLocation = setLocation + `${setJull} af_form_name LIKE '%${eslist[i]}%'`;
       setManagerLocation = setManagerLocation + `${setJull} a.form_name LIKE '%${eslist[i]}%'`;
     }
   }
 
-  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst};`;
+  const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${setLocation} ${getEst};`;
   const allCountQuery = await sql_con.promise().query(allCountSql)
   // const allCount = allCountQuery[0].length
   const allCount = Object.values(allCountQuery[0][0])[0]
@@ -136,9 +136,9 @@ exports.setDbData = async (pnum, est, eslist) => {
 
   if (eslist) {
     // var setDbSql = `SELECT * FROM application_form AS a LEFT JOIN memos AS m  ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setManagerLocation} ${getEst} GROUP BY a.mb_phone ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`;
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.mb_phone = m.mo_phone WHERE a.form_type_in = '분양' ${setLocation} ${getEst} ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${setLocation} ${getEst} ORDER BY a.af_id DESC LIMIT ${startCount}, ${pageCount};`
   } else {
-    var setDbSql = `SELECT * FROM application_form WHERE form_type_in='분양' ${setLocation} ${getEst} GROUP BY mb_phone ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
+    var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${setLocation} ${getEst} GROUP BY af_mb_phone ORDER BY af_id DESC LIMIT ${startCount}, ${pageCount};`;
   }
   console.log(setDbSql);
 
@@ -147,7 +147,7 @@ exports.setDbData = async (pnum, est, eslist) => {
   var pageChkCount = allCount - (pageCount * (nowCount - 1));
   for await (const data of wData) {
     data.chkCount = pageChkCount;
-    data.mb_phone_chk = phNumBar(data.mb_phone);
+    data.af_mb_phone_chk = phNumBar(data.af_mb_phone);
     // data.created_at.setHours(data.created_at.getHours()+9);
     pageChkCount--
   }

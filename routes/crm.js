@@ -29,24 +29,31 @@ router.post('/estate_work/delete', async (req, res, next) => {
     console.log('아니 씨발 여기는 맞잖아???');
     console.log(req.body['set_db_list[]']);
     const set_db_list = req.body['set_db_list[]'];
+    console.log(typeof (set_db_list));
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-    const estate_status_list = getStatusText[0][0].estate_status.split(',')
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
     const estate_status = estate_status_list[1];
-
-    for await (const on_db_id of set_db_list) {
-        console.log(on_db_id);
-        let updateSql = `UPDATE application_form SET mb_status = '${estate_status}' WHERE af_id=${on_db_id}`;
+    if (typeof (set_db_list) == 'string') {
+        let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${set_db_list}`;
         await sql_con.promise().query(updateSql)
+    } else {
+        for await (const on_db_id of set_db_list) {
+            console.log(on_db_id);
+            let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${on_db_id}`;
+            await sql_con.promise().query(updateSql)
+        }
     }
+
+
     res.send(200);
 })
 
 router.use('/estate_work/detail/:id', async (req, res, next) => {
-    if(req.method == 'POST'){
+    if (req.method == 'POST') {
         console.log(req.params.id);
     }
-    
+
     const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
     const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
     const load_info = LoadInfoTemp[0];
@@ -55,7 +62,7 @@ router.use('/estate_work/detail/:id', async (req, res, next) => {
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].estate_status.split(',')
-    res.render('crm/work_estate_detail', { load_info , estate_status_list});
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
 })
 
 
@@ -70,7 +77,7 @@ router.use('/estate_work', async (req, res, next) => {
     // console.log(all_data.estate_list);
 
     const all_data = await setDbData(req.query.pnum, req.query.est)
-    all_data.estate_list = getStatusText[0][0].estate_list.split(',');
+    all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
 
     res.render('crm/work_estate', { all_data });
 })
@@ -102,9 +109,9 @@ router.get('/user_manage', async (req, res, next) => {
     const userListTemp = await sql_con.promise().query(userLoadSql);
     const user_list = userListTemp[0];
 
-    const locationListSql = `SELECT estate_list FROM form_status WHERE fs_id = 1;`;
+    const locationListSql = `SELECT fs_estate_list FROM form_status WHERE fs_id = 1;`;
     const locationListTemp = await sql_con.promise().query(locationListSql);
-    const location_list = locationListTemp[0][0].estate_list.split(',')
+    const location_list = locationListTemp[0][0].fs_estate_list.split(',')
     console.log(location_list);
 
     res.render('crm/user_manage', { master_load, user_list, location_list });
@@ -145,7 +152,7 @@ router.post('/memo_manage', async (req, res, next) => {
         const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?);`;
         await sql_con.promise().query(memoInsertSql, memoArr);
         res.send(200)
-    }else if(req.body.load_memo){
+    } else if (req.body.load_memo) {
         console.log(req.body);
         const memoLoadSql = `SELECT * FROM memos WHERE mo_phone = ? ORDER BY mo_id DESC`;
         const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.ph_val]);
@@ -154,11 +161,11 @@ router.post('/memo_manage', async (req, res, next) => {
 
     }
 
-    
+
 })
 
 
-router.use('/test_axios', async(req, res, next) => {
+router.use('/test_axios', async (req, res, next) => {
 
     res.send('니미 개 병신같은 엑시오스 씹새끼가')
 })
@@ -172,11 +179,11 @@ router.use('/', async (req, res, next) => {
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
             let insertArr = [req.body.estate_status, req.body.estate_list];
-            let insertSql = `INSERT INTO form_status (estate_status, estate_list) VALUES (?, ?);`;
+            let insertSql = `INSERT INTO form_status (fs_estate_status, fs_estate_list) VALUES (?, ?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
             let updatetArr = [req.body.estate_status, req.body.estate_list];
-            let updateSql = `UPDATE form_status SET estate_status=?, estate_list=? WHERE fs_id=1`;
+            let updateSql = `UPDATE form_status SET fs_estate_status=?, estate_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }
