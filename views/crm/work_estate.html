@@ -181,7 +181,6 @@
                 set_db_list.push(alldblist[i].children[0].firstElementChild.value)
             }
         }
-        console.log(set_db_list);
 
         $.ajax({
             method: 'post', url: '/crm/estate_work/delete', data: { set_db_list }, success: function (data) {
