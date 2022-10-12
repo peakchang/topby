@@ -5,7 +5,7 @@ const { executeQuery } = require('../db_lib/dbset.js');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-const { setDbData } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 require('moment-timezone');
@@ -69,14 +69,24 @@ router.use('/estate_work/detail/:id', async (req, res, next) => {
 
 router.use('/estate_work', async (req, res, next) => {
 
-    // 1이면 0부터 / 2 이면 15부터 / 3이면 30부터
-    // 옵션값 구하기
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
 
-    // console.log(all_data.estate_list);
+    const pageCount = 30;
 
-    const all_data = await setDbData(req.query.pnum, req.query.est)
+    if (req.query.est) {
+        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+    } else {
+        var getEst = '';
+    }
+
+    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
+    const allCountQuery = await sql_con.promise().query(allCountSql)
+    const allCount = Object.values(allCountQuery[0][0])[0]
+
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${getEst} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
+
+    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
     all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
 
     res.render('crm/work_estate', { all_data });
@@ -89,13 +99,33 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id])
     const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
 
-    const all_data = await setDbData(req.query.pnum, req.query.est, getUserEstateList)
+    const pageCount = 30;
+
+    var getEst = '';
+    if (req.query.est) {
+        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+    } else {
+        for (let i = 0; i < getUserEstateList.length; i++) {
+            if (i == 0) {
+                var setJull = 'AND'
+                getEstTemp = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+            } else {
+                var setJull = 'OR'
+                getEst = `${getEstTemp} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+            }
+
+        }
+    }
+
+    const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
+    const allCountQuery = await sql_con.promise().query(allCountSql)
+    const allCount = Object.values(allCountQuery[0][0])[0]
+
+    var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
+
+    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
     all_data.estate_list = getUserEstateList;
 
-    // const testSql = `SELECT * FROM users JOIN memos ON users.mo_phone = memos.mb_phone;`;
-    const testSql = `SELECT * FROM memos ORDER BY mo_id DESC GROUP BY mo_phone ;`
-    // SELECT * FROM application_form LEFT JOIN memos ON application_form.mb_phone = memos.mo_phone GROUP BY application_form.mb_phone;
-    console.log(testSql);
     res.render('crm/work_estate_manager', { all_data });
 })
 
@@ -158,10 +188,7 @@ router.post('/memo_manage', async (req, res, next) => {
         const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.ph_val]);
         const memoLoad = memoLoadTemp[0]
         res.send(memoLoad)
-
     }
-
-
 })
 
 
