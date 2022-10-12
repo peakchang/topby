@@ -73,7 +73,7 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
-    
+
     let makeFormTypesTable = `CREATE TABLE IF NOT EXISTS form_status(
             fs_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             fs_estate_status VARCHAR(50),
@@ -84,7 +84,7 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
-    
+
 
 
 
