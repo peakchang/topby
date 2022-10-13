@@ -114,7 +114,7 @@ router.post('/', async (req, res) => {
 
     console.log('여기까지는 정상인가요??')
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
+    const getStatusText = await mysql_conn.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
     let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], nowDateTime];
