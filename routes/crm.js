@@ -26,15 +26,12 @@ router.get('/all_data', async (req, res, next) => {
 
 
 router.post('/estate_work/delete', async (req, res, next) => {
-    console.log('아니 씨발 여기는 맞잖아???');
-    console.log(req.body['set_db_list[]']);
     const set_db_list = req.body['set_db_list[]'];
-    console.log(typeof (set_db_list));
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-    const estate_status = estate_status_list[1];
-    if (typeof (set_db_list) == 'string') {
+    const estate_status = estate_status_list[0];
+    if (typeof(set_db_list) == 'string') {
         let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${set_db_list}`;
         await sql_con.promise().query(updateSql)
     } else {
@@ -282,7 +279,7 @@ router.post('/use_axios', async(req, res, next) => {
 
 
 router.use('/test_axios', async (req, res, next) => {
-
+    const setSql = `SELECT * FROM application_form`
     res.send('니미 개 병신같은 엑시오스 씹새끼가')
 })
 

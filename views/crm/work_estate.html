@@ -170,10 +170,13 @@
         var setDbList = '';
         var alldblist = document.querySelectorAll('.dblist')
         for (let i = 0; i < alldblist.length; i++) {
-            if (alldblist[i].children[5].innerHTML == "") {
-                var setDbList = setDbList + alldblist[i].children[2].innerHTML + '//' + alldblist[i].children[3].innerHTML + '<br>';
+            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g,'')
+            if (getInner == "") {
+                console.log('비어있어~~ㄴ');
+                var setDbList = setDbList + alldblist[i].children[2].firstElementChild.innerHTML + '//' + alldblist[i].children[3].innerHTML + '<br>';
             }
         }
+        console.log(alldblist);
         document.querySelector('.copy_target').innerHTML = setDbList
         $('.estate_copy_modal').show()
     })
@@ -194,7 +197,8 @@
         var alldblist = document.querySelectorAll('.dblist')
         var set_db_list = [];
         for (let i = 0; i < alldblist.length; i++) {
-            if (alldblist[i].children[5].innerHTML == "") {
+            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g,'')
+            if (getInner == "") {
                 set_db_list.push(alldblist[i].children[0].firstElementChild.value)
             }
         }
