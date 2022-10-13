@@ -16,25 +16,33 @@ router.get('/join', isNotLoggedIn, (req, res, next) => {
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
 
-    var { userid_inp, nick, password } = req.body;
+    var { userid_inp, nick, password, user_email } = req.body;
     console.log(userid_inp);
     console.log(nick);
     console.log(password);
+    console.log(user_email);
     try {
         let getUserSql = `SELECT * FROM users WHERE userid = '${userid_inp}'`;
         let getUser = await sql_con.promise().query(getUserSql)
 
         const exUser = getUser[0]
         if (exUser == []) {
-            return res.redirect('/auth/join?error=exist');
+            return res.redirect('/auth/join?error=user_exist');
         }
 
+        let getEmailSql = `SELECT * FROM users WHERE user_email = '${user_email}'`;
+        let getEmail = await sql_con.promise().query(getEmailSql)
+
+        const exEmail = getEmail[0]
+        if (exEmail == []) {
+            return res.redirect('/auth/join?error=email_exist');
+        }
         console.log('체크는 정상이신가~~~~~~');
 
         const hash = await bcrypt.hash(password, 12);
         let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-        let makeUserQuery = `INSERT INTO users (userid, nick, password, created_at) VALUES(?, ?, ?, ?);`;
-        let valArr = [userid_inp, nick, hash, nowTime]
+        let makeUserQuery = `INSERT INTO users (userid, user_email, nick, password, created_at) VALUES(?,?,?,?,?);`;
+        let valArr = [userid_inp, user_email, nick, hash, nowTime]
         await sql_con.promise().query(makeUserQuery, valArr)
 
         return res.redirect('/auth/login');

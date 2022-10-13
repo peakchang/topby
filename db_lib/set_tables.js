@@ -25,6 +25,7 @@ exports.tableSetting = async () => {
     let make_users_form = `CREATE TABLE IF NOT EXISTS users(
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         userid VARCHAR(50) UNIQUE,
+        user_email VARCHAR(50) UNIQUE,
         nick VARCHAR(50) NOT NULL,
         password VARCHAR(150),
         rate VARCHAR(10) NOT NULL DEFAULT '1',

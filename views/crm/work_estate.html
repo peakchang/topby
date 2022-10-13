@@ -26,17 +26,23 @@
         <div class="my-4">
 
             <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
-                <option value="">전체선택</option>
+                <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
                 <option value="{{estate}}" {% if all_data.est==estate %} selected {% endif %}>{{estate}}</option>
                 {% endfor %}
             </select>
 
             <select name="status" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
-                <option value="">전체선택</option>
+                <option value="">상태값 선택</option>
                 {% for status in all_data.status_list %}
                 <option value="{{status}}" {% if all_data.status == status %} selected {% endif %}>{{status}}</option>
                 {% endfor %}
+            </select>
+
+            <select name="sc" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+                <option value="30" {% if all_data.sc == 30 %}selected{% endif %}>30</option>
+                <option value="50" {% if all_data.sc == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if all_data.sc == 100 %}selected{% endif %}>100</option>
             </select>
 
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
@@ -69,7 +75,7 @@
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
                         <td class="border border-slate-300 py-2 text-center"> 
-                            <span class=" cursor-pointer mb_detail">{{ data.af_mb_name }}</span>
+                            <span class="cursor-pointer mb_detail inline-block" style="max-width: 200px;">{{ data.af_mb_name }}</span>
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.af_mb_phone_chk }} </td>
                         <td class="border border-slate-300 py-2 text-center px-3">

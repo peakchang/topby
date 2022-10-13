@@ -116,8 +116,6 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
   const getFormStatus = await sql_con.promise().query(getFormStatusSql)
   const getStatusList = getFormStatus[0][0].fs_estate_status.split(',')
   const getStatusColor = getFormStatus[0][0].fs_estate_status_color.split(',')
-  console.log(getStatusList);
-  console.log(getStatusColor);
 
   let all_data = {};
   var maxPagingEndCount = Math.ceil(allCount / pageCount);

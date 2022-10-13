@@ -24,13 +24,17 @@ exports.chkRateManager = (req, res, next) => {
         if (req.isAuthenticated() && parseInt(req.user.rate) > 1) {
             next();
         } else {
-            const message = encodeURIComponent(movePath);
-            res.redirect(`/auth/login?move=${message}`);
+            console.log('여기로 오는걸까요????');
+            res.send(`
+            <script>
+            alert('등급이 낮습니다. 관리자에게 문의 해주세요');
+            location.href = '/';
+            </script>
+            `)
         }
     } catch (error) {
+        console.log('요~~~~~~~~~~~~~~기로 오는걸까요????');
         const message = encodeURIComponent(movePath);
         res.redirect(`/auth/login?move=${message}`);
     }
-
-
 };

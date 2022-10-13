@@ -18,9 +18,10 @@
         <span>전화 : 1644-9714</span>
 
 
-        {% if userInfo.user.userid %}
+        {% if userInfo.user.rate > 3 %}
         <span><a class="nav-link" href="/crm">CRM 바로가기</a></span>
-
+        {% else %}
+        <span><a class="nav-link" href="/crm/estate_manager">CRM 바로가기</a></span>
         {% endif %}
       </div>
 

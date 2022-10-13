@@ -22,7 +22,7 @@
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item" href="">로그아웃</a></li>
+                    <li><a class="dropdown-item" href="/auth/logout">로그아웃</a></li>
                 </ul>
             </li>
         </ul>
@@ -49,26 +49,40 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">관리자 메뉴</div>
+
+                            {% if user.rate == 5 %}
                             <a class="nav-link" href="/crm">
                                 <div class="sb-nav-link-icon">
                                     <i class="fa fa-cog" aria-hidden="true"></i>
                                 </div>
                                 환경설정
                             </a>
+                            {% endif %}
 
+                            {% if user.rate == 5 %}
                             <a class="nav-link" href="/crm/user_manage">
                                 <div class="sb-nav-link-icon">
                                     <i class="fa fa-users" aria-hidden="true"></i>
                                 </div>
                                 회원관리
                             </a>
+                            {% endif %}
 
+                            <a class="nav-link" href="/crm/modify">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                </div>
+                                내 정보변경
+                            </a>
+
+                            {% if user.rate == 5 %}
                             <a class="nav-link" href="/crm/estate_work">
                                 <div class="sb-nav-link-icon">
                                     <i class="fa fa-home" aria-hidden="true"></i>
                                 </div>
                                 전체 DB
                             </a>
+                            {% endif %}
 
                             <a class="nav-link" href="/crm/estate_manager">
                                 <div class="sb-nav-link-icon">
@@ -77,14 +91,14 @@
                                 접수DB
                             </a>
 
-
-
+                            {% if user.rate == 5 %}
                             <a class="nav-link" href="/crm/all_data">
                                 <div class="sb-nav-link-icon">
                                     <i class="fa fa-television" aria-hidden="true"></i>
                                 </div>
                                 모든데이터
                             </a>
+                            {% endif %}
                         </div>
 
                     </div>

@@ -45,7 +45,6 @@ router.post('/estate_work/delete', async (req, res, next) => {
         }
     }
 
-
     res.send(200);
 })
 
@@ -90,13 +89,37 @@ router.use('/estate_manage/detail/:id', async (req, res, next) => {
 })
 
 
+router.use('/modify', async(req, res, next) => {
+    const userInfo = req.user
+    var { user_nick, user_pwd, user_email } = req.body;
+    if(req.method == 'POST'){
+        console.log('포스트다~~~~~~~~~~~~~~~~~~~');
+        const re_nick = user_nick ? user_nick : userInfo.nick
+        if(user_pwd){
+            var re_pwd = await bcrypt.hash(user_pwd, 12);
+        }else{
+            var re_pwd = userInfo.password
+        }
+        const re_email = user_email ? user_email : userInfo.user_email
+        const userUpdateSql = `UPDATE users SET nick = ?, password = ?, user_email = ? WHERE id = ?`;
+        await sql_con.promise().query(userUpdateSql, [re_nick, re_pwd, re_email, userInfo.id])
+        res.redirect('/crm/modify')
+        return
+    }
+    
+    res.render('crm/crm_modify', { userInfo })
+})
+
 
 router.use('/estate_work', async (req, res, next) => {
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-
-    const pageCount = 30;
+    if(req.query.sc){
+        var pageCount = parseInt(req.query.sc);
+    }else{
+        var pageCount = 30;
+    }
 
     if (req.query.est) {
         var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
@@ -124,6 +147,7 @@ router.use('/estate_work', async (req, res, next) => {
     all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
     all_data.est = req.query.est
     all_data.status = req.query.status
+    all_data.sc = req.query.sc
     res.render('crm/work_estate', { all_data });
 })
 
@@ -133,8 +157,14 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
     const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id])
     const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
-    console.log(getUserEstateList);
-    const pageCount = 30;
+
+    if(req.query.sc){
+        var pageCount = parseInt(req.query.sc);
+    }else{
+        var pageCount = 30;
+    }
+    
+
 
     var getEst = '';
     if (req.query.est) {
@@ -175,6 +205,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     all_data.estate_list = getUserEstateList;
     all_data.est = req.query.est
     all_data.status = req.query.status
+    all_data.sc = req.query.sc
     res.render('crm/work_estate_manager', { all_data });
 })
 
