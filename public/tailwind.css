@@ -873,6 +873,10 @@ video {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
 .pt-6 {
   padding-top: 1.5rem;
 }

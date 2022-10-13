@@ -113,9 +113,12 @@ router.post('/', async (req, res) => {
     await mysql_conn.promise().query(allDataSql, [getAllData]);
 
     console.log('여기까지는 정상인가요??')
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
-    let getArr = [get_form_name, form_type_in, get_name, get_phone, nowDateTime];
-    let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_mb_name, af_mb_phone, af_created_at) VALUES (?,?,?,?,?);`;
+    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], nowDateTime];
+    let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_created_at) VALUES (?,?,?,?,?,?,?);`;
 
     await mysql_conn.promise().query(formInertSql, getArr)
 

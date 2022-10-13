@@ -32,6 +32,13 @@
                 {% endfor %}
             </select>
 
+            <select name="status" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+                <option value="">전체선택</option>
+                {% for status in all_data.status_list %}
+                <option value="{{status}}" {% if all_data.status == status %} selected {% endif %}>{{status}}</option>
+                {% endfor %}
+            </select>
+
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
 
             {% if all_data.est %}
@@ -56,17 +63,21 @@
                     </tr>
 
                     {% for data in all_data.wdata %}
-                    <tr class="dblist">
+                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}"{% endif %}>
                         <td class="border border-slate-300 text-center">
                             <input type="checkbox" name="data_id" value="{{ data.af_id }}" id="" class="on_chk">
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
-                        <td class="border border-slate-300 py-2 text-center"> {{ data.af_mb_name }} </td>
+                        <td class="border border-slate-300 py-2 text-center"> 
+                            <span class=" cursor-pointer mb_detail">{{ data.af_mb_name }}</span>
+                        </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.af_mb_phone_chk }} </td>
                         <td class="border border-slate-300 py-2 text-center px-3">
                             {{ data.af_form_name }}
                         </td>
-                        <td class="border border-slate-300 py-2 text-center px-3">{{ data.af_mb_status }}</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            {{ data.af_mb_status }}
+                        </td>
                         <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.af_created_at |
                             date("YY/MM/DD HH:mm:ss") }}</td>
                     </tr>
@@ -202,6 +213,14 @@
                 e.checked = false;
             });
         }
+    })
+
+
+    $('.mb_detail').click(function (e) {
+        
+        const thisId = this.parentNode.parentNode.firstElementChild.firstElementChild.value
+        var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no'
+        window.open(`estate_work/detail/${thisId}`, '디테일', options)
     })
 
 </script>

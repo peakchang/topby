@@ -54,22 +54,44 @@ router.use('/estate_work/detail/:id', async (req, res, next) => {
         console.log(req.params.id);
     }
 
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    console.log(req.params.id);
+
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    console.log(LoadInfoSql);
     const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
     const load_info = LoadInfoTemp[0];
 
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-    const estate_status_list = getStatusText[0][0].estate_status.split(',')
+    console.log(getStatusText[0][0]);
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
+})
+
+
+router.use('/estate_manage/detail/:id', async (req, res, next) => {
+    if (req.method == 'POST') {
+        console.log(req.params.id);
+    }
+
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    const load_info = LoadInfoTemp[0];
+
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    console.log(getStatusText[0][0]);
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
     res.render('crm/work_estate_detail', { load_info, estate_status_list });
 })
 
 
 
 router.use('/estate_work', async (req, res, next) => {
-
-    console.log(req.query);
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
@@ -82,17 +104,26 @@ router.use('/estate_work', async (req, res, next) => {
         var getEst = '';
     }
 
+    if(req.query.status){
+        var getStatus = `AND af_mb_status = '${req.query.status}'`;
+    }else{
+        var getStatus = '';
+    }
+
     console.log(getEst);
 
-    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
+    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${getEst} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
+
+    console.log(setDbSql);
 
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
     all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
     all_data.est = req.query.est
+    all_data.status = req.query.status
     res.render('crm/work_estate', { all_data });
 })
 
@@ -120,20 +151,30 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         }
     }
 
+    if(req.query.status){
+        var getStatus = `AND af_mb_status = '${req.query.status}'`;
+    }else{
+        var getStatus = '';
+    }
+
+    
+
     console.log('----------------------------');
     console.log(getEst);
+    console.log(getStatus);
 
-    const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
+    const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
     // var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ORDER BY af_id DESC`;
+    var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY af_id DESC`;
 
-    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
+    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
     all_data.estate_list = getUserEstateList;
     all_data.est = req.query.est
+    all_data.status = req.query.status
     res.render('crm/work_estate_manager', { all_data });
 })
 
@@ -186,17 +227,26 @@ router.post('/memo_manage', async (req, res, next) => {
     if (req.body.memo_val) {
         console.log(req.body);
         let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-        const memoArr = [req.body.ph_val, req.user.nick, req.body.memo_val, nowTime];
-        const memoInsertSql = `INSERT INTO memos (mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?);`;
+        const memoArr = [req.body.id_val, req.body.estate_val, req.body.ph_val, req.user.nick, req.body.memo_val, nowTime];
+        const memoInsertSql = `INSERT INTO memos (mo_depend_id, mo_estate, mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?,?,?);`;
         await sql_con.promise().query(memoInsertSql, memoArr);
         res.send(200)
     } else if (req.body.load_memo) {
         console.log(req.body);
-        const memoLoadSql = `SELECT * FROM memos WHERE mo_phone = ? ORDER BY mo_id DESC`;
-        const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.ph_val]);
+        const memoLoadSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_id DESC`;
+        const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.id_val]);
         const memoLoad = memoLoadTemp[0]
         res.send(memoLoad)
     }
+})
+
+router.post('/use_axios', async(req, res, next) => {
+    console.log(req.body);
+
+    const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
+    await sql_con.promise().query(updateStatusSql, [req.body.statusSelVal, req.body.idVal]);
+    
+    res.send(200)
 })
 
 
@@ -213,12 +263,12 @@ router.use('/', async (req, res, next) => {
         const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
-            let insertArr = [req.body.estate_status, req.body.estate_list];
-            let insertSql = `INSERT INTO form_status (fs_estate_status, fs_estate_list) VALUES (?, ?);`;
+            let insertArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list];
+            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color fs_estate_list) VALUES (?,?,?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
-            let updatetArr = [req.body.estate_status, req.body.estate_list];
-            let updateSql = `UPDATE form_status SET fs_estate_status=?, estate_list=? WHERE fs_id=1`;
+            let updatetArr = [req.body.estate_status, req.body.estate_status_color,req.body.estate_list];
+            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_estate_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }

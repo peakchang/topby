@@ -11,7 +11,7 @@
 
         .table_area {
             width: 100%;
-            min-width: 1000px;
+            min-width: 1100px;
         }
     }
 </style>
@@ -21,9 +21,16 @@
         <div class="my-4">
 
             <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
-                <option value="">전체선택</option>
+                <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
                 <option value="{{estate}}" {% if all_data.est==estate %} selected {% endif %}>{{estate}}</option>
+                {% endfor %}
+            </select>
+
+            <select name="status" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+                <option value="">상태값 선택</option>
+                {% for status in all_data.status_list %}
+                <option value="{{status}}" {% if all_data.status==status %} selected {% endif %}>{{status}}</option>
                 {% endfor %}
             </select>
 
@@ -44,7 +51,7 @@
                     </tr>
 
                     {% for data in all_data.wdata %}
-                    <tr class="dblist">
+                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}"{% endif %}>
                         <input type="hidden" name="" value="{{ data.af_id }}">
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
                         <td class="border border-slate-300 py-2 text-center">
@@ -71,8 +78,6 @@
                                 </div>
                             </div>
 
-
-
                             <div class="">
                                 <div>
                                     {{ data.mo_memo }}
@@ -80,11 +85,21 @@
 
 
                                 <button type="button"
-                                    class="open_memo ml-1 text-sm px-4 bg-green-500 hover:bg-green-700 text-white rounded mt-1">목록</button>
+                                    class="open_memo ml-1 text-sm px-4 bg-green-500 hover:bg-green-700 text-white rounded mt-1">메모 목록</button>
                             </div>
                         </td>
-                        <td class="border border-slate-300 py-2 text-center px-3">
-                            {{ data.mb_status }}
+                        <td class="border border-slate-300 py-2 text-center">
+                            <div class="flex justify-center">
+                                <select name="" id="" class="border border-gray-200 px-1 rounded">
+                                    <option value="">상태선택</option>
+                                    {% for status in all_data.status_list %}
+                                    <option value="{{ status }}" {% if status==data.af_mb_status %} selected {% endif
+                                        %}>{{ status }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button"
+                                    class="ml-1 text-sm px-1 bg-blue-500 hover:bg-blue-700 text-white rounded change_status">적용</button>
+                            </div>
                         </td>
                         <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.af_created_at |
                             date("YY/MM/DD HH:mm:ss") }}</td>
@@ -146,19 +161,14 @@
 <div class="testaxios">alsdjfasdf</div>
 <script>
 
-    document.querySelector('.testaxios').addEventListener('click', function (e) {
-
-
-
-    })
-
-
     $('.open_memo').click(function (e) {
-        const ph_val = this.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
+        const id_val = this.parentNode.parentNode.parentNode.firstElementChild.value;
+        console.log(id_val);
+        // const ph_val = this.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
         var nowEle = this;
         const load_memo = "on";
         $.ajax({
-            method: 'post', url: '/crm/memo_manage', data: { ph_val, load_memo }, success: function (data) {
+            method: 'post', url: '/crm/memo_manage', data: { id_val, load_memo }, success: function (data) {
                 const setDataArea = nowEle.parentNode.parentNode.firstElementChild.firstElementChild.children[2];
                 const chkData = setDataArea.innerHTML.replace(/[\s\n]/g, '')
                 if (chkData == '') {
@@ -182,9 +192,9 @@
         const memo_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value;
         const ph_val = this.parentNode.parentNode.parentNode.parentNode.children[3].innerHTML.replace(/[\-\s]/g, '');
-
+        const estate_val = this.parentNode.parentNode.parentNode.parentNode.children[4].innerHTML
         $.ajax({
-            method: 'post', url: '/crm/memo_manage', data: { id_val, ph_val, memo_val }, success: function (data) {
+            method: 'post', url: '/crm/memo_manage', data: { id_val, estate_val, ph_val, memo_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             },
@@ -193,6 +203,22 @@
             }
         })
         console.log(ph_val);
+    })
+
+    $('.change_status').click(function(e){
+        console.log(this.parentNode.parentNode.parentNode.firstElementChild.value);
+        const idVal = this.parentNode.parentNode.parentNode.firstElementChild.value
+        const statusSelVal = this.previousElementSibling.options[this.previousElementSibling.selectedIndex].value
+        if(!statusSelVal){
+            alert('선택된 값이 없습니다!')
+            return false
+        }
+        axios.post('/crm/use_axios', { idVal , statusSelVal }).then((res) => {
+            console.log(res);
+            location.reload()
+        }).catch((err) => {
+
+        })
     })
 
 
@@ -272,7 +298,7 @@
         console.log();
         const thisId = this.parentNode.parentNode.firstElementChild.value
         var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no'
-        window.open(`estate_work/detail/${thisId}`, '디테일', options)
+        window.open(`estate_manage/detail/${thisId}`, '디테일', options)
     })
 </script>
 {% endblock %}

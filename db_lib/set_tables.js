@@ -10,6 +10,7 @@ exports.tableSetting = async () => {
     let make_memos_form = `CREATE TABLE IF NOT EXISTS memos(
         mo_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         mo_depend_id VARCHAR(10),
+        mo_estate VARCHAR(100),
         mo_phone VARCHAR(50),
         mo_manager VARCHAR(50),
         mo_memo VARCHAR(255),
@@ -53,6 +54,7 @@ exports.tableSetting = async () => {
         af_mb_reserve_time DATETIME,
         af_mb_visit_status VARCHAR(50),
         af_mb_price INT(11),
+        af_lead_id VARCHAR(50),
         af_created_at DATETIME
         );`
     try {
@@ -76,8 +78,8 @@ exports.tableSetting = async () => {
 
     let makeFormTypesTable = `CREATE TABLE IF NOT EXISTS form_status(
             fs_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            fs_estate_status VARCHAR(50),
-            fs_estate_list VARCHAR(50)
+            fs_estate_status VARCHAR(255),
+            fs_estate_list TEXT
         );`
     try {
         sql_con.query(makeFormTypesTable, async (err, result) => { });

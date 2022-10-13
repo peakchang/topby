@@ -50,9 +50,7 @@
                 </div>
             </div>
 
-
-
-
+            {% if load_info[0].mo_memo %}
             <table class="border-collapse border border-slate-400 w-full text-sm suit-font rounded mt-2">
                 {% for info in load_info %}
                 <tr>
@@ -62,6 +60,9 @@
                 </tr>
                 {% endfor %}
             </table>
+            {% else %}
+            <div class="text-center mt-3">메모가 아직 없습니다.</div>
+            {% endif %}
 
         </form>
     </div>

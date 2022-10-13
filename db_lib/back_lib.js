@@ -111,6 +111,14 @@ pagingStartCount = maxPagingEndCount - 5
 
 */
 exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
+
+  const getFormStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+  const getFormStatus = await sql_con.promise().query(getFormStatusSql)
+  const getStatusList = getFormStatus[0][0].fs_estate_status.split(',')
+  const getStatusColor = getFormStatus[0][0].fs_estate_status_color.split(',')
+  console.log(getStatusList);
+  console.log(getStatusColor);
+
   let all_data = {};
   var maxPagingEndCount = Math.ceil(allCount / pageCount);
 
@@ -150,12 +158,13 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
 
   var setDbSql = `${setDbSql} LIMIT ${startCount}, ${pageCount};`;
 
-  console.log(setDbSql);
-
   const tempData = await sql_con.promise().query(setDbSql)
   var wData = tempData[0];
   var pageChkCount = allCount - (pageCount * (nowCount - 1));
   for await (const data of wData) {
+    if(getStatusList.indexOf(data.af_mb_status)){
+      data.status_color = getStatusColor[getStatusList.indexOf(data.af_mb_status)]
+    }
     data.chkCount = pageChkCount;
     data.af_mb_phone_chk = phNumBar(data.af_mb_phone);
     // data.created_at.setHours(data.created_at.getHours()+9);
@@ -165,6 +174,8 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
   all_data.pagingStartCount = pagingStartCount;
   all_data.pagingEndCount = pagingEndCount;
   all_data.nowCount = nowCount;
+  all_data.status_list = getStatusList
+  
 
   return all_data
 }
