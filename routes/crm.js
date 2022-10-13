@@ -69,6 +69,8 @@ router.use('/estate_work/detail/:id', async (req, res, next) => {
 
 router.use('/estate_work', async (req, res, next) => {
 
+    console.log(req.query);
+
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
 
@@ -80,6 +82,8 @@ router.use('/estate_work', async (req, res, next) => {
         var getEst = '';
     }
 
+    console.log(getEst);
+
     const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
@@ -88,7 +92,7 @@ router.use('/estate_work', async (req, res, next) => {
 
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
     all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
-
+    all_data.est = req.query.est
     res.render('crm/work_estate', { all_data });
 })
 
@@ -98,7 +102,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
     const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id])
     const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
-
+    console.log(getUserEstateList);
     const pageCount = 30;
 
     var getEst = '';
@@ -108,24 +112,28 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         for (let i = 0; i < getUserEstateList.length; i++) {
             if (i == 0) {
                 var setJull = 'AND'
-                getEstTemp = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
             } else {
                 var setJull = 'OR'
-                getEst = `${getEstTemp} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
             }
-
         }
     }
+
+    console.log('----------------------------');
+    console.log(getEst);
 
     const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
+    // var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
+
+    var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ORDER BY af_id DESC`;
 
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
     all_data.estate_list = getUserEstateList;
-
+    all_data.est = req.query.est
     res.render('crm/work_estate_manager', { all_data });
 })
 
