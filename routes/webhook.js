@@ -117,7 +117,8 @@ router.post('/', async (req, res) => {
     const getStatusText = await mysql_conn.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
-    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
+    // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
+    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
     let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
 
     await mysql_conn.promise().query(formInertSql, getArr)
