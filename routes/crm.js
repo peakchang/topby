@@ -112,31 +112,27 @@ router.use('/estate_work', async (req, res, next) => {
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
-    if(req.query.sc){
-        var pageCount = parseInt(req.query.sc);
-    }else{
-        var pageCount = 30;
-    }
 
-    if (req.query.est) {
-        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
-    } else {
-        var getEst = '';
-    }
+    var testVal = (1 == 21) ? '마장' : '아냥';
 
-    if(req.query.status){
-        var getStatus = `AND af_mb_status = '${req.query.status}'`;
-    }else{
-        var getStatus = '';
-    }
 
+    var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
+    var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
+    var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
+    var startDay = req.query.sd ? req.query.sd : Date.now().format('YYYY-MM-DD');
+    var endDay = req.query.ed ? req.query.ed : Date.now().format('YYYY-MM-DD');
+    var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${req.query.sd}' AND af_created_at < '${req.query.ed}'` : '';
+    var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${req.query.sd}' AND a.af_created_at < '${req.query.ed}'` : '';
+
+    console.log(sdCountQ);
+    console.log(sdSearchQ);
     console.log(getEst);
 
-    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
+    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${sdSearchQ} ${getEst} ${getStatus} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
 
     console.log(setDbSql);
 
@@ -145,6 +141,10 @@ router.use('/estate_work', async (req, res, next) => {
     all_data.est = req.query.est
     all_data.status = req.query.status
     all_data.sc = req.query.sc
+    all_data.sd = startDay
+    all_data.ed = endDay
+
+    // console.log(all_data);
     res.render('crm/work_estate', { all_data });
 })
 
@@ -152,7 +152,7 @@ router.use('/estate_work', async (req, res, next) => {
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
-    const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id])
+    const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
     const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
 
     if(req.query.sc){
@@ -184,8 +184,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         var getStatus = '';
     }
 
-    
-
     console.log('----------------------------');
     console.log(getEst);
     console.log(getStatus);
@@ -198,7 +196,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY af.af_id DESC`;
     var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m
-    ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN (SELECT max(a.af_id) FROM application_form GROUP BY a.af_mb_phone) ${getEst} ${getStatus} ORDER BY af.af_id DESC`;
+    ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN (SELECT max(a.af_id) FROM application_form GROUP BY a.af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql)
 
@@ -207,6 +205,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     all_data.est = req.query.est
     all_data.status = req.query.status
     all_data.sc = req.query.sc
+
     res.render('crm/work_estate_manager', { all_data });
 })
 

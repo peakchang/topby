@@ -63,7 +63,6 @@ exports.mailSender = {
         console.log('Email sent: ' + info.response);
       }
     });
-
   }
 }
 
@@ -151,7 +150,6 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
         var pagingStartCount = 1
       }
     }
-
   }
 
   var setDbSql = `${setDbSql} LIMIT ${startCount}, ${pageCount};`;

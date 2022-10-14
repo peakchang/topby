@@ -25,6 +25,10 @@
     <form>
         <div class="my-4">
 
+            <input type="date" class="border rounded-lg py-1 px-2 text-sm now_date" name="sd" value="{{ all_data.sd }}">
+            ~
+            <input type="date" class="border rounded-lg py-1 px-2 text-sm" name="ed" value="{{ all_data.ed }}">
+
             <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
                 <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
@@ -35,14 +39,14 @@
             <select name="status" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
                 <option value="">상태값 선택</option>
                 {% for status in all_data.status_list %}
-                <option value="{{status}}" {% if all_data.status == status %} selected {% endif %}>{{status}}</option>
+                <option value="{{status}}" {% if all_data.status==status %} selected {% endif %}>{{status}}</option>
                 {% endfor %}
             </select>
 
             <select name="sc" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
-                <option value="30" {% if all_data.sc == 30 %}selected{% endif %}>30</option>
-                <option value="50" {% if all_data.sc == 50 %}selected{% endif %}>50</option>
-                <option value="100" {% if all_data.sc == 100 %}selected{% endif %}>100</option>
+                <option value="30" {% if all_data.sc==30 %}selected{% endif %}>30</option>
+                <option value="50" {% if all_data.sc==50 %}selected{% endif %}>50</option>
+                <option value="100" {% if all_data.sc==100 %}selected{% endif %}>100</option>
             </select>
 
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
@@ -69,13 +73,15 @@
                     </tr>
 
                     {% for data in all_data.wdata %}
-                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}"{% endif %}>
+                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}" {% endif
+                        %}>
                         <td class="border border-slate-300 text-center">
                             <input type="checkbox" name="data_id" value="{{ data.af_id }}" id="" class="on_chk">
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
-                        <td class="border border-slate-300 py-2 text-center"> 
-                            <span class="cursor-pointer mb_detail inline-block" style="max-width: 200px;">{{ data.af_mb_name }}</span>
+                        <td class="border border-slate-300 py-2 text-center">
+                            <span class="cursor-pointer mb_detail inline-block" style="max-width: 200px;">{{
+                                data.af_mb_name }}</span>
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.af_mb_phone_chk }} </td>
                         <td class="border border-slate-300 py-2 text-center px-3">
@@ -161,6 +167,23 @@
 
 <script>
 
+    $('input[name=ed]').click(function (e) {
+        var preVal = this.value
+        $('input[name=ed]').change(function (e) {
+            var start_day = document.querySelector('input[name=sd]').value;
+            if (this.value < start_day) {
+                alert('시작날짜보다 이전 날짜 지정은 불가합니다.')
+                this.value = preVal
+            }
+            console.log(this.value);
+        })
+    })
+
+
+
+
+
+
     $('.estate_copy_modal').hide()
     $('.close_modal').click(function (e) {
         $('.estate_copy_modal').hide()
@@ -170,7 +193,7 @@
         var setDbList = '';
         var alldblist = document.querySelectorAll('.dblist')
         for (let i = 0; i < alldblist.length; i++) {
-            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g,'')
+            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g, '')
             if (getInner == "") {
                 console.log('비어있어~~ㄴ');
                 var setDbList = setDbList + alldblist[i].children[2].firstElementChild.innerHTML + '//' + alldblist[i].children[3].innerHTML + '<br>';
@@ -197,7 +220,7 @@
         var alldblist = document.querySelectorAll('.dblist')
         var set_db_list = [];
         for (let i = 0; i < alldblist.length; i++) {
-            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g,'')
+            var getInner = alldblist[i].children[5].innerHTML.replace(/\s/g, '')
             if (getInner == "") {
                 set_db_list.push(alldblist[i].children[0].firstElementChild.value)
             }
@@ -227,7 +250,7 @@
 
 
     $('.mb_detail').click(function (e) {
-        
+
         const thisId = this.parentNode.parentNode.firstElementChild.firstElementChild.value
         var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no'
         window.open(`estate_work/detail/${thisId}`, '디테일', options)
