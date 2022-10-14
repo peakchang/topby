@@ -196,7 +196,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY af_id DESC`;
+    // var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY af.af_id DESC`;
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m
+    ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN (SELECT max(a.af_id) FROM application_form GROUP BY a.af_mb_phone) ${getEst} ${getStatus} ORDER BY af.af_id DESC`;
+
+    console.log(setDbSql)
 
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
     all_data.estate_list = getUserEstateList;
