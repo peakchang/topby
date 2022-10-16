@@ -16,6 +16,20 @@ router.use((req, res, next) => {
     next();
 });
 
+
+
+router.use('/testdb_set', async (req, res, next) => {
+    if (req.method == 'POST') {
+        var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+        testSql = `INSERT INTO application_form (af_mb_name, af_mb_phone, af_mb_status, af_form_name, af_form_type_in, af_created_at) VALUES (?,?,?,?,?,?)`;
+        testValList = [req.body.af_mb_name, req.body.af_mb_phone, '접수완료', '강남현대삼성', '분양', now]
+        await sql_con.promise().query(testSql, testValList)
+    }
+    res.render('crm/testdb', {});
+})
+
+
+
 router.get('/all_data', async (req, res, next) => {
     let allSearchSql = `SELECT * FROM webhookdatas ORDER BY id DESC;`;
     let alldatas = await sql_con.promise().query(allSearchSql)
@@ -31,7 +45,7 @@ router.post('/estate_work/delete', async (req, res, next) => {
     const getStatusText = await sql_con.promise().query(getStatusSql)
     const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
     const estate_status = estate_status_list[0];
-    if (typeof(set_db_list) == 'string') {
+    if (typeof (set_db_list) == 'string') {
         let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${set_db_list}`;
         await sql_con.promise().query(updateSql)
     } else {
@@ -45,56 +59,18 @@ router.post('/estate_work/delete', async (req, res, next) => {
     res.send(200);
 })
 
-router.use('/estate_work/detail/:id', async (req, res, next) => {
-    if (req.method == 'POST') {
-        console.log(req.params.id);
-    }
-
-    console.log(req.params.id);
-
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
-    console.log(LoadInfoSql);
-    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
-    const load_info = LoadInfoTemp[0];
 
 
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log(getStatusText[0][0]);
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
-    res.render('crm/work_estate_detail', { load_info, estate_status_list });
-})
-
-
-router.use('/estate_manage/detail/:id', async (req, res, next) => {
-    if (req.method == 'POST') {
-        console.log(req.params.id);
-    }
-
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
-    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
-    const load_info = LoadInfoTemp[0];
-
-
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log(getStatusText[0][0]);
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    res.render('crm/work_estate_detail', { load_info, estate_status_list });
-})
-
-
-router.use('/modify', async(req, res, next) => {
+router.use('/modify', async (req, res, next) => {
     const userInfo = req.user
     var { user_nick, user_pwd, user_email } = req.body;
-    if(req.method == 'POST'){
+    if (req.method == 'POST') {
         console.log('포스트다~~~~~~~~~~~~~~~~~~~');
         const re_nick = user_nick ? user_nick : userInfo.nick
-        if(user_pwd){
+        if (user_pwd) {
             var re_pwd = await bcrypt.hash(user_pwd, 12);
-        }else{
+        } else {
             var re_pwd = userInfo.password
         }
         const re_email = user_email ? user_email : userInfo.user_email
@@ -103,12 +79,14 @@ router.use('/modify', async(req, res, next) => {
         res.redirect('/crm/modify')
         return
     }
-    
+
     res.render('crm/crm_modify', { userInfo })
 })
 
 
 router.use('/estate_work', async (req, res, next) => {
+
+
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
@@ -119,20 +97,16 @@ router.use('/estate_work', async (req, res, next) => {
     var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
     var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
     var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
-    var startDay = req.query.sd ? req.query.sd : Date.now().format('YYYY-MM-DD');
-    var endDay = req.query.ed ? req.query.ed : Date.now().format('YYYY-MM-DD');
+    var startDay = req.query.sd ? req.query.sd : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
     var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${req.query.sd}' AND af_created_at < '${req.query.ed}'` : '';
     var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${req.query.sd}' AND a.af_created_at < '${req.query.ed}'` : '';
-
-    console.log(sdCountQ);
-    console.log(sdSearchQ);
-    console.log(getEst);
 
     const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' ${sdSearchQ} ${getEst} ${getStatus} GROUP BY a.af_mb_phone ORDER BY a.af_id DESC`
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
 
     console.log(setDbSql);
 
@@ -151,36 +125,49 @@ router.use('/estate_work', async (req, res, next) => {
 
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
-    const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
-    const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
-    const getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
 
-    if(req.query.sc){
+    if (req.user.rate < 5) {
+        const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
+        const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
+        var getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
+    } else if (req.user.rate == 5) {
+        const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;
+        const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql);
+        var getUserEstateList = getUserEstateTemp[0][0].fs_estate_list.split(',');
+    }
+
+
+    if (req.query.sc) {
         var pageCount = parseInt(req.query.sc);
-    }else{
+    } else {
         var pageCount = 30;
     }
-    
+
 
 
     var getEst = '';
-    if (req.query.est) {
-        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
-    } else {
-        for (let i = 0; i < getUserEstateList.length; i++) {
-            if (i == 0) {
-                var setJull = 'AND'
-                getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-            } else {
-                var setJull = 'OR'
-                getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+
+    console.log(req.user.rate);
+    if (req.user.rate < 5) {
+        if (req.query.est) {
+            var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+        } else {
+            for (let i = 0; i < getUserEstateList.length; i++) {
+                if (i == 0) {
+                    var setJull = 'AND'
+                    getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                } else {
+                    var setJull = 'OR'
+                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                }
             }
         }
     }
 
-    if(req.query.status){
+
+    if (req.query.status) {
         var getStatus = `AND af_mb_status = '${req.query.status}'`;
-    }else{
+    } else {
         var getStatus = '';
     }
 
@@ -188,15 +175,31 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     console.log(getEst);
     console.log(getStatus);
 
+    // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    // var setDbSql = `SELECT * FROM application_form WHERE af_form_type_in='분양' ${getEst} ORDER BY af_id DESC`;
+    console.log(allCount);
 
-    // var setDbSql = `SELECT * FROM application_form as af LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as mo ON af.af_id = mo.mo_depend_id WHERE af.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY af.af_id DESC`;
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m
-    ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN (SELECT max(a.af_id) FROM application_form GROUP BY a.af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    if (req.user.rate < 5) {
+        if (req.query.est) {
+            var getEst = `AND a.af_form_name LIKE '%${req.query.est}%'`;
+        } else {
+            for (let i = 0; i < getUserEstateList.length; i++) {
+                if (i == 0) {
+                    var setJull = 'AND'
+                    getEst = `${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                } else {
+                    var setJull = 'OR'
+                    getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                }
+            }
+        }
+    }
+    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql)
 
@@ -271,12 +274,12 @@ router.post('/memo_manage', async (req, res, next) => {
     }
 })
 
-router.post('/use_axios', async(req, res, next) => {
+router.post('/use_axios', async (req, res, next) => {
     console.log(req.body);
 
     const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
     await sql_con.promise().query(updateStatusSql, [req.body.statusSelVal, req.body.idVal]);
-    
+
     res.send(200)
 })
 
@@ -287,6 +290,46 @@ router.use('/test_axios', async (req, res, next) => {
 })
 
 
+router.use('/estate_work/detail/:id', async (req, res, next) => {
+    if (req.method == 'POST') {
+        console.log(req.params.id);
+    }
+
+    console.log(req.params.id);
+
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    console.log(LoadInfoSql);
+    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    const load_info = LoadInfoTemp[0];
+
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    console.log(getStatusText[0][0]);
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
+})
+
+
+router.use('/estate_manage/detail/:id', async (req, res, next) => {
+    if (req.method == 'POST') {
+        console.log(req.params.id);
+    }
+
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    const load_info = LoadInfoTemp[0];
+
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    console.log(getStatusText[0][0]);
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
+})
+
 
 router.use('/', async (req, res, next) => {
     if (req.method == 'POST') {
@@ -295,10 +338,10 @@ router.use('/', async (req, res, next) => {
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
             let insertArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list];
-            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color fs_estate_list) VALUES (?,?,?);`;
+            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_estate_list) VALUES (?,?,?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
-            let updatetArr = [req.body.estate_status, req.body.estate_status_color,req.body.estate_list];
+            let updatetArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list];
             let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_estate_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
@@ -308,6 +351,11 @@ router.use('/', async (req, res, next) => {
     const result = resultData[0][0];
     res.render('crm/crm_main', { result });
 })
+
+
+
+
+
 
 
 function phNumBar(value) {
