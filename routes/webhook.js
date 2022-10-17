@@ -138,9 +138,9 @@ router.post('/', async (req, res) => {
     }
 
     const mailSubject = `${form_type_in} 고객명 ${get_name} 접수되었습니다.`;
-    const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+    const mailContent = `현장: ${get_form_name} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
     mailSender.sendEmail('adpeak@naver.com',mailSubject, mailContent);
-    // mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
+    mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
 
     res.sendStatus(200);
     console.log('success!!!!!');
