@@ -38,3 +38,25 @@ exports.chkRateManager = (req, res, next) => {
         res.redirect(`/auth/login?move=${message}`);
     }
 };
+
+
+exports.chkRateMaster = (req, res, next) => {
+    const movePath = req._parsedOriginalUrl.pathname
+    try {
+        if (req.isAuthenticated() && parseInt(req.user.rate) == 5) {
+            next();
+        } else {
+            console.log('여기로 오는걸까요????');
+            res.send(`
+            <script>
+            alert('관리자만 이용 가능한 메뉴입니다.');
+            location.href = '/';
+            </script>
+            `)
+        }
+    } catch (error) {
+        console.log('요~~~~~~~~~~~~~~기로 오는걸까요????');
+        const message = encodeURIComponent(movePath);
+        res.redirect(`/auth/login?move=${message}`);
+    }
+};

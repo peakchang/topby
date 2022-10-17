@@ -37,7 +37,6 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
         if (exEmail == []) {
             return res.redirect('/auth/join?error=email_exist');
         }
-        console.log('체크는 정상이신가~~~~~~');
 
         const hash = await bcrypt.hash(password, 12);
         let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
@@ -78,12 +77,14 @@ router.get('/login', isNotLoggedIn, (req, res, next) => {
     res.render('auth/login', { loginErr });
 });
 router.post('/login', isNotLoggedIn, (req, res, next) => {
-    if(req.query.move){
+    if (req.query.move) {
         var movePath = req.query.move
-    }else{
+    } else if (req.query.move == 'auth') {
+        var movePath = ''
+    } else {
         var movePath = ''
     }
-    
+
     passport.authenticate('local', (authError, user, info) => {
         if (authError) {
             console.error(authError);

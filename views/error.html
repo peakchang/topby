@@ -5,8 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        .err_main_img{max-width: 800px; width: 90%; margin: 40px auto;}
+        .err_main_img img{width: 100%;}
+        .err_text{text-align: center; font-weight: bolder; font-size: 2rem;}
+    </style>
 </head>
 <body>
+
+    <div class="err_main_img">
+        <img src="/img/topby_base/err_img.png" alt="">
+    </div>
+    <div class="err_text">
+        {{ errData }}
+    </div>
+    
+
+
     {% if errData.err_chk == 'notLogin' %}
     {{ errData.move }}
     <script>

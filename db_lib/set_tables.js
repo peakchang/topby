@@ -6,6 +6,15 @@ const sql_con = require('./index');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+    let makeAlldataTable = `CREATE TABLE IF NOT EXISTS webhookdatas(
+        wh_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        webhookdata TEXT
+    );`
+    try {
+        sql_con.query(makeAlldataTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
 
     let make_memos_form = `CREATE TABLE IF NOT EXISTS memos(
         mo_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -88,6 +97,9 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+
+    
 
 
 

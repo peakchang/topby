@@ -1,5 +1,5 @@
 const express = require('express');
-const { isLoggedIn, isNotLoggedIn, chkRateManager } = require('./middlewares');
+const { isLoggedIn, isNotLoggedIn, chkRateManager, chkRateMaster } = require('./middlewares');
 const sql_con = require('../db_lib');
 const { executeQuery } = require('../db_lib/dbset.js');
 const bcrypt = require('bcrypt');
@@ -30,12 +30,19 @@ router.use('/testdb_set', async (req, res, next) => {
 
 
 
-router.get('/all_data', async (req, res, next) => {
-    let allSearchSql = `SELECT * FROM webhookdatas ORDER BY id DESC;`;
-    let alldatas = await sql_con.promise().query(allSearchSql)
-    let alldata = alldatas[0]
-    console.log(alldata);
-    res.render('crm/work_alldata', { alldata });
+router.get('/all_data', chkRateMaster,async (req, res, next) => {
+
+    try {
+        let allSearchSql = `SELECT * FROM webhookdatas ORDER BY wh_id DESC;`;
+        let alldatas = await sql_con.promise().query(allSearchSql)
+        let alldata = alldatas[0]
+        console.log(alldata);
+        res.render('crm/work_alldata', { alldata });
+    } catch (error) {
+        next(error)
+    }
+
+    
 })
 
 
@@ -84,7 +91,7 @@ router.use('/modify', async (req, res, next) => {
 })
 
 
-router.use('/estate_work', async (req, res, next) => {
+router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 
 
@@ -213,7 +220,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 })
 
 
-router.get('/user_manage', async (req, res, next) => {
+router.get('/user_manage', chkRateMaster,async (req, res, next) => {
     const masterLoadSql = `SELECT * FROM users WHERE rate = 5;`;
     const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
     const master_load = masterLoadTemp[0];
@@ -230,7 +237,7 @@ router.get('/user_manage', async (req, res, next) => {
     res.render('crm/user_manage', { master_load, user_list, location_list });
 })
 
-router.post('/user_manage', async (req, res, next) => {
+router.post('/user_manage', chkRateManager,async (req, res, next) => {
     console.log(req.body);
     if (req.body.pwd_val) {
         const hash = await bcrypt.hash(req.body.pwd_val, 12);
@@ -331,7 +338,7 @@ router.use('/estate_manage/detail/:id', async (req, res, next) => {
 })
 
 
-router.use('/', async (req, res, next) => {
+router.use('/', chkRateMaster, async (req, res, next) => {
     if (req.method == 'POST') {
         // 검증
         const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;

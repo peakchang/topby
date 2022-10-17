@@ -77,6 +77,7 @@ const sessionOption = {
     cookie: {
         httpOnly: true,
         secure: https_status,
+        maxAge: 60 * 1000 * 30,
     },
 };
 
@@ -102,11 +103,18 @@ app.use((req, res, next) => {
   });
   
   app.use((err, req, res, next) => {
+    console.log('------------------------------');
     console.error(err);
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
     res.status(err.status || 500);
-    errData = {err_chk : 'noPage'}
+
+    console.log(err.status);
+    if(err.code == 'ER_NO_SUCH_TABLE'){
+      var errData = '테이블이 존재하지 않습니다. 테이블을 추가해주세요'
+    }else if(err.status == 404){
+      var errData = '페이지가 존재하지 않습니다. 주소를 확인해주세요'
+    }
     res.render('error', { errData });
   });
 
