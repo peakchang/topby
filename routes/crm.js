@@ -30,7 +30,7 @@ router.use('/testdb_set', async (req, res, next) => {
 
 
 
-router.get('/all_data', chkRateMaster,async (req, res, next) => {
+router.get('/all_data', chkRateMaster, async (req, res, next) => {
 
     try {
         let allSearchSql = `SELECT * FROM webhookdatas ORDER BY wh_id DESC;`;
@@ -42,7 +42,7 @@ router.get('/all_data', chkRateMaster,async (req, res, next) => {
         next(error)
     }
 
-    
+
 })
 
 
@@ -103,12 +103,12 @@ router.use('/estate_manage/detail/:id', async (req, res, next) => {
     if (req.method == 'POST') {
         console.log(load_info);
         console.log(req.body.add_memo);
-        if(req.body.add_memo){
+        if (req.body.add_memo) {
             const addMemoSql = `INSERT INTO memos (mo_depend_id, mo_estate, mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?,?,?)`;
             const addMemoArr = [load_info[0].af_id, load_info[0].af_form_name, load_info[0].af_mb_phone, req.user.nick, req.body.write_memo, now];
 
             await sql_con.promise().query(addMemoSql, addMemoArr)
-        }else if(req.body.change_status){
+        } else if (req.body.change_status) {
             const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
             await sql_con.promise().query(updateStatusSql, [req.body.write_memo, req.params.id])
         }
@@ -153,6 +153,20 @@ router.use('/modify', async (req, res, next) => {
 
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
+    if (req.method == 'POST') {
+        console.log(req.body);
+        console.log(typeof (req.body.data_id));
+        if (typeof (req.body.data_id) == 'string') {
+            var delArr = [req.body.data_id]
+        } else {
+            var delArr = req.body.data_id
+        }
+
+        for await (const delOn of delArr) {
+            const delSql = `DELETE FROM application_form WHERE af_id = ?`;
+            await sql_con.promise().query(delSql, [delOn])
+        }
+    }
 
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
@@ -216,14 +230,33 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     var getEst = '';
 
     console.log(req.user.rate);
+    // if (req.user.rate < 5) {
+    //     if (req.query.est) {
+    //         var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+    //     } else {
+    //         for (let i = 0; i < getUserEstateList.length; i++) {
+    //             if (i == 0) {
+    //                 var setJull = 'AND'
+    //                 getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+    //             } else {
+    //                 var setJull = 'OR'
+    //                 getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+    //             }
+    //         }
+    //     }
+    // }
+
     if (req.user.rate < 5) {
         if (req.query.est) {
-            var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
         } else {
             for (let i = 0; i < getUserEstateList.length; i++) {
                 if (i == 0) {
-                    var setJull = 'AND'
+                    var setJull = 'WHERE'
                     getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                } else if (i == 1) {
+                    var setJull = 'AND'
+                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
                 } else {
                     var setJull = 'OR'
                     getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
@@ -234,7 +267,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
 
     if (req.query.status) {
-        var getStatus = `AND af_mb_status = '${req.query.status}'`;
+        if (getEst) {
+            var getStatus = `AND af_mb_status = '${req.query.status}'`;
+        } else {
+            var getStatus = `WHERE af_mb_status = '${req.query.status}'`;
+        }
     } else {
         var getStatus = '';
     }
@@ -244,7 +281,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     console.log(getStatus);
 
     // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
-    const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
+    // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
+    const allCountSql = `SELECT COUNT(*) FROM application_form ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
@@ -252,12 +290,15 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     if (req.user.rate < 5) {
         if (req.query.est) {
-            var getEst = `AND a.af_form_name LIKE '%${req.query.est}%'`;
+            var getEst = `WHERE a.af_form_name LIKE '%${req.query.est}%'`;
         } else {
             for (let i = 0; i < getUserEstateList.length; i++) {
                 if (i == 0) {
-                    var setJull = 'AND'
+                    var setJull = 'WHERE'
                     getEst = `${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                } else if (i == 1) {
+                    var setJull = 'AND'
+                    getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
                 } else {
                     var setJull = 'OR'
                     getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
@@ -267,7 +308,9 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     }
     // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql)
 
@@ -281,7 +324,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 })
 
 
-router.get('/user_manage', chkRateMaster,async (req, res, next) => {
+router.get('/user_manage', chkRateMaster, async (req, res, next) => {
     const masterLoadSql = `SELECT * FROM users WHERE rate = 5;`;
     const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
     const master_load = masterLoadTemp[0];
@@ -298,7 +341,7 @@ router.get('/user_manage', chkRateMaster,async (req, res, next) => {
     res.render('crm/user_manage', { master_load, user_list, location_list });
 })
 
-router.post('/user_manage', chkRateManager,async (req, res, next) => {
+router.post('/user_manage', chkRateManager, async (req, res, next) => {
     console.log(req.body);
     if (req.body.pwd_val) {
         const hash = await bcrypt.hash(req.body.pwd_val, 12);
