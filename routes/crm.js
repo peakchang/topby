@@ -67,6 +67,66 @@ router.post('/estate_work/delete', async (req, res, next) => {
 })
 
 
+router.use('/estate_work/detail/:id', async (req, res, next) => {
+    if (req.method == 'POST') {
+        console.log(req.params.id);
+    }
+
+    console.log(req.params.id);
+
+    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    console.log(LoadInfoSql);
+    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    const load_info = LoadInfoTemp[0];
+
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+    console.log(getStatusText[0][0]);
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
+})
+
+
+router.use('/estate_manage/detail/:id', async (req, res, next) => {
+
+    var LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+
+
+    var LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
+    var load_info = LoadInfoTemp[0];
+
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+
+
+    if (req.method == 'POST') {
+        console.log(load_info);
+        console.log(req.body.add_memo);
+        if(req.body.add_memo){
+            const addMemoSql = `INSERT INTO memos (mo_depend_id, mo_estate, mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?,?,?)`;
+            const addMemoArr = [load_info[0].af_id, load_info[0].af_form_name, load_info[0].af_mb_phone, req.user.nick, req.body.write_memo, now];
+
+            await sql_con.promise().query(addMemoSql, addMemoArr)
+        }else if(req.body.change_status){
+            const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
+            await sql_con.promise().query(updateStatusSql, [req.body.write_memo, req.params.id])
+        }
+
+    }
+
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await sql_con.promise().query(getStatusSql)
+
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    console.log(load_info);
+
+    res.render('crm/work_estate_detail', { load_info, estate_status_list });
+})
+
+
+
 
 
 router.use('/modify', async (req, res, next) => {
@@ -297,45 +357,6 @@ router.use('/test_axios', async (req, res, next) => {
 })
 
 
-router.use('/estate_work/detail/:id', async (req, res, next) => {
-    if (req.method == 'POST') {
-        console.log(req.params.id);
-    }
-
-    console.log(req.params.id);
-
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
-    console.log(LoadInfoSql);
-    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
-    const load_info = LoadInfoTemp[0];
-
-
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log(getStatusText[0][0]);
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    res.render('crm/work_estate_detail', { load_info, estate_status_list });
-})
-
-
-router.use('/estate_manage/detail/:id', async (req, res, next) => {
-    if (req.method == 'POST') {
-        console.log(req.params.id);
-    }
-
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
-    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
-    const load_info = LoadInfoTemp[0];
-
-
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log(getStatusText[0][0]);
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    res.render('crm/work_estate_detail', { load_info, estate_status_list });
-})
 
 
 router.use('/', chkRateMaster, async (req, res, next) => {
