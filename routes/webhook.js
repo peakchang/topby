@@ -103,7 +103,7 @@ router.post('/', async (req, res) => {
 
 
     const userFindSql = `SELECT * FROM users;`;
-    const userFind = await sql_con.promise().query(userFindSql)
+    const userFind = await mysql_conn.promise().query(userFindSql)
     var mailPushArr = []
     for await(const user of userFind[0]) {
         if (user.manage_estate) {
