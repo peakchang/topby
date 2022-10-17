@@ -101,6 +101,22 @@ router.post('/', async (req, res) => {
         console.log('암것도 포함 안됨!!');
     }
 
+    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId}`;
+
+    let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
+    await mysql_conn.promise().query(allDataSql, [getAllData]);
+
+    console.log('여기까지는 정상인가요??')
+    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+    const getStatusText = await mysql_conn.promise().query(getStatusSql)
+    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+
+    // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
+    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
+    let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+
+    await mysql_conn.promise().query(formInertSql, getArr)
+
 
     const userFindSql = `SELECT * FROM users;`;
     const userFind = await mysql_conn.promise().query(userFindSql)
@@ -115,8 +131,6 @@ router.post('/', async (req, res) => {
             }
         }
     }
-
-
     for await (const tatgetMail of mailPushArr) {
         const mailSubject = `${get_name} 고객 DB 접수되었습니다.`;
         const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
@@ -127,23 +141,6 @@ router.post('/', async (req, res) => {
     const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
     mailSender.sendEmail('adpeak@naver.com',mailSubject, mailContent);
     // mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
-    
-    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId}`;
-    console.log(getAllData);
-
-    let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
-    await mysql_conn.promise().query(allDataSql, [getAllData]);
-
-    console.log('여기까지는 정상인가요??')
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await mysql_conn.promise().query(getStatusSql)
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
-    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
-    let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
-
-    await mysql_conn.promise().query(formInertSql, getArr)
 
     res.sendStatus(200);
     console.log('success!!!!!');
