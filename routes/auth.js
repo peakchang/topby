@@ -82,7 +82,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
     } else if (req.query.move == 'auth') {
         var movePath = ''
     } else {
-        var movePath = ''
+        var movePath = '/crm/estate_manager'
     }
 
     passport.authenticate('local', (authError, user, info) => {

@@ -28,7 +28,7 @@ exports.chkRateManager = (req, res, next) => {
             res.send(`
             <script>
             alert('등급이 낮습니다. 관리자에게 문의 해주세요');
-            location.href = '/';
+            location.href = '/auth/login?move=/crm/estate_manager';
             </script>
             `)
         }
