@@ -101,10 +101,32 @@ router.post('/', async (req, res) => {
         console.log('암것도 포함 안됨!!');
     }
 
+
+    const userFindSql = `SELECT * FROM users;`;
+    const userFind = await sql_con.promise().query(userFindSql)
+    var mailPushArr = []
+    for await(const user of userFind[0]) {
+        if (user.manage_estate) {
+            var userEstates = user.manage_estate.split(',')
+            for (let i = 0; i < userEstates.length; i++) {
+                if (get_form_name.includes(userEstates[i])) {
+                    mailPushArr.push(user.user_email);
+                }
+            }
+        }
+    }
+
+
+    for await (const tatgetMail of mailPushArr) {
+        const mailSubject = `${get_name} 고객 DB 접수되었습니다.`;
+        const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+        mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
+    }
+
     const mailSubject = `${form_type_in} 고객명 ${get_name} 접수되었습니다.`;
-    const mailContent = `${form_type_in} 고객명 ${get_name} 접수되었습니다\n\ ${get_form_name} 폼에서 접수되었습니다.`;
+    const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
     mailSender.sendEmail('adpeak@naver.com',mailSubject, mailContent);
-    mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
+    // mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
     
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId}`;
     console.log(getAllData);
