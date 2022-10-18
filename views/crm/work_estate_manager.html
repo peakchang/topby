@@ -163,8 +163,6 @@
         </div>
     </form>
 </div>
-
-<div class="testaxios">alsdjfasdf</div>
 <script>
 
     $('.open_memo').click(function (e) {
@@ -304,7 +302,7 @@
         console.log();
         const thisId = this.parentNode.parentNode.firstElementChild.value
         var options = 'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no'
-        window.open(`estate_manage/detail/${thisId}`, '디테일', options)
+        window.open(`estate_detail/${thisId}`, '디테일', options)
     })
 </script>
 {% endblock %}

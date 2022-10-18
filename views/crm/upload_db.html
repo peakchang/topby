@@ -1,0 +1,47 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+
+<style>
+    .test {
+        border: 1px solid red;
+    }
+</style>
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="container grid grid-cols-2 max-w-4xl w-full lg:w-4/5 my-4 border border-gray-500 rounded-lg">
+        <div class="p-3">
+            <textarea name="dblist_text" id="" cols="30" rows="10" class="border w-full border-gray-800 rounded-xl p-2"></textarea>
+        </div>
+        <div class="py-2 text-center">
+            <div>
+                엑셀파일 선택
+                <input type="file" name="dblist_excel" id="" class="border  w-11/12 input_excel" accept=".xls,.xlsx">
+            </div>
+            <div class="mt-2">
+                <select name="set_estate" id="" class="border w-11/12 p-2 rounded-lg">
+                    <option value="">현장 선택</option>
+                </select>
+            </div>
+            <div class="mt-2">
+                <select name="set_marketer" id="" class="border w-11/12 p-2 rounded-lg">
+                    <option value="">마케팅 선택</option>
+                </select>
+            </div>
+            <div class="mt-2">
+                <button class="bg-green-700 p-2 text-white rounded-lg w-4/5">업로드</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $('.input_excel').change(function (e) {
+
+    })
+</script>
+
+
+
+{% endblock %}

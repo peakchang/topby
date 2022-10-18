@@ -4,10 +4,14 @@ const sql_con = require('../db_lib');
 const { executeQuery } = require('../db_lib/dbset.js');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const xlsx = require("xlsx");
+const multer = require('multer');
+const path = require('path');
 
 const { setDbData, getDbData } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
+const { Logform } = require('winston');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -16,7 +20,45 @@ router.use((req, res, next) => {
     next();
 });
 
+const uploadEx = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            const ext = path.extname(file.originalname); // 확장자 뽑기
+            console.log(file.originalname);
+            console.log(ext);
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+});
 
+// const uploadEx = multer({
+//     storage: multer.memoryStorage(),
+//     limits: { fileSize: 5 * 1024 * 1024 },
+// });
+
+
+const upload = multer();
+
+
+router.use('/upload_db', uploadEx.single('dblist_excel'), async (req, res, next) => {
+    console.log(req.body);
+    console.log(req.filename);
+    if (req.method == 'POST') {
+        if (req.filename) {
+            // const excelFile = xlsx.readFile('./uploads/naver_id.xlsx');
+            // console.log(excelFile);
+        } else {
+            console.log(req.body.dblist_text.split('\r\n'))
+        }
+    }
+    // const excelFile = xlsx.readFile( req.body.dblist_excel );
+    // console.log(excelFile);
+    res.render('crm/upload_db',)
+})
 
 router.use('/testdb_set', async (req, res, next) => {
     if (req.method == 'POST') {
@@ -66,32 +108,14 @@ router.post('/estate_work/delete', async (req, res, next) => {
     res.send(200);
 })
 
+router.use('/estate_detail/:id', async (req, res, next) => {
 
-router.use('/estate_work/detail/:id', async (req, res, next) => {
-    if (req.method == 'POST') {
-        console.log(req.params.id);
+    if (req.user.rate == 5) {
+        var LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
+    } else {
+        var LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
     }
 
-    console.log(req.params.id);
-
-    const LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
-    console.log(LoadInfoSql);
-    const LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
-    const load_info = LoadInfoTemp[0];
-
-
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
-    console.log(getStatusText[0][0]);
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    res.render('crm/work_estate_detail', { load_info, estate_status_list });
-})
-
-
-router.use('/estate_manage/detail/:id', async (req, res, next) => {
-
-    var LoadInfoSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id WHERE a.af_id = ? ORDER BY m.mo_id DESC`;
 
 
     var LoadInfoTemp = await sql_con.promise().query(LoadInfoSql, [req.params.id])
@@ -119,8 +143,6 @@ router.use('/estate_manage/detail/:id', async (req, res, next) => {
     const getStatusText = await sql_con.promise().query(getStatusSql)
 
     const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-    console.log(load_info);
 
     res.render('crm/work_estate_detail', { load_info, estate_status_list });
 })
@@ -230,22 +252,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     var getEst = '';
 
     console.log(req.user.rate);
-    // if (req.user.rate < 5) {
-    //     if (req.query.est) {
-    //         var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
-    //     } else {
-    //         for (let i = 0; i < getUserEstateList.length; i++) {
-    //             if (i == 0) {
-    //                 var setJull = 'AND'
-    //                 getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-    //             } else {
-    //                 var setJull = 'OR'
-    //                 getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-    //             }
-    //         }
-    //     }
-    // }
-
     if (req.user.rate < 5) {
         if (req.query.est) {
             var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
@@ -254,9 +260,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                 if (i == 0) {
                     var setJull = 'WHERE'
                     getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                } else if (i == 1) {
-                    var setJull = 'AND'
-                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
                 } else {
                     var setJull = 'OR'
                     getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
@@ -264,6 +267,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
     }
+
+
 
 
     if (req.query.status) {
@@ -296,9 +301,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                 if (i == 0) {
                     var setJull = 'WHERE'
                     getEst = `${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                } else if (i == 1) {
-                    var setJull = 'AND'
-                    getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
                 } else {
                     var setJull = 'OR'
                     getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
@@ -310,7 +312,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql)
 
