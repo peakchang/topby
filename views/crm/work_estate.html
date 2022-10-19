@@ -63,9 +63,16 @@
 
     <form method="post">
         <div class="text-right mb-1">
-            <button type="submit" name="delete" value="on" class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg chkdelete">삭제</button>
+            <button type="submit" name="delete" value="on"
+                class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg chkdelete">삭제</button>
+
+            <a href="/crm/down_db">
+                <span type="submit" name="delete" value="on"
+                    class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg">다운</span>
+            </a>
+
         </div>
-        
+
         <div class="table_wrap">
             <div class="table_area">
                 <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
@@ -175,11 +182,11 @@
 </div>
 
 <script>
-    $('.chkdelete').click(function(e){
-        if(!confirm('삭제하시겠습니까? 삭제된 DB는 복구가 불가합니다.')){
+    $('.chkdelete').click(function (e) {
+        if (!confirm('삭제하시겠습니까? 삭제된 DB는 복구가 불가합니다.')) {
             return false
         }
-        
+
     })
     $('input[name=ed]').click(function (e) {
         var preVal = this.value

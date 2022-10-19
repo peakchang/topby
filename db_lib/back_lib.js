@@ -158,7 +158,7 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
   var wData = tempData[0];
   var pageChkCount = allCount - (pageCount * (nowCount - 1));
   for await (const data of wData) {
-    if(getStatusList.indexOf(data.af_mb_status)){
+    if (getStatusList.indexOf(data.af_mb_status)) {
       data.status_color = getStatusColor[getStatusList.indexOf(data.af_mb_status)]
     }
     data.chkCount = pageChkCount;
@@ -171,9 +171,20 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
   all_data.pagingEndCount = pagingEndCount;
   all_data.nowCount = nowCount;
   all_data.status_list = getStatusList
-  
+
 
   return all_data
+}
+
+
+exports.getExLength = (worksheet) => {
+  var chkCount = 0;
+  var getVal = 'ready!'
+  while (getVal) {
+    chkCount++
+    var getVal = worksheet[`A${chkCount}`]
+  }
+  return chkCount - 1
 }
 
 

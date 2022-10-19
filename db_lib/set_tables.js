@@ -90,7 +90,8 @@ exports.tableSetting = async () => {
             fs_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             fs_estate_status VARCHAR(255),
             fs_estate_status_color VARCHAR(255),
-            fs_estate_list TEXT
+            fs_estate_list TEXT,
+            fs_marketer_list VARCHAR(255),
         );`
     try {
         sql_con.query(makeFormTypesTable, async (err, result) => { });

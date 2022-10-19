@@ -77,10 +77,11 @@ router.get('/login', isNotLoggedIn, (req, res, next) => {
     res.render('auth/login', { loginErr });
 });
 router.post('/login', isNotLoggedIn, (req, res, next) => {
-    if (req.query.move) {
+
+    if (req.query.move == '/auth') {
+        var movePath = '/crm/estate_manager'
+    } else if (req.query.move) {
         var movePath = req.query.move
-    } else if (req.query.move == 'auth') {
-        var movePath = ''
     } else {
         var movePath = '/crm/estate_manager'
     }
@@ -91,16 +92,14 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
             return next(authError);
         }
         if (!user) {
-            console.log(req.user);
             return res.redirect(`/auth/login/?loginError=${info.message}&move=${movePath}`)
         }
         return req.login(user, (loginError) => {
-            console.log(user);
-            console.log(req.session);
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
             }
+
             if (movePath) {
                 res.redirect(movePath)
             } else {

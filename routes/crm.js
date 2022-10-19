@@ -7,8 +7,10 @@ const router = express.Router();
 const xlsx = require("xlsx");
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs')
+const app_root_path = require('app-root-path').path;
 
-const { setDbData, getDbData } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData, getExLength } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform } = require('winston');
@@ -20,44 +22,70 @@ router.use((req, res, next) => {
     next();
 });
 
-const uploadEx = multer({
-    storage: multer.diskStorage({
-        destination(req, file, cb) {
-            cb(null, 'uploads/');
-        },
-        filename(req, file, cb) {
-            const ext = path.extname(file.originalname); // 확장자 뽑기
-            console.log(file.originalname);
-            console.log(ext);
-            cb(null, file.originalname);
-        },
-    }),
-    limits: { fileSize: 5 * 1024 * 1024 },
-});
+// const uploadEx = multer({
+//     storage: multer.diskStorage({
+//         destination(req, file, cb) {
+//             cb(null, 'uploads/');
+//         },
+//         filename(req, file, cb) {
+//             const ext = path.extname(file.originalname); // 확장자 뽑기
+//             console.log(file.originalname);
+//             console.log(ext);
+//             cb(null, file.originalname);
+//         },
+//     }),
+//     limits: { fileSize: 5 * 1024 * 1024 },
+// });
 
 // const uploadEx = multer({
 //     storage: multer.memoryStorage(),
 //     limits: { fileSize: 5 * 1024 * 1024 },
 // });
+// const excelFile = xlsx.readFile(`./uploads/${req.file.originalname}`);
+// let worksheet = excelFile.Sheets["Sheet1"]
+// const wsLength = getExLength(worksheet)
+// console.log(wsLength);
+
+// const upload = multer();
 
 
-const upload = multer();
+router.get('/down_db', async(req, res, next) => {
+    console.log(app_root_path);
+    const 파일명 = 'file.txt';  
+    res.setHeader('Content-Disposition', `attachment; filename=${파일명}`); // 이게 핵심 
+    res.sendFile(app_root_path + '/uploads/life cycle.txt');
+})
 
 
-router.use('/upload_db', uploadEx.single('dblist_excel'), async (req, res, next) => {
-    console.log(req.body);
-    console.log(req.filename);
+router.use('/upload_db', async (req, res, next) => {
+    console.log(__dirname);
     if (req.method == 'POST') {
-        if (req.filename) {
-            // const excelFile = xlsx.readFile('./uploads/naver_id.xlsx');
-            // console.log(excelFile);
-        } else {
-            console.log(req.body.dblist_text.split('\r\n'))
+        console.log()
+        const getDbList = req.body.dblist_text.split('\r\n');
+        var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+
+        var formName = req.body.set_estate
+        if(req.body.set_estate_memo){
+            var formName = formName + ' ' + req.body.set_estate_memo;
+        }
+
+        for await(const getDb of getDbList) {
+            const spliceDb = getDb.split(',');
+            const insertDbSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_created_at) VALUES (?,?,?,?,?,?,?)`;
+            const insertDbArr = [formName, '분양', req.body.set_marketer, spliceDb[0], spliceDb[1], '', now]
+            await sql_con.promise().query(insertDbSql, insertDbArr)
         }
     }
-    // const excelFile = xlsx.readFile( req.body.dblist_excel );
-    // console.log(excelFile);
-    res.render('crm/upload_db',)
+
+    const getFormStatusSql = `SELECT * FROM form_status WHERE fs_id=1`;
+    const getFormStatus = await sql_con.promise().query(getFormStatusSql)
+    const getForm = getFormStatus[0][0];
+    console.log(getForm);
+    const estate_list = getForm.fs_estate_list.split(',');
+    const marketer_list = getForm.fs_marketer_list.split(',');
+
+
+    res.render('crm/upload_db', {estate_list, marketer_list})
 })
 
 router.use('/testdb_set', async (req, res, next) => {
@@ -411,18 +439,21 @@ router.use('/', chkRateMaster, async (req, res, next) => {
         const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
-            let insertArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list];
-            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_estate_list) VALUES (?,?,?);`;
+            const marketerList = 'FB,' + req.body.marketer_list
+            let insertArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list, marketerList];
+            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_estate_list, fs_marketer_list) VALUES (?,?,?,?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
-            let updatetArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list];
-            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_estate_list=? WHERE fs_id=1`;
+            const marketerList = 'FB,' + req.body.marketer_list
+            let updatetArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list, marketerList];
+            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_estate_list=?, fs_marketer_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }
     const resultSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
+    result.fs_marketer_list = result.fs_marketer_list.replace('FB,','')
     res.render('crm/crm_main', { result });
 })
 

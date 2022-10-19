@@ -10,24 +10,35 @@
 </style>
 
 
-<form method="post" enctype="multipart/form-data">
+<form method="post">
     <div class="container grid grid-cols-2 max-w-4xl w-full lg:w-4/5 my-4 border border-gray-500 rounded-lg">
         <div class="p-3">
             <textarea name="dblist_text" id="" cols="30" rows="10" class="border w-full border-gray-800 rounded-xl p-2"></textarea>
         </div>
         <div class="py-2 text-center">
-            <div>
+            <!-- <div>
                 엑셀파일 선택
                 <input type="file" name="dblist_excel" id="" class="border  w-11/12 input_excel" accept=".xls,.xlsx">
-            </div>
+            </div> -->
             <div class="mt-2">
                 <select name="set_estate" id="" class="border w-11/12 p-2 rounded-lg">
                     <option value="">현장 선택</option>
+                    {% for estate in estate_list %}
+                    <option value="{{estate}}">{{estate}}</option>
+                    {% endfor %}
+
                 </select>
+            </div>
+            <div class="mt-2 flex w-11/12 mx-auto">
+                <span class="w-1/4 flex justify-center items-center">추가메모</span>
+                <input type="text" name="set_estate_memo" class="border w-full p-2 rounded-lg">
             </div>
             <div class="mt-2">
                 <select name="set_marketer" id="" class="border w-11/12 p-2 rounded-lg">
-                    <option value="">마케팅 선택</option>
+                    <option value="">마케터 선택</option>
+                    {% for marketer in marketer_list %}
+                    <option value="{{marketer}}">{{marketer}}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="mt-2">
