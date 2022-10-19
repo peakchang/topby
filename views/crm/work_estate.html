@@ -58,17 +58,14 @@
 
         </div>
 
-    </form>
 
-
-    <form method="post">
         <div class="text-right mb-1">
-            <button type="submit" name="delete" value="on"
+            <button type="button" name="delete" value="on"
                 class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg chkdelete">삭제</button>
 
-            <a href="/crm/down_db">
+            <a href="/crm/down_db{{add_query}}">
                 <span type="submit" name="delete" value="on"
-                    class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg">다운</span>
+                    class="ml-2 text-sm py-1 px-4 bg-red-500 text-white rounded-lg">다운</button>
             </a>
 
         </div>
@@ -114,7 +111,6 @@
 
                 </table>
             </div>
-
 
             <nav aria-label="Page navigation example" class="text-center mt-4">
                 <ul class="inline-flex items-center -space-x-px mx-auto">
@@ -183,9 +179,29 @@
 
 <script>
     $('.chkdelete').click(function (e) {
+
         if (!confirm('삭제하시겠습니까? 삭제된 DB는 복구가 불가합니다.')) {
             return false
         }
+
+
+        var onChk = document.querySelectorAll('.on_chk');
+        var onChkArr = []
+        for (let i = 0; i < onChk.length; i++) {
+            if (onChk[i].checked) {
+                onChkArr.push(onChk[i].value)
+            }
+        }
+
+        axios.post('/crm/estate_work/delete', { set_db_list: onChkArr }).then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.error(err);
+        })
+
+
+
+
 
     })
     $('input[name=ed]').click(function (e) {
@@ -248,7 +264,7 @@
         }
 
         $.ajax({
-            method: 'post', url: '/crm/estate_work/delete', data: { set_db_list }, success: function (data) {
+            method: 'post', url: '/crm/estate_work/update', data: { set_db_list }, success: function (data) {
                 location.reload()
             }, error: function (err) {
                 console.log(err);

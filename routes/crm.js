@@ -9,6 +9,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs')
 const app_root_path = require('app-root-path').path;
+var url = require('url');
 
 const { setDbData, getDbData, getExLength } = require('../db_lib/back_lib.js');
 
@@ -48,12 +49,57 @@ router.use((req, res, next) => {
 
 // const upload = multer();
 
+router.get('/test', (req, res, next) => {
+    res.send('aldsjflaisjdflajsdf')
+})
 
-router.get('/down_db', async(req, res, next) => {
+router.get('/down_db', async (req, res, next) => {
+
+    var addQuery = '';
+    if (req.query.sd || req.query.ed) {
+        var addQuery = `WHERE af_created_at > '${req.query.sd}' AND af_created_at < '${req.query.ed}'`;
+    }
+
+    if (req.query.sd && req.query.est != '') {
+        var addQuery = addQuery + `AND af_form_name LIKE '%${req.query.est}%'`;
+    } else if (req.query.est && req.query.est != '') {
+        var addQuery = `WHERE af_form_name LIKE '%${req.query.est}%'`;
+    }
+
+
+    if (req.query.sd && req.query.status != '' || req.query.est && req.query.status != '') {
+        var addQuery = addQuery + `AND af_mb_status = '${req.query.status}'`;
+    } else if (req.query.status && req.query.status != '') {
+        var addQuery = `WHERE af_mb_status = '${req.query.status}'`;
+    }
+
+    const downDbSql = `SELECT * FROM application_form ${addQuery} GROUP BY af_mb_phone ORDER BY af_id DESC`;
+    console.log(downDbSql);
+    const downDbList = await sql_con.promise().query(downDbSql)
+    console.log(downDbList[0]);
+
+
+
+
+    fs.open(`${app_root_path}/public/temp/down.txt`, 'a', function (err, fd) {
+        for (const downDb of downDbList[0]) {
+            let data = `${downDb.af_mb_name},${downDb.af_mb_phone}\r\n`
+            fs.appendFileSync(`${app_root_path}/public/temp/down.txt`, data, 'utf8');
+        }
+    })
+
+
+    // fs.writeFile(`${app_root_path}/public/temp/down.txt`, data, 'utf8', function (err, fd) { });
+
+
+
     console.log(app_root_path);
-    const 파일명 = 'file.txt';  
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    const 파일명 = 'file.txt';
     res.setHeader('Content-Disposition', `attachment; filename=${파일명}`); // 이게 핵심 
-    res.sendFile(app_root_path + '/uploads/life cycle.txt');
+    res.sendFile(`${app_root_path}/public/temp/down.txt`);
+
+    // fs.unlink(`${app_root_path}/public/temp/down.txt`, err => {});
 })
 
 
@@ -65,11 +111,11 @@ router.use('/upload_db', async (req, res, next) => {
         var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
         var formName = req.body.set_estate
-        if(req.body.set_estate_memo){
+        if (req.body.set_estate_memo) {
             var formName = formName + ' ' + req.body.set_estate_memo;
         }
 
-        for await(const getDb of getDbList) {
+        for await (const getDb of getDbList) {
             const spliceDb = getDb.split(',');
             const insertDbSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_created_at) VALUES (?,?,?,?,?,?,?)`;
             const insertDbArr = [formName, '분양', req.body.set_marketer, spliceDb[0], spliceDb[1], '', now]
@@ -85,7 +131,7 @@ router.use('/upload_db', async (req, res, next) => {
     const marketer_list = getForm.fs_marketer_list.split(',');
 
 
-    res.render('crm/upload_db', {estate_list, marketer_list})
+    res.render('crm/upload_db', { estate_list, marketer_list })
 })
 
 router.use('/testdb_set', async (req, res, next) => {
@@ -116,7 +162,7 @@ router.get('/all_data', chkRateMaster, async (req, res, next) => {
 })
 
 
-router.post('/estate_work/delete', async (req, res, next) => {
+router.post('/estate_work/update', async (req, res, next) => {
     const set_db_list = req.body['set_db_list[]'];
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
@@ -131,6 +177,17 @@ router.post('/estate_work/delete', async (req, res, next) => {
             let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${on_db_id}`;
             await sql_con.promise().query(updateSql)
         }
+    }
+
+    res.send(200);
+})
+
+
+router.post('/estate_work/delete', async (req, res, next) => {
+    var delArr = [req.body.set_db_list]
+    for await (const delOn of delArr) {
+        const delSql = `DELETE FROM application_form WHERE af_id = ?`;
+        await sql_con.promise().query(delSql, [delOn])
     }
 
     res.send(200);
@@ -203,19 +260,11 @@ router.use('/modify', async (req, res, next) => {
 
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
+    console.log('이것이 URL이란 말인가????' + req.url);
     if (req.method == 'POST') {
-        console.log(req.body);
-        console.log(typeof (req.body.data_id));
-        if (typeof (req.body.data_id) == 'string') {
-            var delArr = [req.body.data_id]
-        } else {
-            var delArr = req.body.data_id
-        }
 
-        for await (const delOn of delArr) {
-            const delSql = `DELETE FROM application_form WHERE af_id = ?`;
-            await sql_con.promise().query(delSql, [delOn])
-        }
+
+
     }
 
 
@@ -228,8 +277,8 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
     var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
     var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
-    var startDay = req.query.sd ? req.query.sd : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    var startDay = req.query.sd ? req.query.sd : moment(Date.now()).format('YYYY-MM-DD');
+    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
     var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${req.query.sd}' AND af_created_at < '${req.query.ed}'` : '';
     var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${req.query.sd}' AND a.af_created_at < '${req.query.ed}'` : '';
 
@@ -249,9 +298,13 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     all_data.sc = req.query.sc
     all_data.sd = startDay
     all_data.ed = endDay
+    add_query = req.url;
+
+    console.log(startDay);
+    console.log(endDay);
 
     // console.log(all_data);
-    res.render('crm/work_estate', { all_data });
+    res.render('crm/work_estate', { all_data, add_query });
 })
 
 
@@ -453,7 +506,7 @@ router.use('/', chkRateMaster, async (req, res, next) => {
     const resultSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
-    result.fs_marketer_list = result.fs_marketer_list.replace('FB,','')
+    result.fs_marketer_list = result.fs_marketer_list.replace('FB,', '')
     res.render('crm/crm_main', { result });
 })
 
