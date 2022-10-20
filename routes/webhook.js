@@ -91,15 +91,15 @@ router.post('/', async (req, res) => {
 
     if (get_form_name.includes('인터넷')) {
         var form_type_in = '인터넷'
-        console.log('인터넷 포함!!');
         await sendSms(get_phone, sendMsg)
-    } else if (get_form_name.includes('분양')) {
-        console.log('분양 포함!!');
-        var form_type_in = '분양'
     } else {
-        var form_type_in = '미정'
-        console.log('암것도 포함 안됨!!');
+        var form_type_in = '분양'
     }
+
+    // else if (get_form_name.includes('분양')) {
+    //     console.log('분양 포함!!');
+    //     var form_type_in = '분양'
+    // } 
 
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId}`;
 
