@@ -3,11 +3,39 @@ const express = require('express');
 const sql_con = require('../db_lib');
 const router = express.Router();
 
+const fs = require('fs')
 
 router.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
+
+
+
+router.use('/test', (req, res, next) => {
+
+    const file = "test.txt";
+    const data = "테스트";
+
+
+    var datas = testFunc(file, data);
+    console.log('이 부분은 어떻게 동작을 할까요?????');
+    // fs.unlinkSync(file, data, (err) => console.log(err));
+
+    console.log(datas);
+    res.send('aldsjflaisjdflajsdf')
+})
+
+function testFunc(file, data){
+    fs.writeFile(file, '', (err) => {
+        console.log('asldfjaisjdf');
+        for (let i = 0; i < 10; i++) {
+            fs.appendFile(file, `이정도면 ${i}\n`, (err) => {})
+        }
+    });
+    
+    return fs.readFileSync(file, 'utf8');
+}
 
 
 router.get('/', (req, res, next) => {
@@ -42,32 +70,6 @@ router.post('/policy', (req, res, next) => {
 })
 
 
-router.use('/test', async (req, res, next) => {
 
-    
-    // // const testSql = `UPDATE users SET rate = 5 WHERE userid = 'master';`;
-    // const testSql = `SELECT * FROM users;`;
-    // const results = await sql_con.promise().query(testSql)
-    // // console.log(results[0]);
-
-    // var testChk = '안성라포르테';
-
-    // var mailPushArr = []
-    // for (const user of results[0]) {
-    //     if (user.manage_estate) {
-    //         var userEstates = user.manage_estate.split(',')
-    //         for (let i = 0; i < userEstates.length; i++) {
-    //             if (testChk.includes(userEstates[i])) {
-    //                 mailPushArr.push(user.user_email);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // console.log(mailPushArr);
-
-
-    res.send('sldjfaldsjfliajsdlfjasdf')
-})
 
 module.exports = router;

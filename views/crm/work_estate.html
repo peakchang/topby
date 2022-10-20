@@ -29,7 +29,7 @@
             ~
             <input type="date" class="border rounded-lg py-1 px-2 text-sm" name="ed" value="{{ all_data.ed }}">
 
-            
+
             <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
                 <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
@@ -195,7 +195,7 @@
         }
 
         axios.post('/crm/estate_work/delete', { set_db_list: onChkArr }).then((res) => {
-            console.log(res);
+            location.reload()
         }).catch((err) => {
             console.error(err);
         })

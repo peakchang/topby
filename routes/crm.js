@@ -49,11 +49,11 @@ router.use((req, res, next) => {
 
 // const upload = multer();
 
-router.get('/test', (req, res, next) => {
-    res.send('aldsjflaisjdflajsdf')
-})
 
-router.get('/down_db', async (req, res, next) => {
+
+router.get('/down_db', chkRateMaster,async (req, res, next) => {
+    var pathBasic = `${app_root_path}/public/temp/down.txt`;
+    fs.writeFile(pathBasic, '', (err) => {});
 
     var addQuery = '';
     if (req.query.sd || req.query.ed) {
@@ -74,36 +74,28 @@ router.get('/down_db', async (req, res, next) => {
     }
 
     const downDbSql = `SELECT * FROM application_form ${addQuery} GROUP BY af_mb_phone ORDER BY af_id DESC`;
-    console.log(downDbSql);
     const downDbList = await sql_con.promise().query(downDbSql)
-    console.log(downDbList[0]);
+
+    console.log(downDbSql);
 
 
-
-
-    fs.open(`${app_root_path}/public/temp/down.txt`, 'a', function (err, fd) {
-        for (const downDb of downDbList[0]) {
-            let data = `${downDb.af_mb_name},${downDb.af_mb_phone}\r\n`
-            fs.appendFileSync(`${app_root_path}/public/temp/down.txt`, data, 'utf8');
-        }
-    })
-
-
-    // fs.writeFile(`${app_root_path}/public/temp/down.txt`, data, 'utf8', function (err, fd) { });
-
-
-
-    console.log(app_root_path);
-    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-    const 파일명 = 'file.txt';
-    res.setHeader('Content-Disposition', `attachment; filename=${파일명}`); // 이게 핵심 
+    for (const downDb of downDbList[0]) {
+        const db_name = downDb.af_mb_name
+        const db_phone = downDb.af_mb_phone
+        fs.appendFileSync(pathBasic, `${db_name},${db_phone}\n`, (err) => { })
+    }
+    
+    var now = moment(Date.now()).format('YYYY-MM-DD');
+    const downFileName = `${now}_file.txt`;
+    res.setHeader('Content-Disposition', `attachment; filename=${downFileName}`); // 이게 핵심 
     res.sendFile(`${app_root_path}/public/temp/down.txt`);
 
-    // fs.unlink(`${app_root_path}/public/temp/down.txt`, err => {});
+
+
 })
 
 
-router.use('/upload_db', async (req, res, next) => {
+router.use('/upload_db', chkRateMaster, async (req, res, next) => {
     console.log(__dirname);
     if (req.method == 'POST') {
         console.log()
@@ -288,7 +280,7 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     var startDay = req.query.sd ? req.query.sd : moment(Date.now()).subtract(mDays, 'days').format('YYYY-MM-DD');
     var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
     var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
-    
+
     var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
     var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
@@ -417,6 +409,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
 
 router.get('/user_manage', chkRateMaster, async (req, res, next) => {
+
     const masterLoadSql = `SELECT * FROM users WHERE rate = 5;`;
     const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
     const master_load = masterLoadTemp[0];
@@ -434,7 +427,6 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
 })
 
 router.post('/user_manage', chkRateManager, async (req, res, next) => {
-    console.log(req.body);
     if (req.body.pwd_val) {
         const hash = await bcrypt.hash(req.body.pwd_val, 12);
         const valArr = [hash, req.body.id_val]
@@ -455,6 +447,10 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
         const valArr = [req.body.id_val]
         const locationDeleteSql = `UPDATE users SET manage_estate = '' WHERE id = ?;`;
         await sql_con.promise().query(locationDeleteSql, valArr);
+    } else if (req.body.email_val){
+        const valArr = [req.body.email_val, req.body.id_val]
+        const emailUpdateSql = `UPDATE users SET user_email = ? WHERE id = ?;`;
+        await sql_con.promise().query(emailUpdateSql, valArr);
     }
     res.send(200)
 })
@@ -516,10 +512,10 @@ router.use('/', chkRateMaster, async (req, res, next) => {
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
 
-    if(result.fs_marketer_list){
+    if (result.fs_marketer_list) {
         result.fs_marketer_list = result.fs_marketer_list.replace('FB,', '')
     }
-    
+
     res.render('crm/crm_main', { result });
 })
 

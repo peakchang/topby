@@ -25,6 +25,7 @@
                         <th class="border border-slate-300 py-2 text-center">닉네임</th>
                         <th class="border border-slate-300 py-2 text-center">등급</th>
                         <th class="border border-slate-300 py-2 text-center">비번 변경</th>
+                        <th class="border border-slate-300 py-2 text-center">이메일</th>
                         <th class="border border-slate-300 py-2 text-center">관리 현장</th>
                         <th class="border border-slate-300 py-2 text-center">가입일</th>
                     </tr>
@@ -47,6 +48,14 @@
                             <button type="button"
                                 class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
                         </td>
+
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{master.user_email}}">
+                            <button type="button"
+                                class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                        </td>
+
+                        
                         <td class="border border-slate-300 p-2 text-center"></td>
                         <td class="border border-slate-300 p-2 text-center">
                             {{master.created_at | date("YY/MM/DD HH:mm:ss")}}
@@ -83,6 +92,12 @@
                             <input type="password" class="border border-gray-400 py-1 px-3 rounded">
                             <button type="button"
                                 class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                        </td>
+
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{user.user_email}}">
+                            <button type="button"
+                                class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
                         </td>
                         <td class="border border-slate-300 p-2 text-center">
 
@@ -150,6 +165,33 @@
             }
         })
     })
+
+    $('.change_email').click(function () {
+        const email_val = this.previousElementSibling.value;
+        const id_val = this.parentNode.parentNode.firstElementChild.value
+        console.log(email_val);
+        console.log(id_val);
+
+
+        axios.post('/crm/user_manage', {email_val, id_val}).then((res) => {
+            console.log(res);
+            location.reload()
+        }).catch((err) => {
+            console.log(err);
+        })
+
+        // $.ajax({
+        //     method: 'post', url: '/crm/user_manage', data: { email_val, id_val }, success: function (e) {
+        //         console.log('성공!!!');
+        //         location.reload()
+        //     }, error: function (err) {
+        //         console.log(err);
+        //     }
+        // })
+    })
+
+
+    
 
     $('.change_rate').click(function () {
         const rate_val = this.previousElementSibling.value;
