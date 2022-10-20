@@ -287,7 +287,7 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
     var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
-    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
+    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE ${sdCountQ} ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
