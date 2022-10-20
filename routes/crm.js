@@ -277,10 +277,15 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
     var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
     var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
+
+
+
     var startDay = req.query.sd ? req.query.sd : moment(Date.now()).format('YYYY-MM-DD');
     var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
-    var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${req.query.sd}' AND af_created_at < '${req.query.ed}'` : '';
-    var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${req.query.sd}' AND a.af_created_at < '${req.query.ed}'` : '';
+    var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
+    
+    var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
+    var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
     const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
     const allCountQuery = await sql_con.promise().query(allCountSql)
@@ -299,9 +304,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     all_data.sd = startDay
     all_data.ed = endDay
     add_query = req.url;
-
-    console.log(startDay);
-    console.log(endDay);
 
     // console.log(all_data);
     res.render('crm/work_estate', { all_data, add_query });
