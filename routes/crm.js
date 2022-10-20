@@ -283,7 +283,7 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
     var startDay = req.query.sd ? req.query.sd : moment(Date.now()).format('YYYY-MM-DD');
     var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
     var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
-    
+
     var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
     var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
@@ -508,7 +508,11 @@ router.use('/', chkRateMaster, async (req, res, next) => {
     const resultSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
-    result.fs_marketer_list = result.fs_marketer_list.replace('FB,', '')
+
+    if(result.fs_marketer_list){
+        result.fs_marketer_list = result.fs_marketer_list.replace('FB,', '')
+    }
+    
     res.render('crm/crm_main', { result });
 })
 
