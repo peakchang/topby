@@ -188,6 +188,8 @@ exports.getExLength = (worksheet) => {
 }
 
 
+
+
 function phNumBar(value) {
   value = value.replace(/[^0-9]/g, "");
   return value.replace(
