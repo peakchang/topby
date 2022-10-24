@@ -246,18 +246,21 @@ ${customerInfo.ciSite} 관심고객으로 등록해 주셔서 감사드립니다
 * 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람을 받기 위해 신청자에게만 발송되는 메시지입니다.`,
     }
 
-    console.log(req.body);
+    // console.log(req.body);
 
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
           console.log('alligo', r);
+          console.log('kakao send is success!!!!!!!!!!!!');
           resolve(true);
         }).catch((e) => {
           console.error('err', e)
-          reject(false)
+          console.log('kakao send is false T.T');
+          reject(false);
         })
       } else {
+        console.log('kakao send is false T.T');
         // console.log(2)
         resolve(true)
       }
