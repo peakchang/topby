@@ -482,6 +482,16 @@ router.post('/use_axios', async (req, res, next) => {
     }else if(req.body.siteVal){
         const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
         await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
+    }else if(req.body.delVal){
+        console.log(req.body.siteUpdateList);
+        console.log(req.body.siteNameList);
+        console.log(req.body.siteLinkList);
+
+        // for (const update_id of siteUpdateList) {
+        //     let updateSql = `UPDATE site_list SET sl_site_name`
+        // }
+        // const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
+        // await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
     }
 
 
