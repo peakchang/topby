@@ -135,8 +135,12 @@ router.post('/', async (req, res) => {
     await mysql_conn.promise().query(formInertSql, getArr)
 
 
-    const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%?%';`;
-    const findUserData = await mysql_conn.promise().query(userFindSql, [get_form_name])
+
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+
+
+    const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
+    const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName])
     const findUser = findUserData[0][0];
 
     console.log(userFindSql);
@@ -165,9 +169,9 @@ router.post('/', async (req, res) => {
     //     mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
     // }
 
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+    
     const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
-    const mailContent = `현장: ${get_form_name} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+    const mailContent = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
     mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
     mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
