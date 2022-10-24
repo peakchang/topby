@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 
     let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
     let formData = await doRequest({ uri: formUrl });
-    
+
 
     let getLeadsData = JSON.parse(LeadsData)
     let getFormData = JSON.parse(formData)
@@ -77,14 +77,26 @@ router.post('/', async (req, res) => {
 
     let getLeadsData = JSON.parse(LeadsData)
     let getFormData = JSON.parse(formData)
-    
+
     // 이름
-    let get_name = getLeadsData.field_data[0].values[0];
-    let temp_phone = getLeadsData.field_data[1].values[0]
+    var get_name = getLeadsData.field_data[0].values[0];
+    var temp_phone = getLeadsData.field_data[1].values[0]
     if (temp_phone.includes('+820')) {
         var get_phone = temp_phone.replace('+820', '0')
-    } else {
+    } else if (temp_phone.includes('+82')) {
         var get_phone = temp_phone.replace('+82', '0')
+    } else {
+
+
+        var temp_phone = getLeadsData.field_data[0].values[0];
+        var get_name = getLeadsData.field_data[1].values[0];
+        if (temp_phone.includes('+820')) {
+            var get_phone = temp_phone.replace('+820', '0')
+        } else if (temp_phone.includes('+82')) {
+            var get_phone = temp_phone.replace('+82', '0')
+        }
+
+
     }
     let get_created_time = getLeadsData.created_time
     let get_form_name = getFormData.name
@@ -118,29 +130,58 @@ router.post('/', async (req, res) => {
     await mysql_conn.promise().query(formInertSql, getArr)
 
 
-    const userFindSql = `SELECT * FROM users;`;
-    const userFind = await mysql_conn.promise().query(userFindSql)
-    var mailPushArr = []
-    for await(const user of userFind[0]) {
-        if (user.manage_estate) {
-            var userEstates = user.manage_estate.split(',')
-            for (let i = 0; i < userEstates.length; i++) {
-                if (get_form_name.includes(userEstates[i])) {
-                    mailPushArr.push(user.user_email);
-                }
-            }
-        }
-    }
-    for await (const tatgetMail of mailPushArr) {
-        const mailSubject = `${get_name} 고객 DB 접수되었습니다.`;
-        const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
-        mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
+    const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%?%';`;
+    const findUserData = await mysql_conn.promise().query(userFindSql, [get_form_name])
+    const findUser = findUserData[0][0];
+
+
+
+
+
+    const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
+    const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+    mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
+
+    // var mailPushArr = []
+    // for await(const user of userFind[0]) {
+    //     if (user.manage_estate) {
+    //         var userEstates = user.manage_estate.split(',')
+    //         for (let i = 0; i < userEstates.length; i++) {
+    //             if (get_form_name.includes(userEstates[i])) {
+    //                 mailPushArr.push(user.user_email);
+    //             }
+    //         }
+    //     }
+    // }
+    // for await (const tatgetMail of mailPushArr) {
+    //     const mailSubject = `${get_name} 고객 DB 접수되었습니다.`;
+    //     const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+    //     mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
+    // }
+
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+    const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
+    const mailContent = `현장: ${get_form_name} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+    mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
+    mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
+
+
+    // 고객한테 갈 알림톡
+
+
+    const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
+    const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
+    const getSiteInfo = getSiteInfoData[0][0];
+
+    if (getSiteInfo.sl_site_link) {
+        var siteList = getSiteInfo.sl_site_link
+    } else {
+        var siteList = '정보없음'
     }
 
-    const mailSubject = `${form_type_in} 고객명 ${get_name} 접수되었습니다.`;
-    const mailContent = `현장: ${get_form_name} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
-    mailSender.sendEmail('adpeak@naver.com',mailSubject, mailContent);
-    mailSender.sendEmail('changyong112@naver.com',mailSubject, mailContent);
+    var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: '1644-9714', ciSiteLink: siteList, ciReceiver: get_phone }
+    aligoKakaoNotification(req, customerInfo)
+
 
     res.sendStatus(200);
     console.log('success!!!!!');
