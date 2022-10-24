@@ -138,7 +138,7 @@ router.post('/', async (req, res) => {
 
 
     var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
-
+    console.log(reFormName);
 
     const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
     const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
