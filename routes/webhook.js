@@ -101,6 +101,7 @@ router.post('/', async (req, res) => {
 
     }
     let get_created_time = getLeadsData.created_time
+    console.log(getFormData);
     let get_form_name = getFormData.name
 
     if (get_form_name.includes('인터넷')) {
@@ -183,8 +184,10 @@ router.post('/', async (req, res) => {
     const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
     const getSiteInfo = getSiteInfoData[0][0];
 
+    
     console.log(getSiteInfoSql);
     console.log('***************** pass END!!!!');
+    console.log(getSiteInfo);
 
     if (getSiteInfo.sl_site_link) {
         var siteList = getSiteInfo.sl_site_link
