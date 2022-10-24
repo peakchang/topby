@@ -146,6 +146,7 @@ router.post('/', async (req, res) => {
 
     console.log(userFindSql);
     console.log('***************** pass second');
+    console.log(findUser);
 
 
 
