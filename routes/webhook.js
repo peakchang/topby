@@ -141,7 +141,7 @@ router.post('/', async (req, res) => {
 
 
     const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
-    const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName])
+    const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
     const findUser = findUserData[0][0];
 
     console.log(userFindSql);
@@ -195,7 +195,7 @@ router.post('/', async (req, res) => {
         var siteList = '정보없음'
     }
 
-    var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: '1644-9714', ciSiteLink: siteList, ciReceiver: get_phone }
+    var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
     aligoKakaoNotification(req, customerInfo)
 
 

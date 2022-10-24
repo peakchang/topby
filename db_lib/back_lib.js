@@ -222,13 +222,6 @@ exports.aligoKakaoNotification = async (req, customerInfo) => {
       }
     })
 
-    var 고객명 = '박창현'
-    var 업체명 = '탑분양정보'
-    var 현장명 = '똥개현장'
-    var 연락처 = '1644-9714'
-    var 현장링크 = 'http://adpeak.kr'
-
-
     req.body = {
       senderkey: process.env.ALIGO_SENDERKEY,
       tpl_code: 'TK_3802',
