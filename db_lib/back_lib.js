@@ -2,6 +2,8 @@
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const sql_con = require('../db_lib');
+const aligoapi = require('aligoapi')
+
 
 /** 알리고 문자 발송  **/
 exports.sendSms = (receivers, message) => {
@@ -187,6 +189,85 @@ exports.getExLength = (worksheet) => {
   return chkCount - 1
 }
 
+
+exports.aligoKakaoNotification = async (req, customerInfo) => {
+  try {
+    const AuthData = {
+      apikey: process.env.ALIGOKEY,
+      // 이곳에 발급받으신 api key를 입력하세요
+      userid: process.env.ALIGOID,
+      // 이곳에 userid를 입력하세요
+    }
+
+    req.body = {
+      type: 'i',  // 유효시간 타입 코드 // y(년), m(월), d(일), h(시), i(분), s(초)
+      time: 1, // 유효시간
+    }
+    // console.log('req.body', req.body)
+
+    const result = await new Promise((resolve, reject) => {
+      if (true) {
+        aligoapi.token(req, AuthData)
+          .then((r) => {
+            // console.log('alligo', r);
+            resolve(r);
+          })
+          .catch((e) => {
+            // console.error('err', e)
+            reject(e)
+          })
+      } else {
+        // console.log(2)
+        resolve(true)
+      }
+    })
+
+    var 고객명 = '박창현'
+    var 업체명 = '탑분양정보'
+    var 현장명 = '똥개현장'
+    var 연락처 = '1644-9714'
+    var 현장링크 = 'http://adpeak.kr'
+
+
+    req.body = {
+      senderkey: process.env.ALIGO_SENDERKEY,
+      tpl_code: 'TK_3802',
+      token: result.token,
+      sender: '010-4478-1127',
+      receiver_1: customerInfo.ciReceiver,
+      subject_1: '분양정보 신청고객 알림톡',
+      message_1: `안녕하세요. ${customerInfo.ciName}님! ${customerInfo.ciCompany} 입니다 !
+${customerInfo.ciSite} 관심고객으로 등록해 주셔서 감사드립니다.
+
+하단에 링크를 클릭하시면 현장에 대한 내용 확인이 가능합니다.
+문의 : ${customerInfo.ciPhone}
+링크 : ${customerInfo.ciSiteLink}
+
+* 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람을 받기 위해 신청자에게만 발송되는 메시지입니다.`,
+    }
+
+    console.log(req.body);
+
+    let resultSend = await new Promise((resolve, reject) => {
+      if (true) {
+        aligoapi.alimtalkSend(req, AuthData).then((r) => {
+          console.log('alligo', r);
+          resolve(true);
+        }).catch((e) => {
+          console.error('err', e)
+          reject(false)
+        })
+      } else {
+        // console.log(2)
+        resolve(true)
+      }
+    })
+  } catch (e) {
+    // await db.rollback(connection);
+    // next(e);
+    console.error(e);
+  }
+}
 
 
 

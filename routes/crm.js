@@ -253,12 +253,6 @@ router.use('/modify', async (req, res, next) => {
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
     console.log('이것이 URL이란 말인가????' + req.url);
-    if (req.method == 'POST') {
-
-
-
-    }
-
 
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)

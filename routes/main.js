@@ -6,6 +6,7 @@ const router = express.Router();
 const fs = require('fs')
 
 const aligoapi = require('aligoapi')
+const { aligoKakaoNotification } = require('../db_lib/back_lib')
 
 router.use((req, res, next) => {
     res.locals.user = req.user;
@@ -16,88 +17,13 @@ router.use((req, res, next) => {
 
 router.use('/aligo_token', async (req, res, next) => {
     // const connection = await db.beginTransaction();
-    let kakaoInfo = req.options;
-    try {
-        const AuthData = {
-            apikey: '2wyw9p9g4zzqoruwmhewiz0grwhu2w7v',
-            // 이곳에 발급받으신 api key를 입력하세요
-            userid: 'adpeak'
-            // 이곳에 userid를 입력하세요
-        }
-
-        req.body = {
-            type: 'y',  // 유효시간 타입 코드 // y(년), m(월), d(일), h(시), i(분), s(초)
-            time: 10, // 유효시간
-        }
-        // console.log('req.body', req.body)
-
-        const result = await new Promise((resolve, reject) => {
-            if (true) {
-                aligoapi.token(req, AuthData)
-                    .then((r) => {
-                        // console.log('alligo', r);
-                        resolve(r);
-                    })
-                    .catch((e) => {
-                        // console.error('err', e)
-                        reject(e)
-                    })
-            } else {
-                // console.log(2)
-                resolve(true)
-            }
-        })
-
-        // console.log('result', result);
-        // console.log('result_message', result.message);
 
 
-        req.body = {
-            senderkey: '8fbcc05384b65a270432da1eb8b54acd596316ee',
-            tpl_code: 'TK_3802',
-            token: result.token,
-            sender: '010-2190-2197',
-            receiver_1: '010-2190-2197',
-            subject_1: '테스트제목',
-            message_1: `안녕하세요. #{고객명}님! #{업체명} 입니다 !
-            #{현장명} 관심고객으로 등록해 주셔서 감사드립니다.
-            
-            하단에 링크를 클릭하시면 현장에 대한 내용 확인이 가능합니다.
-            
-            문의 : #{연락처}
-            링크 : #{현장링크}
-            
-            * 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람을 받기 위해 신청자에게만 발송되는 메시지입니다.`,
-        }
-
-        console.log(req.body);
-
-        let resultSend = await new Promise((resolve, reject) => {
-            if (true) {
-                aligoapi.alimtalkSend(req, AuthData).then((r) => {
-                    console.log('alligo', r);
-                    resolve(true);
-                }).catch((e) => {
-                    console.error('err', e)
-                    reject(false)
-                })
-            } else {
-                // console.log(2)
-                resolve(true)
-            }
-        })
+    var customerInfo = {ciName : '나야나야나', ciCompany : '탑분양정보', ciSite : '테스트정보', ciPhone : '1644-9714', ciSiteLink : '테스트 링크', ciReceiver : '010-2190-2197'}
+    aligoKakaoNotification(req, customerInfo)
+    res.send('alsdijflasjdfliajsdf')
 
 
-
-
-
-
-        res.send('alsdjfliasdjf')
-
-    } catch (e) {
-        // await db.rollback(connection);
-        next(e);
-    }
 })
 
 
