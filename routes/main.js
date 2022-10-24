@@ -29,49 +29,9 @@ router.use('/aligo_token', async (req, res, next) => {
 
 
 router.use('/test', (req, res, next) => {
-    var AuthData = {
-        apikey: '2wyw9p9g4zzqoruwmhewiz0grwhu2w7v',
-        // 이곳에 발급받으신 api key를 입력하세요
-        userid: 'adpeak',
-        // 이곳에 userid를 입력하세요
-        token: "b571d9af620dc7bf170b02530779e36b9b23f883fde9b760db29ebd9bca30df421531fb2bbdb560e2255ff0329df9ae18482a04b6c882a13f1c37b12483519cd8r3lz4ymzuIOfwoqH+FovKtonlhICUwFxRfBU3C/dTcZJAci1N8iZFcR3Lk4v9ZcCLWbZ6j9ks0YFDszmUUZww=="
-        // 이곳에 token api로 발급받은 토큰을 입력하세요
-    }
-
-
-    // aligoapi.token(req, AuthData).then((r) => {
-    //     res.send(r)
-    // }).catch((e) => {
-    //     res.send(e)
-    // })
-
-    sendObject = {
-        senderkey: '8fbcc05384b65a270432da1eb8b54acd596316ee',
-        tpl_code: 'TK_3802',
-        sender: '01021902197',
-        receiver_1: '01044781127',
-        subject_1: '테스트 메세지 입니다.',
-        message_1: `안녕하세요. #{고객명}님! #{업체명} 입니다 !
-        #{현장명} 관심고객으로 등록해 주셔서 감사드립니다.
-        
-        하단에 링크를 클릭하시면 현장에 대한 내용 확인이 가능합니다.
-        
-        문의 : #{연락처}
-        링크 : #{현장링크}
-        
-        * 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람을 받기 위해 신청자에게만 발송되는 메시지입니다.`,
-    }
-
-    aligoapi.alimtalkSend(sendObject, AuthData).then((r) => {
-        console.log('어떻게 되었니???');
-    }).catch((e) => {
-        console.log(e);
-    })
-
-
-
-
-    // console.log(testToken);
+    var get_form_name = '별내자이더스타(분양)-copy'
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양]/g, '')
+    console.log(reFormName);
     res.send('aldsjflaisjdflajsdf')
 })
 

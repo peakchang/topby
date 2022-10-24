@@ -137,7 +137,7 @@ router.post('/', async (req, res) => {
 
 
 
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양]/g, '')
     console.log(reFormName);
 
     const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
