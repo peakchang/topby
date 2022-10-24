@@ -51,9 +51,9 @@ router.use((req, res, next) => {
 
 
 
-router.get('/down_db', chkRateMaster,async (req, res, next) => {
+router.get('/down_db', chkRateMaster, async (req, res, next) => {
     var pathBasic = `${app_root_path}/public/temp/down.txt`;
-    fs.writeFile(pathBasic, '', (err) => {});
+    fs.writeFile(pathBasic, '', (err) => { });
 
     var addQuery = '';
     if (req.query.sd || req.query.ed) {
@@ -84,7 +84,7 @@ router.get('/down_db', chkRateMaster,async (req, res, next) => {
         const db_phone = downDb.af_mb_phone
         fs.appendFileSync(pathBasic, `${db_name},${db_phone}\n`, (err) => { })
     }
-    
+
     var now = moment(Date.now()).format('YYYY-MM-DD');
     const downFileName = `${now}_file.txt`;
     res.setHeader('Content-Disposition', `attachment; filename=${downFileName}`); // 이게 핵심 
@@ -441,10 +441,15 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
         const valArr = [req.body.id_val]
         const locationDeleteSql = `UPDATE users SET manage_estate = '' WHERE id = ?;`;
         await sql_con.promise().query(locationDeleteSql, valArr);
-    } else if (req.body.email_val){
+    } else if (req.body.email_val) {
         const valArr = [req.body.email_val, req.body.id_val]
         const emailUpdateSql = `UPDATE users SET user_email = ? WHERE id = ?;`;
         await sql_con.promise().query(emailUpdateSql, valArr);
+    } else if (req.body.phone_val) {
+        var phone_val = req.body.phone_val.replace(/\-/g, '');
+        const valArr = [phone_val, req.body.id_val]
+        const phoneUpdateSql = `UPDATE users SET user_phone = ? WHERE id = ?;`;
+        await sql_con.promise().query(phoneUpdateSql, valArr);
     }
     res.send(200)
 })
@@ -468,10 +473,17 @@ router.post('/memo_manage', async (req, res, next) => {
 })
 
 router.post('/use_axios', async (req, res, next) => {
-    console.log(req.body);
 
-    const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
-    await sql_con.promise().query(updateStatusSql, [req.body.statusSelVal, req.body.idVal]);
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+
+    if (req.body.statusSelVal) {
+        const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
+        await sql_con.promise().query(updateStatusSql, [req.body.statusSelVal, req.body.idVal]);
+    }else if(req.body.siteVal){
+        const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
+        await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
+    }
+
 
     res.send(200)
 })
@@ -506,11 +518,15 @@ router.use('/', chkRateMaster, async (req, res, next) => {
     const resultData = await sql_con.promise().query(resultSql)
     const result = resultData[0][0];
 
+    const siteListSql = `SELECT * FROM site_list`;
+    const siteListData = await sql_con.promise().query(siteListSql)
+    const site_list = siteListData[0];
+
     if (result.fs_marketer_list) {
         result.fs_marketer_list = result.fs_marketer_list.replace('FB,', '')
     }
 
-    res.render('crm/crm_main', { result });
+    res.render('crm/crm_main', { result, site_list });
 })
 
 

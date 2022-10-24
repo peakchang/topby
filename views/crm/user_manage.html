@@ -3,7 +3,7 @@
 {% block dbmanage_content %}
 
 <style>
-    @media screen and (max-width: 992px) {
+    @media screen and (max-width: 1588px) {
         .table_wrap {
             width: 100%;
             overflow: auto;
@@ -11,7 +11,7 @@
 
         .table_area {
             width: 100%;
-            min-width: 800px;
+            min-width: 1300px;
         }
     }
 </style>
@@ -26,6 +26,7 @@
                         <th class="border border-slate-300 py-2 text-center">등급</th>
                         <th class="border border-slate-300 py-2 text-center">비번 변경</th>
                         <th class="border border-slate-300 py-2 text-center">이메일</th>
+                        <th class="border border-slate-300 py-2 text-center">휴대폰</th>
                         <th class="border border-slate-300 py-2 text-center">관리 현장</th>
                         <th class="border border-slate-300 py-2 text-center">가입일</th>
                     </tr>
@@ -53,6 +54,12 @@
                             <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{master.user_email}}">
                             <button type="button"
                                 class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                        </td>
+
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{master.user_phone}}">
+                            <button type="button"
+                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
                         </td>
 
                         
@@ -98,6 +105,13 @@
                             <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{user.user_email}}">
                             <button type="button"
                                 class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                        </td>
+
+
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="text" class="border border-gray-400 py-1 px-3 rounded" value="{{user.user_phone}}">
+                            <button type="button"
+                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
                         </td>
                         <td class="border border-slate-300 p-2 text-center">
 
@@ -179,15 +193,21 @@
         }).catch((err) => {
             console.log(err);
         })
+    })
 
-        // $.ajax({
-        //     method: 'post', url: '/crm/user_manage', data: { email_val, id_val }, success: function (e) {
-        //         console.log('성공!!!');
-        //         location.reload()
-        //     }, error: function (err) {
-        //         console.log(err);
-        //     }
-        // })
+    $('.change_phone').click(function(e){
+        const phone_val = this.previousElementSibling.value;
+        const id_val = this.parentNode.parentNode.firstElementChild.value
+        if(!phone_val){
+            alert('전화번호를 입력해주세요! 코딩 시로!')
+            return false
+        }
+        axios.post('/crm/user_manage', {phone_val, id_val}).then((res) => {
+            console.log(res);
+            location.reload()
+        }).catch((err) => {
+            console.log(err);
+        })
     })
 
 

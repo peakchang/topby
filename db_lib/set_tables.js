@@ -6,6 +6,20 @@ const sql_con = require('./index');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+
+    let makeSiteListTable = `CREATE TABLE IF NOT EXISTS site_list(
+        sl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        sl_site_name VARCHAR(100),
+        sl_site_link VARCHAR(255),
+        sl_created_at DATETIME
+    );`
+    try {
+        sql_con.query(makeSiteListTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
+
     let makeAlldataTable = `CREATE TABLE IF NOT EXISTS webhookdatas(
         wh_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         webhookdata TEXT
@@ -35,6 +49,7 @@ exports.tableSetting = async () => {
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         userid VARCHAR(50) UNIQUE,
         user_email VARCHAR(50) UNIQUE,
+        user_phone VARCHAR(50),
         nick VARCHAR(50) NOT NULL,
         password VARCHAR(150),
         rate VARCHAR(10) NOT NULL DEFAULT '1',

@@ -19,7 +19,8 @@
 <div class="container mt-3">
     <form method="post">
 
-        <button class="text-white mb-3 bg-yellow-600 hover:bg-yellow-700 font-medium rounded-lg text-sm px-3 py-1 text-center">
+        <button
+            class="text-white mb-3 bg-yellow-600 hover:bg-yellow-700 font-medium rounded-lg text-sm px-3 py-1 text-center">
             업데이트
         </button>
 
@@ -66,9 +67,9 @@
                         <td class="border border-slate-300 py-2 text-center px-3">
                             <div class="flex">
                                 <span class="flex justify-center items-center mr-2">FB,</span>
-                                
+
                                 <input type="text" name="marketer_list"
-                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
                                     value="{{ result.fs_marketer_list }}">
                             </div>
                         </td>
@@ -77,5 +78,92 @@
             </div>
         </div>
     </form>
+
+
+    <div class="mt-4">
+        <button
+            class="text-white mb-3 bg-emerald-600 hover:bg-emerald-800 font-medium rounded-lg text-sm px-3 py-1 text-center add_site_open">
+            현장 추가
+        </button>
+
+        <button
+            class="text-white mb-3 bg-red-600 hover:bg-red-800 font-medium rounded-lg text-sm px-3 py-1 text-center delete_site">
+            삭제
+        </button>
+
+        <button
+            class="text-white mb-3 bg-indigo-500 hover:bg-indigo-700 font-medium rounded-lg text-sm px-3 py-1 text-center update_site">
+            수정
+        </button>
+
+        <div class="flex mb-3 create_site_area" style="display:none;">
+            <div class="w-full text-center">
+                <input type="text"
+                    class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto" name="new_site" placeholder="현장명을 입력하세요">
+            </div>
+            <div class="w-full text-center">
+                <input type="text"
+                    class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto" name="new_site_link" placeholder="사이트(블로그)주소를 입력하세요">
+            </div>
+            <div class="w-full text-left">
+                <button
+                    class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center add_site">
+                    등록
+                </button>
+            </div>
+        </div>
+
+
+        <table class="w-full text-sm">
+            <tr>
+                <th class="border border-slate-300 py-2 text-center" style="width: 50px;">
+                    <input type="checkbox" name="" id="">
+                </th>
+                <th class="border border-slate-300 py-2 text-center">현장명</th>
+                <th class="border border-slate-300 py-2 text-center">이메일</th>
+            </tr>
+
+            {% for site in site_list %}
+
+            <tr>
+                <td class="border border-slate-300 py-2 text-center">
+                    <input type="checkbox" value="{{ site.sl_id }}">
+                </td>
+                <td class="border border-slate-300 py-2 text-center">
+                    <input type="text"
+                        class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs" value="{{ site.sl_site_name }}">
+                </td>
+
+                <td class="border border-slate-300 py-2 text-center">
+                    <input type="text"
+                        class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs" value="{{ site.sl_site_link }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
+
+<script>
+    $('.add_site_open').click(function(e){
+        $('.create_site_area').toggle()
+    })
+
+    $('.add_site').click(function(e){
+        var siteVal = document.querySelector('input[name=new_site]').value
+        var siteLinkVal = document.querySelector('input[name=new_site_link]').value
+
+        if(!siteVal){
+            alert('현장명을 입력해주세요!')
+            return false
+        }
+        axios.post('/crm/use_axios', {siteVal , siteLinkVal}).then((res) => {
+            console.log(res)
+            location.reload()
+        }).catch((err) => {
+            console.log(err)
+        })
+    })
+
+</script>
 {% endblock %}
