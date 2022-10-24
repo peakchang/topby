@@ -8,6 +8,8 @@ const { sendSms } = require('../db_lib/back_lib');
 var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
+const { aligoKakaoNotification } = require('../db_lib/back_lib')
+
 const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
@@ -127,6 +129,9 @@ router.post('/', async (req, res) => {
     let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
     let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
 
+    console.log(formInertSql);
+    console.log('***************** pass first');
+
     await mysql_conn.promise().query(formInertSql, getArr)
 
 
@@ -134,7 +139,8 @@ router.post('/', async (req, res) => {
     const findUserData = await mysql_conn.promise().query(userFindSql, [get_form_name])
     const findUser = findUserData[0][0];
 
-
+    console.log(userFindSql);
+    console.log('***************** pass second');
 
 
 
@@ -172,6 +178,9 @@ router.post('/', async (req, res) => {
     const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
     const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
     const getSiteInfo = getSiteInfoData[0][0];
+
+    console.log(getSiteInfoSql);
+    console.log('***************** pass END!!!!');
 
     if (getSiteInfo.sl_site_link) {
         var siteList = getSiteInfo.sl_site_link
