@@ -116,7 +116,9 @@ router.post('/', async (req, res) => {
     //     var form_type_in = '분양'
     // } 
 
-    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId}`;
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양투자]/g, '')
+
+    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
 
     let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
     await mysql_conn.promise().query(allDataSql, [getAllData]);
@@ -137,7 +139,7 @@ router.post('/', async (req, res) => {
 
 
 
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양투자]/g, '')
+    
     console.log(reFormName);
 
     const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
