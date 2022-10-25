@@ -6,6 +6,17 @@ const sql_con = require('./index');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+    let makeChkJishoTable = `CREATE TABLE IF NOT EXISTS chkjisho(
+        cj_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        cj_get_time VARCHAR(100),
+        cj_created_at DATETIME
+    );`
+    try {
+        sql_con.query(makeChkJishoTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
 
     let makeSiteListTable = `CREATE TABLE IF NOT EXISTS site_list(
         sl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

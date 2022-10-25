@@ -8,6 +8,10 @@ const fs = require('fs')
 const aligoapi = require('aligoapi')
 const { aligoKakaoNotification } = require('../db_lib/back_lib')
 
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
 router.use((req, res, next) => {
     res.locals.user = req.user;
     next();
@@ -22,10 +26,13 @@ router.use('/aligo_token', async (req, res, next) => {
     res.send('alsdijflasjdfliajsdf')
 })
 
-router.use('/test_webhook', async (req, res, next) => {
+router.use('/chk_jisho', async (req, res, next) => {
+
+    var now = moment(Date.now()).format('YYYY-MM-DD');
     if(req.method == 'POST'){
+        const jishoSql = `INSERT INTO chkjisho (cj_get_time, cj_created_at) VALUES (?, ?);`;
+        await sql_con.promise().query(jishoSql, [req.body.on_time, now])
         console.log('request is recieve!! it`s POST!!!');
-        console.log(req.body);
     }
     res.sendStatus(200)
 })
