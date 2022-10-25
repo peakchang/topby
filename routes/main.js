@@ -28,7 +28,7 @@ router.use('/aligo_token', async (req, res, next) => {
 
 router.use('/chk_jisho', async (req, res, next) => {
 
-    var now = moment(Date.now()).format('YYYY-MM-DD');
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
     if(req.method == 'POST'){
         const jishoSql = `INSERT INTO chkjisho (cj_get_time, cj_created_at) VALUES (?, ?);`;
         await sql_con.promise().query(jishoSql, [req.body.on_time, now])
