@@ -17,13 +17,17 @@ router.use((req, res, next) => {
 
 router.use('/aligo_token', async (req, res, next) => {
     // const connection = await db.beginTransaction();
-
-
     var customerInfo = {ciName : '나야나야나', ciCompany : '탑분양정보', ciSite : '테스트정보', ciPhone : '1644-9714', ciSiteLink : '테스트 링크', ciReceiver : '010-2190-2197'}
     aligoKakaoNotification(req, customerInfo)
     res.send('alsdijflasjdfliajsdf')
+})
 
-
+router.use('/test_webhook', async (req, res, next) => {
+    if(req.method == 'POST'){
+        console.log('request is recieve!! it`s POST!!!');
+        console.log(req.body);
+    }
+    res.sendStatus(200)
 })
 
 
