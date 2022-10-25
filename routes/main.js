@@ -29,10 +29,18 @@ router.use('/aligo_token', async (req, res, next) => {
 
 
 router.use('/test', (req, res, next) => {
-    var get_form_name = '별내자이더스타(분양)-copy'
+
+
     var get_form_name = '안성라포르테(분양)-투자-copy'
     
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양투자]/g, '')
+    var get_form_name = '양주옥정H'
+    var get_form_name = '별내자이더스타(분양)-copy'
+    
+    
+    var get_form_name = get_form_name.replace('분양', '')
+    var get_form_name = get_form_name.replace('투자', '')
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+    
     console.log(reFormName);
     res.send('aldsjflaisjdflajsdf')
 })

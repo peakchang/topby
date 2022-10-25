@@ -102,7 +102,7 @@ router.post('/', async (req, res) => {
     }
     let get_created_time = getLeadsData.created_time
     console.log(getFormData);
-    let get_form_name = getFormData.name
+    var get_form_name = getFormData.name
 
     if (get_form_name.includes('인터넷')) {
         var form_type_in = '인터넷'
@@ -116,7 +116,10 @@ router.post('/', async (req, res) => {
     //     var form_type_in = '분양'
     // } 
 
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s분양투자]/g, '')
+    var get_form_name = get_form_name.replace('분양', '')
+    var get_form_name = get_form_name.replace('투자', '')
+    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+    
 
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
 
