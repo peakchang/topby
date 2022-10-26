@@ -15,6 +15,7 @@ const { setDbData, getDbData, getExLength } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform } = require('winston');
+const { IGComment } = require('facebook-nodejs-business-sdk');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -263,8 +264,8 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 
         var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
-        var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
-        var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
+        
+        
 
 
         var dateOn = new Date();
@@ -273,16 +274,25 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
         var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
 
-        var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
-        var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
-        const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
+        var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
+        var sdSearchQ = `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
+
+        var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
+        var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
+
+        const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form  ${sdCountQ} ${getEst} ${getStatus};`;
+        console.log(allCountSql);
+
+        // WHERE af_form_type_in='분양'
 
         const allCountQuery = await sql_con.promise().query(allCountSql)
         const allCount = Object.values(allCountQuery[0][0])[0]
 
         // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
-        var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) AND af_form_type_in='분양' ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
+        var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
+
+        // AND af_form_type_in='분양'
 
         console.log('is before error location????');
         console.log(setDbSql);
