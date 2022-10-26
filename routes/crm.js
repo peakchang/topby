@@ -284,12 +284,13 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
         var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) AND af_form_type_in='분양' ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
 
-        console.log('에러는 여기서 나는거인건가??????');
+        console.log('is before error location????');
+        console.log(setDbSql);
 
         const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
 
-        console.log('이후 에러는 어떻게 됨???');
-        
+        console.log('is error location????');
+
         all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
         all_data.est = req.query.est
         all_data.status = req.query.status
