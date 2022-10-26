@@ -252,54 +252,61 @@ router.use('/modify', async (req, res, next) => {
 
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
-    console.log('이것이 URL이란 말인가????' + req.url);
 
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await sql_con.promise().query(getStatusSql)
+    try {
+        console.log('이것이 URL이란 말인가????' + req.url);
 
-    var testVal = (1 == 21) ? '마장' : '아냥';
+        const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+        const getStatusText = await sql_con.promise().query(getStatusSql)
 
-
-    var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
-    var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
-    var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
+        var testVal = (1 == 21) ? '마장' : '아냥';
 
 
-    var dateOn = new Date();
-    // var startDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-    console.log(dateOn);
-    console.log(dateOn.getDate());
+        var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
+        var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
+        var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
 
-    var mDays = dateOn.getDate() - 1;
-    var startDay = req.query.sd ? req.query.sd : moment(Date.now()).subtract(mDays, 'days').format('YYYY-MM-DD');
-    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
-    var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
 
-    var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
-    var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
+        var dateOn = new Date();
+        // var startDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+        console.log(dateOn);
+        console.log(dateOn.getDate());
 
-    const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
+        var mDays = dateOn.getDate() - 1;
+        var startDay = req.query.sd ? req.query.sd : moment(Date.now()).subtract(mDays, 'days').format('YYYY-MM-DD');
+        var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
+        var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
 
-    console.log(allCountSql);
-    const allCountQuery = await sql_con.promise().query(allCountSql)
-    const allCount = Object.values(allCountQuery[0][0])[0]
+        var sdCountQ = req.query.sd || req.query.ed ? `AND af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'` : '';
+        var sdSearchQ = req.query.sd || req.query.ed ? `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'` : '';
 
-    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) AND af_form_type_in='분양' ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
+        const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
 
-    console.log(setDbSql);
+        console.log(allCountSql);
+        const allCountQuery = await sql_con.promise().query(allCountSql)
+        const allCount = Object.values(allCountQuery[0][0])[0]
 
-    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
-    all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
-    all_data.est = req.query.est
-    all_data.status = req.query.status
-    all_data.sc = req.query.sc
-    all_data.sd = startDay
-    all_data.ed = endDay
-    add_query = req.url;
+        // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
+        var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) AND af_form_type_in='분양' ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
 
-    // console.log(all_data);
-    res.render('crm/work_estate', { all_data, add_query });
+        console.log(setDbSql);
+
+        const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
+        all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
+        all_data.est = req.query.est
+        all_data.status = req.query.status
+        all_data.sc = req.query.sc
+        all_data.sd = startDay
+        all_data.ed = endDay
+        add_query = req.url;
+
+        // console.log(all_data);
+        res.render('crm/work_estate', { all_data, add_query });
+    } catch (error) {
+        console.log(error);
+        res.send('일단 에러')
+    }
+
 })
 
 
@@ -479,10 +486,10 @@ router.post('/use_axios', async (req, res, next) => {
     if (req.body.statusSelVal) {
         const updateStatusSql = `UPDATE application_form SET af_mb_status = ? WHERE af_id = ?`;
         await sql_con.promise().query(updateStatusSql, [req.body.statusSelVal, req.body.idVal]);
-    }else if(req.body.siteVal){
+    } else if (req.body.siteVal) {
         const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
         await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
-    }else if(req.body.delVal){
+    } else if (req.body.delVal) {
         console.log(req.body.siteUpdateList);
         console.log(req.body.siteNameList);
         console.log(req.body.siteLinkList);
