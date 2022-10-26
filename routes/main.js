@@ -26,6 +26,14 @@ router.use('/aligo_token', async (req, res, next) => {
     res.send('alsdijflasjdfliajsdf')
 })
 
+
+router.use('/jschk', async(req, res, next) => {
+    const chkjishoSql = `SELECT * FROM chkjisho;`;
+    const chk_jisho_data = chkjishoSql[0]
+
+    res.render('jschk', {chkjishodata})
+})
+
 router.use('/chk_jisho', async (req, res, next) => {
 
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
