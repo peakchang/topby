@@ -164,7 +164,13 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
       data.status_color = getStatusColor[getStatusList.indexOf(data.af_mb_status)]
     }
     data.chkCount = pageChkCount;
-    data.af_mb_phone_chk = phNumBar(data.af_mb_phone);
+
+    try {
+      data.af_mb_phone_chk = phNumBar(data.af_mb_phone);
+    } catch (error) {
+      data.af_mb_phone_chk = '';
+    }
+    
     // data.created_at.setHours(data.created_at.getHours()+9);
     pageChkCount--
   }
