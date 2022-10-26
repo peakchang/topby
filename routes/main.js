@@ -28,7 +28,7 @@ router.use('/aligo_token', async (req, res, next) => {
 
 
 router.use('/jschk', async(req, res, next) => {
-    const chkjishoSql = `SELECT * FROM chkjisho;`;
+    const chkjishoSql = `SELECT * FROM chkjisho ORDER BY cj_id DESC;`;
     const chk_jisho_data = await sql_con.promise().query(chkjishoSql)
     const chk_jisho = chk_jisho_data[0];
 
