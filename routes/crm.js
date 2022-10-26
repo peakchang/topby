@@ -268,10 +268,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 
         var dateOn = new Date();
-        // var startDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-        console.log(dateOn);
-        console.log(dateOn.getDate());
-
         var mDays = dateOn.getDate() - 1;
         var startDay = req.query.sd ? req.query.sd : moment(Date.now()).subtract(mDays, 'days').format('YYYY-MM-DD');
         var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
@@ -282,16 +278,18 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
         const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${sdCountQ} ${getEst} ${getStatus};`;
 
-        console.log(allCountSql);
         const allCountQuery = await sql_con.promise().query(allCountSql)
         const allCount = Object.values(allCountQuery[0][0])[0]
 
         // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
         var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_mb_phone = m.mo_phone WHERE a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) AND af_form_type_in='분양' ${sdSearchQ} ${getEst} ${getStatus} ORDER BY a.af_id DESC`
 
-        console.log(setDbSql);
+        console.log('에러는 여기서 나는거인건가??????');
 
         const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
+
+        console.log('이후 에러는 어떻게 됨???');
+        
         all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
         all_data.est = req.query.est
         all_data.status = req.query.status
