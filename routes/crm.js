@@ -139,8 +139,7 @@ router.use('/testdb_set', async (req, res, next) => {
 
 
 
-router.get('/all_data', chkRateMaster, async (req, res, next) => {
-
+router.get('/all_data', async (req, res, next) => {
     try {
         let allSearchSql = `SELECT * FROM webhookdatas ORDER BY wh_id DESC;`;
         let alldatas = await sql_con.promise().query(allSearchSql)
@@ -150,8 +149,6 @@ router.get('/all_data', chkRateMaster, async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-
-
 })
 
 
