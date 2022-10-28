@@ -38,25 +38,23 @@ doRequest = (url) => {
 
 router.get('/', async (req, res) => {
 
-    let leadsUrl = `https://graph.facebook.com/v15.0/474249967950779?access_token=${process.env.ACCESS_TOKEN}`
-    let LeadsData = await doRequest({ uri: leadsUrl });
+    // let leadsUrl = `https://graph.facebook.com/v15.0/474249967950779?access_token=${process.env.ACCESS_TOKEN}`
+    // let LeadsData = await doRequest({ uri: leadsUrl });
 
-    let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
-    let formData = await doRequest({ uri: formUrl });
+    // let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
+    // let formData = await doRequest({ uri: formUrl });
 
 
-    let getLeadsData = JSON.parse(LeadsData)
-    let getFormData = JSON.parse(formData)
-    // 이름
-    let get_name = getLeadsData.field_data[0].values[0];
-    let temp_phone = getLeadsData.field_data[1].values[0]
-    let get_phone = temp_phone.replace('+82', '0')
-    let get_created_ime = getLeadsData.created_time
-    let get_form_name = getFormData.name
-    if (
-        req.query['hub.mode'] == 'subscribe' &&
-        req.query['hub.verify_token'] == token
-    ) {
+    // let getLeadsData = JSON.parse(LeadsData)
+    // let getFormData = JSON.parse(formData)
+    // // 이름
+    // let get_name = getLeadsData.field_data[0].values[0];
+    // let temp_phone = getLeadsData.field_data[1].values[0]
+    // let get_phone = temp_phone.replace('+82', '0')
+    // let get_created_ime = getLeadsData.created_time
+    // let get_form_name = getFormData.name
+    if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == token) {
+        console.log('여기 안들어오니???');
         res.send(req.query['hub.challenge']);
     } else {
         res.send('웹 훅 인증 대기 페이지 입니다!!!')
@@ -119,7 +117,7 @@ router.post('/', async (req, res) => {
     var get_form_name = get_form_name.replace('분양', '')
     var get_form_name = get_form_name.replace('투자', '')
     var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
-    
+
 
     let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
 
@@ -142,7 +140,7 @@ router.post('/', async (req, res) => {
 
 
 
-    
+
     console.log(reFormName);
 
     const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
@@ -176,7 +174,7 @@ router.post('/', async (req, res) => {
     //     mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
     // }
 
-    
+
     const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
     const mailContent = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
     mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
@@ -190,7 +188,7 @@ router.post('/', async (req, res) => {
     const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
     const getSiteInfo = getSiteInfoData[0][0];
 
-    
+
     console.log(getSiteInfoSql);
     console.log('***************** pass END!!!!');
     console.log(getSiteInfo);
