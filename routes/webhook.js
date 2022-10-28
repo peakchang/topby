@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
     // let get_created_ime = getLeadsData.created_time
     // let get_form_name = getFormData.name
     if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == token) {
-        console.log('여기 안들어오니???');
+        console.log('여기 안들어옴??');
         res.send(req.query['hub.challenge']);
     } else {
         res.send('웹 훅 인증 대기 페이지 입니다!!!')
