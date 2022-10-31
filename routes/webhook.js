@@ -66,146 +66,131 @@ router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     let getData = req.body
     console.log(getData);
-    let leadsId = getData.entry[0].changes[0].value.leadgen_id
-    let formId = getData.entry[0].changes[0].value.form_id
-    var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-    let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-    let LeadsData = await doRequest({ uri: leadsUrl });
+    try {
+        let leadsId = getData.entry[0].changes[0].value.leadgen_id
+        let formId = getData.entry[0].changes[0].value.form_id
+        var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-    let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-    let formData = await doRequest({ uri: formUrl });
+        let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
+        let LeadsData = await doRequest({ uri: leadsUrl });
 
-    let getLeadsData = JSON.parse(LeadsData)
-    let getFormData = JSON.parse(formData)
+        let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
+        let formData = await doRequest({ uri: formUrl });
 
-    // 이름
-    var get_name = getLeadsData.field_data[0].values[0];
-    var temp_phone = getLeadsData.field_data[1].values[0]
-    if (temp_phone.includes('+820')) {
-        var get_phone = temp_phone.replace('+820', '0')
-    } else if (temp_phone.includes('+82')) {
-        var get_phone = temp_phone.replace('+82', '0')
-    } else {
+        let getLeadsData = JSON.parse(LeadsData)
+        let getFormData = JSON.parse(formData)
 
-
-        var temp_phone = getLeadsData.field_data[0].values[0];
-        var get_name = getLeadsData.field_data[1].values[0];
+        // 이름
+        var get_name = getLeadsData.field_data[0].values[0];
+        var temp_phone = getLeadsData.field_data[1].values[0]
         if (temp_phone.includes('+820')) {
             var get_phone = temp_phone.replace('+820', '0')
         } else if (temp_phone.includes('+82')) {
             var get_phone = temp_phone.replace('+82', '0')
+        } else {
+
+
+            var temp_phone = getLeadsData.field_data[0].values[0];
+            var get_name = getLeadsData.field_data[1].values[0];
+            if (temp_phone.includes('+820')) {
+                var get_phone = temp_phone.replace('+820', '0')
+            } else if (temp_phone.includes('+82')) {
+                var get_phone = temp_phone.replace('+82', '0')
+            }
+
+
+        }
+        let get_created_time = getLeadsData.created_time
+        console.log(getFormData);
+        var get_form_name = getFormData.name
+
+        if (get_form_name.includes('인터넷')) {
+            var form_type_in = '인터넷'
+            await sendSms(get_phone, sendMsg)
+        } else {
+            var form_type_in = '분양'
         }
 
-
-    }
-    let get_created_time = getLeadsData.created_time
-    console.log(getFormData);
-    var get_form_name = getFormData.name
-
-    if (get_form_name.includes('인터넷')) {
-        var form_type_in = '인터넷'
-        await sendSms(get_phone, sendMsg)
-    } else {
-        var form_type_in = '분양'
-    }
-
-    // else if (get_form_name.includes('분양')) {
-    //     console.log('분양 포함!!');
-    //     var form_type_in = '분양'
-    // } 
-
-    var get_form_name = get_form_name.replace('분양', '')
-    var get_form_name = get_form_name.replace('투자', '')
-    var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+        var get_form_name = get_form_name.replace('분양', '')
+        var get_form_name = get_form_name.replace('투자', '')
+        var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
 
-    let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
+        let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
 
-    let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
-    await mysql_conn.promise().query(allDataSql, [getAllData]);
+        let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
+        await mysql_conn.promise().query(allDataSql, [getAllData]);
 
-    console.log('여기까지는 정상인가요??')
-    const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-    const getStatusText = await mysql_conn.promise().query(getStatusSql)
-    const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+        console.log('여기까지는 정상인가요??')
+        const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+        const getStatusText = await mysql_conn.promise().query(getStatusSql)
+        const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
-    // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
-    let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
-    let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+        // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
+        let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+        let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
 
-    console.log(formInertSql);
-    console.log('***************** pass first');
+        console.log(formInertSql);
+        console.log('***************** pass first');
 
-    await mysql_conn.promise().query(formInertSql, getArr)
+        await mysql_conn.promise().query(formInertSql, getArr)
 
 
 
 
-    console.log(reFormName);
+        console.log(reFormName);
 
-    const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
-    const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
-    const findUser = findUserData[0][0];
+        const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
+        const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
+        const findUser = findUserData[0][0];
 
-    console.log(userFindSql);
-    console.log('***************** pass second');
-    console.log(findUser);
-
-
-
-    const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
-    const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
-    mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
-
-    // var mailPushArr = []
-    // for await(const user of userFind[0]) {
-    //     if (user.manage_estate) {
-    //         var userEstates = user.manage_estate.split(',')
-    //         for (let i = 0; i < userEstates.length; i++) {
-    //             if (get_form_name.includes(userEstates[i])) {
-    //                 mailPushArr.push(user.user_email);
-    //             }
-    //         }
-    //     }
-    // }
-    // for await (const tatgetMail of mailPushArr) {
-    //     const mailSubject = `${get_name} 고객 DB 접수되었습니다.`;
-    //     const mailContent = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
-    //     mailSender.sendEmail(tatgetMail,mailSubject, mailContent);
-    // }
+        console.log(userFindSql);
+        console.log('***************** pass second');
+        console.log(findUser);
 
 
-    const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
-    const mailContent = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
-    mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
-    mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
+
+        const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
+        const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+        mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
 
 
-    // 고객한테 갈 알림톡
+
+        const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
+        const mailContent = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+        mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
+        mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
-    const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
-    const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
-    const getSiteInfo = getSiteInfoData[0][0];
+        // 고객한테 갈 알림톡
 
 
-    console.log(getSiteInfoSql);
-    console.log('***************** pass END!!!!');
-    console.log(getSiteInfo);
+        const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
+        const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
+        const getSiteInfo = getSiteInfoData[0][0];
 
-    if (getSiteInfo.sl_site_link) {
-        var siteList = getSiteInfo.sl_site_link
-    } else {
-        var siteList = '정보없음'
+
+        console.log(getSiteInfoSql);
+        console.log('***************** pass END!!!!');
+        console.log(getSiteInfo);
+
+        if (getSiteInfo.sl_site_link) {
+            var siteList = getSiteInfo.sl_site_link
+        } else {
+            var siteList = '정보없음'
+        }
+
+        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
+        aligoKakaoNotification(req, customerInfo)
+
+
+        res.sendStatus(200);
+        console.log('success!!!!!');
+    } catch (error) {
+        res.status(200)
     }
 
-    var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
-    aligoKakaoNotification(req, customerInfo)
-
-
-    res.sendStatus(200);
-    console.log('success!!!!!');
 })
 
 
