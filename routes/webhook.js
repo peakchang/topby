@@ -65,6 +65,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     let getData = req.body
+    console.log(getData);
     let leadsId = getData.entry[0].changes[0].value.leadgen_id
     let formId = getData.entry[0].changes[0].value.form_id
     var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
