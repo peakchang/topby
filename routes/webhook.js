@@ -188,7 +188,15 @@ router.post('/', async (req, res) => {
         res.sendStatus(200);
         console.log('success!!!!!');
     } catch (error) {
+        
+
+        getDataStr = JSON.stringify(getData)
+        const insertAuditWhdataSql = `INSERT INTO (audit_webhookdata) VALUES (?);`;
+        await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
+
         res.status(200)
+
+        
     }
 
 })
