@@ -192,6 +192,7 @@ router.post('/', async (req, res) => {
 
         getDataStr = JSON.stringify(getData)
         const insertAuditWhdataSql = `INSERT INTO (audit_webhookdata) VALUES (?);`;
+        console.log(insertAuditWhdataSql);
         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
 
         res.status(200)
