@@ -138,6 +138,18 @@ router.use('/testdb_set', async (req, res, next) => {
 })
 
 
+router.get('/wh_datas', async (req, res, next) => {
+    try {
+        let allSearchSql = `SELECT * FROM audit_webhook ORDER BY wh_id DESC;`;
+        let alldatas = await sql_con.promise().query(allSearchSql)
+        let alldata = alldatas[0]
+        console.log(alldata);
+        res.render('crm/wh_alldata', { alldata });
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 router.get('/all_data', async (req, res, next) => {
     try {

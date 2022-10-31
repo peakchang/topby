@@ -1,0 +1,47 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+<style>
+    @media screen and (max-width: 992px) {
+        .table_wrap {
+            width: 100%;
+            overflow: auto;
+        }
+
+        .table_area {
+            width: 100%;
+            min-width: 800px;
+        }
+    }
+</style>
+
+<!-- {% for i in range(2,7) %}
+{{i}}
+{% endfor %} -->
+<!-- <a href="?pnum=3">sdfsdf</a> -->
+
+<div class="container">
+    <form>
+        <div class="table_wrap">
+            <div class="table_area">
+                <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
+                    <tr>
+                        <th class="border border-slate-300 py-2 text-center">데이터</th>
+                    </tr>
+
+                    {% for data in alldata %}
+                    <tr class="dblist">
+                        <td class="border border-slate-300 p-2">
+                            {{data.webhookdata}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
