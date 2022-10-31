@@ -64,7 +64,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
-    let getData = req.body
+    var getData = req.body
     console.log(getData);
 
     try {
@@ -190,7 +190,8 @@ router.post('/', async (req, res) => {
     } catch (error) {
         
 
-        getDataStr = JSON.stringify(getData)
+        const getDataStr = JSON.stringify(req.body)
+        console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO (audit_webhookdata) VALUES (?);`;
         console.log(insertAuditWhdataSql);
         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
