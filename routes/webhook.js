@@ -89,8 +89,6 @@ router.post('/', async (req, res) => {
         } else if (temp_phone.includes('+82')) {
             var get_phone = temp_phone.replace('+82', '0')
         } else {
-
-
             var temp_phone = getLeadsData.field_data[0].values[0];
             var get_name = getLeadsData.field_data[1].values[0];
             if (temp_phone.includes('+820')) {
@@ -98,8 +96,6 @@ router.post('/', async (req, res) => {
             } else if (temp_phone.includes('+82')) {
                 var get_phone = temp_phone.replace('+82', '0')
             }
-
-
         }
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
@@ -121,6 +117,19 @@ router.post('/', async (req, res) => {
 
         let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
         await mysql_conn.promise().query(allDataSql, [getAllData]);
+
+
+        const chkFormInSiteListSql = `SELECT * FROM makeSiteListTable WHERE sl_site_name = ?`;
+        const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [get_form_name]);
+        const chkFormInSiteList = chkFormInSiteListData[0][0]
+        if(!chkFormInSiteList){
+            const addFormInSiteList = `INSERT INTO makeSiteListTable (sl_site_name, sl_created_at) VALUES (?, ?)`
+            await mysql_conn.promise().query(addFormInSiteList, [get_form_name, nowDateTime]);
+        }
+
+
+
+
 
         console.log('여기까지는 정상인가요??')
         const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
@@ -149,8 +158,6 @@ router.post('/', async (req, res) => {
         console.log('***************** pass second');
         console.log(findUser);
         console.log(findUser.user_email);
-
-
 
         const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
         const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
