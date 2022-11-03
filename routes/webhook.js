@@ -120,11 +120,11 @@ router.post('/', async (req, res) => {
 
 
         const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
-        const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [get_form_name]);
+        const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
         const chkFormInSiteList = chkFormInSiteListData[0][0]
         if(!chkFormInSiteList){
             const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
-            await mysql_conn.promise().query(addFormInSiteList, [get_form_name, nowDateTime]);
+            await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
         }
 
 
