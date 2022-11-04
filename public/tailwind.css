@@ -682,6 +682,9 @@ video {
 .h-5 {
   height: 1.25rem;
 }
+.h-9 {
+  height: 2.25rem;
+}
 .w-full {
   width: 100%;
 }
@@ -709,6 +712,9 @@ video {
 .w-3\/4 {
   width: 75%;
 }
+.w-9 {
+  width: 2.25rem;
+}
 .max-w-xs {
   max-width: 20rem;
 }
@@ -717,6 +723,38 @@ video {
 }
 .border-collapse {
   border-collapse: collapse;
+}
+@-webkit-keyframes bounce {
+
+  0%, 100% {
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+@keyframes bounce {
+
+  0%, 100% {
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+.animate-bounce {
+  -webkit-animation: bounce 1s infinite;
+          animation: bounce 1s infinite;
 }
 .cursor-pointer {
   cursor: pointer;
@@ -959,6 +997,9 @@ video {
 }
 .pb-4 {
   padding-bottom: 1rem;
+}
+.pb-20 {
+  padding-bottom: 5rem;
 }
 .text-left {
   text-align: left;
