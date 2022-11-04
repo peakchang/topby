@@ -53,11 +53,10 @@ router.use('/testpp', async (req, res, next) => {
     // res.send('didididididididididi')
 })
 
-
-function testFunc(e) {
-    console.log('sldjflaijdf');
-    return 'iiiiiiiii'
-}
+router.use('/testmain', (req, res, next) => {
+    console.log('alsdjfiasjdfiajsdf');
+    res.render('topby/top_main_test')
+})
 
 router.use('/jschk', async (req, res, next) => {
     const chkjishoSql = `SELECT * FROM chkjisho ORDER BY cj_id DESC;`;

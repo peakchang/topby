@@ -1,0 +1,114 @@
+{% extends "topby/topby_base.html" %}
+
+{% block topby_content %}
+
+<style>
+    #menu {
+        position: fixed;
+        display: block;
+        width: 100%;
+        height: 60px;
+        top: 0;
+        margin: 0;
+        z-index: 9;
+    }
+
+    .first_page {
+        text-align: center;
+        font-family: 'Tenada';
+        background-image: url('/img/topby_base/back.png');
+        background-size: cover;
+
+    }
+
+    .subject_text {
+        color: white;
+        font-family: 'GmarketSansBold';
+    }
+</style>
+
+<nav id="menu" style="position: fix;">
+    <a class="menu-links hideme" data-menuanchor="first_page" href="#firstPage">section 1</a>
+    <a class="menu-links" data-menuanchor="second_page" href="#secondPage">section 2</a>
+    <a class="menu-links" data-menuanchor="third_page" href="#3rdPage">section 3</a>
+</nav>
+
+<div id="fullpage">
+
+    <div class="section first_page" id="first_page">
+        <p class="subject_text leading-normal text-xl md:text-2xl xl:text-4xl pb-24">
+        </p>
+
+        <p class="text-left text-5xl md:text-7xl leading-normal md:pl-24 xl:pl-80 pb-4 md:pb-12 text-white"
+            data-aos="fade-up" data-aos-duration="1000" data-aos-delay="1400">
+            BIG DATA
+        </p>
+        <p class="text-left text-5xl md:text-7xl leading-normal md:pl-24 xl:pl-80 pb-4 md:pb-12 text-blue-300"
+            data-aos="fade-down" data-aos-duration="1000" data-aos-delay="1800">
+            정말타겟 마켓팅
+        </p>
+        <p class="text-left text-6xl md:text-8xl leading-loose md:pl-24 xl:pl-80 pb-4 md:pb-12 text-white" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="2100">
+            TOP 분양
+        </p>
+
+    </div>
+    <div class="section" id="second_page">
+
+    </div>
+    <div class="section" id="third_page">
+    </div>
+    <div class="section">
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#fullpage').fullpage({
+            sectionsColor: ['', '#4BBFC3', '#7BAABE', 'red'],
+            anchors: ['firstPage', 'secondPage', 'thirdPage', 'last'],
+            menu: '#menu',
+            css3: true,
+            scrollingSpeed: 1000
+        });
+
+
+        AOS.init();
+
+
+
+
+
+        // 글자 입력 속도
+
+
+        // 타이핑 효과
+        const $text = document.querySelector(".subject_text");
+        typing($text)
+
+    });
+
+    function wait(ms) {
+        return new Promise(res => setTimeout(res, ms))
+    }
+
+    const typing = async (textArea) => {
+
+        const letters = `아무것도 하지 않으면 아무일도 일어나지 않는다.`
+        const letter = letters.split("");
+        const speed = 50;
+        let i = 0;
+
+        while (letter.length) {
+            await wait(speed);
+            textArea.innerHTML += letter.shift();
+        }
+    }
+
+</script>
+
+</body>
+
+</html>
+
+{% endblock %}

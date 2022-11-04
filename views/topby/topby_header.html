@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed; top:0px; width:100%;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="/img/topby_base/logo.png" class="logo_img" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item ml-5">
+                    <span class="nav-link active">왜 탑분양일까요?</span>
+                </li>
+                <li class="nav-item ml-5">
+                    <span class="nav-link">광고사례</span>
+                </li>
+                <li class="nav-item ml-5">
+                    <span class="nav-link">진행후기</span>
+                </li>
+                <li class="nav-item ml-5">
+                    <span class="nav-link">신청하기</span>
+                </li>
+                
+                <li class="nav-item ml-5">
+                    {% if userInfo.user.userid %}
+                    <a class="nav-link" href="/auth/logout">로그아웃</a>
+                    {% else %}
+                    <a class="nav-link" href="/auth/login?move=/crm/estate_manager">로그인</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
