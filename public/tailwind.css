@@ -1011,6 +1011,9 @@ video {
 .pb-5 {
   padding-bottom: 1.25rem;
 }
+.pb-0 {
+  padding-bottom: 0px;
+}
 .pb-20 {
   padding-bottom: 5rem;
 }
@@ -1019,6 +1022,9 @@ video {
 }
 .pb-16 {
   padding-bottom: 4rem;
+}
+.pt-0 {
+  padding-top: 0px;
 }
 .text-left {
   text-align: left;
