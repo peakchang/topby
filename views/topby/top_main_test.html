@@ -22,6 +22,24 @@
 
     }
 
+    .topby_last_image{
+        text-align: center;
+        font-family: 'Tenada';
+        background-image: url('/img/topby_base_new/endimg.png');
+        background-size: cover;
+        padding-top: 0px !important;
+        height: 450px;
+
+        
+    }
+
+    @media (max-width: 800px) {
+        .topby_last_image{
+            height: 222px;
+        }
+
+      }
+
     .suit_font {
         font-family: 'SUIT', sans-serif;
     }
@@ -162,9 +180,9 @@
         <div class="gm_bold md:text-left pl-10 md:pl-60 text-3xl md:text-4xl">
             <span>ABOUT</span><span class="text-blue-500">. TOP분양</span>
         </div>
-        <div class=" grid md:grid-cols-2 max-w-7xl mx-auto">
+        <div class=" grid md:grid-cols-2 max-w-7xl mx-auto justify-center">
             <div class="flex items-center" style="padding-top: 25px;">
-                <div class="suit_font bg-gray-300 py-5 lg:py-0 lg:h-3/4 w-full max-w-xl md:max-w-full mx-auto rounded-t-lg md:rounded-l-lg md:rounded-tr-none p-4">
+                <div class="suit_font bg-gray-300 py-5 lg:py-0 lg:h-3/4 w-full max-w-xl md:max-w-full mx-auto rounded-t-lg md:rounded-l-lg md:rounded-tr-none px-3 text-xs md:text-base">
                     <p class="lg:leading-loose">Adpeak는 2021년 설립 이후 많은 광고 대행을 진행하였습니다.</p>
                     <br>
                     <p class="lg:leading-loose">효율 적인 광고를 위해 끊임없이 노력하며, 고품질의 DB를 제공하고 있습니다.</p>
@@ -175,22 +193,22 @@
                 </div>
             </div>
             
-            <div class="flex justify-end items-center">
-                <img src="/img/topby_base_new/endimg.png" alt="" class="w-full max-w-xl md:max-w-full mx-auto">
+            <div class="topby_last_image max-w-xl">
+                <!-- <img src="/img/topby_base_new/endimg.png" alt="" class="w-full max-w-xl md:max-w-full mx-auto"> -->
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2 mt-7 max-w-3xl mx-auto">
             <div>
-                <img src="/img/topby_base_new/customer_call.png" alt="" class="mx-auto">
+                <img src="/img/topby_base_new/customer_call.png" alt="" class="mx-auto w-3/4">
             </div>
             <div>
-                <img src="/img/topby_base_new/customer_kakao.png" alt="" class="mx-auto">
+                <img src="/img/topby_base_new/customer_kakao.png" alt="" class="mx-auto w-3/4">
             </div>
         </div>
 
 
-        <div class="suit_font text-center mt-10">
+        <div class="suit_font text-center mt-10 text-xs md:text-base">
             <span class="inline-block mr-4 text-sm">개인정보책임자 : 김연지</span>
             <span class="inline-block mr-4 text-sm">대표 : 박창현</span>
             <span class="inline-block mr-4 text-sm">회사명 : 피크</span>
@@ -203,7 +221,7 @@
 
 
 
-        <div class="max-w-2xl mt-4 mx-auto">
+        <div class="max-w-2xl mt-1 mx-auto">
             <img src="/img/topby_base_new/footer_company.png" alt="" class="mx-auto">
         </div>
 
