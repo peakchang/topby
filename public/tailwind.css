@@ -1038,12 +1038,6 @@ video {
 .pr-14 {
   padding-right: 3.5rem;
 }
-.pt-3 {
-  padding-top: 0.75rem;
-}
-.pb-5 {
-  padding-bottom: 1.25rem;
-}
 .pb-0 {
   padding-bottom: 0px;
 }
@@ -1061,6 +1055,12 @@ video {
 }
 .pl-10 {
   padding-left: 2.5rem;
+}
+.pt-3 {
+  padding-top: 0.75rem;
+}
+.pb-5 {
+  padding-bottom: 1.25rem;
 }
 .text-left {
   text-align: left;
