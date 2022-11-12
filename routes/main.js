@@ -2,7 +2,7 @@ const express = require('express');
 
 const sql_con = require('../db_lib');
 const router = express.Router();
-
+var requestIp = require('request-ip');
 const fs = require('fs')
 
 const aligoapi = require('aligoapi')
@@ -99,6 +99,12 @@ router.use('/test', (req, res, next) => {
 
 
 router.get('/', (req, res, next) => {
+    console.log(req.headers);
+    console.log(req.get('Referrer'));
+    console.log("client IP: " + requestIp.getClientIp(req));
+    console.log(requestIp.getClientIp(req));
+    
+    
     try {
         userInfo = { 'user': req.user, 'req': req };
     } catch {
