@@ -99,11 +99,10 @@ router.use('/test', (req, res, next) => {
 
 
 router.get('/', (req, res, next) => {
-    console.log(req.headers);
+    console.log(req.headers['user-agent']);
     console.log(req.get('Referrer'));
-    console.log("client IP: " + requestIp.getClientIp(req));
     console.log(requestIp.getClientIp(req));
-    
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
     
     try {
         userInfo = { 'user': req.user, 'req': req };

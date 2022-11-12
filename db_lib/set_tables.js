@@ -6,6 +6,19 @@ const sql_con = require('./index');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+    let makeVisitChkTable = `CREATE TABLE IF NOT EXISTS visit_chk(
+        vc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        vc_ip VARCHAR(100),
+        vc_path TEXT,
+        vc_browser TEXT,
+        vc_created_at DATETIME
+    );`;
+    try {
+        sql_con.query(makeVisitChkTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
 
     let makeAuditTable = `CREATE TABLE IF NOT EXISTS audit_webhook(
         aw_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
