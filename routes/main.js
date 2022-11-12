@@ -21,6 +21,13 @@ router.use((req, res, next) => {
 
 
 
+app.get("/robots.txt", (req, res) => {
+    res.type("text/plain");
+    res.send(
+        "User-agent: *\nAllow: /\nDisallow: /admin/\n"
+    );
+});
+
 
 
 router.use('/testpp', async (req, res, next) => {
@@ -40,7 +47,7 @@ router.use('/testpp', async (req, res, next) => {
         }
         resolve(dbContent)
     })
-    
+
     fs.appendFileSync(pathBasic, result, (err) => { })
 
 
@@ -103,7 +110,7 @@ router.get('/', (req, res, next) => {
     console.log(req.get('Referrer'));
     console.log(requestIp.getClientIp(req));
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-    
+
     try {
         userInfo = { 'user': req.user, 'req': req };
     } catch {
