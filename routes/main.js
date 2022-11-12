@@ -24,7 +24,7 @@ router.use((req, res, next) => {
 router.get("/robots.txt", (req, res) => {
     res.type("text/plain");
     res.send(
-        "User-agent: *\nAllow: /\nDisallow: /admin/\n"
+        "User-agent: *\nDisallow: /crm/\nAllow: /\n"
     );
 });
 
