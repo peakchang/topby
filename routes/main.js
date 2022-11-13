@@ -105,11 +105,35 @@ router.use('/test', (req, res, next) => {
 
 
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
     console.log(req.headers['user-agent']);
     console.log(req.get('Referrer'));
+    if (req.get('Referrer')) {
+        var prePath = req.get('Referrer')
+    } else {
+        var prePath = ''
+    }
     console.log(requestIp.getClientIp(req));
+
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    var nowDate = moment(Date.now()).format('YYYY-MM-DD');
+
+
+
+    const visitSearchSql = `SELECT * FROM visit_chk WHERE DATE(vc_created_at) = ?`;
+    const visitSearchToday = await sql_con.promise().query(visitSearchSql, [nowDate])
+    const getVisitList = visitSearchToday[0]
+    for await (const getVisit of getVisitList) {
+        if (getVisit.vc_ip == requestIp.getClientIp(req)) {
+            var addVisitChk = 'ON';
+        }
+    }
+    if (!addVisitChk) {
+        var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+        const visitChkSql = `INSERT INTO visit_chk (vc_ip,vc_path,vc_browser,vc_created_at) VALUES (?,?,?,?);`;
+        const visitChkArr = [requestIp.getClientIp(req), prePath, req.headers['user-agent'], now]
+        await sql_con.promise().query(visitChkSql, visitChkArr)
+    }
 
     try {
         userInfo = { 'user': req.user, 'req': req };
