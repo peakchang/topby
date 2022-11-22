@@ -259,23 +259,13 @@ router.use('/modify', async (req, res, next) => {
     res.render('crm/crm_modify', { userInfo })
 })
 
-
+// chkRateMaster
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 
     try {
-        console.log('이것이 URL이란 말인가????' + req.url);
-
-        const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-        const getStatusText = await sql_con.promise().query(getStatusSql)
-
-        var testVal = (1 == 21) ? '마장' : '아냥';
-
 
         var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
-        
-        
-
 
         var dateOn = new Date();
         var mDays = dateOn.getDate() - 1;
@@ -291,7 +281,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
 
         const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form  ${sdCountQ} ${getEst} ${getStatus};`;
-        console.log(allCountSql);
 
         // WHERE af_form_type_in='분양'
 
@@ -303,14 +292,19 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
         // AND af_form_type_in='분양'
 
-        console.log('is before error location????');
-        console.log(setDbSql);
-
         const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
+        // console.log(all_data);
 
-        console.log('is error location????');
+        const getSiteListSql = "SELECT * FROM site_list";
+        const getSiteListResult = await sql_con.promise().query(getSiteListSql)
+        const siteList = [];
+        for (const getSiteListFor of getSiteListResult[0]) {
+            siteList.push(getSiteListFor.sl_site_name)
+        }
 
-        all_data.estate_list = getStatusText[0][0].fs_estate_list.split(',');
+
+
+        all_data.estate_list = siteList;
         all_data.est = req.query.est
         all_data.status = req.query.status
         all_data.sc = req.query.sc
@@ -446,37 +440,42 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
 })
 
 router.post('/user_manage', chkRateManager, async (req, res, next) => {
-    if (req.body.pwd_val) {
-        const hash = await bcrypt.hash(req.body.pwd_val, 12);
-        const valArr = [hash, req.body.id_val]
-        const pwdUpdateSql = `UPDATE users SET password = ? WHERE id = ?;`;
-        await sql_con.promise().query(pwdUpdateSql, valArr);
-    } else if (req.body.rate_val) {
-        const valArr = [req.body.rate_val, req.body.id_val]
-        const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
-        await sql_con.promise().query(rateUpdateSql, valArr);
-    } else if (req.body.location_val) {
-        console.log(req.body.location_val);
-        const valArr = [req.body.location_val, req.body.id_val]
-        const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
-        console.log(locationUpdateSql);
-        await sql_con.promise().query(locationUpdateSql, valArr);
 
-    } else if (req.body.delval) {
-        const valArr = [req.body.id_val]
-        const locationDeleteSql = `UPDATE users SET manage_estate = '' WHERE id = ?;`;
-        await sql_con.promise().query(locationDeleteSql, valArr);
-    } else if (req.body.email_val) {
-        const valArr = [req.body.email_val, req.body.id_val]
-        const emailUpdateSql = `UPDATE users SET user_email = ? WHERE id = ?;`;
-        await sql_con.promise().query(emailUpdateSql, valArr);
-    } else if (req.body.phone_val) {
-        var phone_val = req.body.phone_val.replace(/\-/g, '');
-        const valArr = [phone_val, req.body.id_val]
-        const phoneUpdateSql = `UPDATE users SET user_phone = ? WHERE id = ?;`;
-        await sql_con.promise().query(phoneUpdateSql, valArr);
+    try {
+        if (req.body.pwd_val) {
+            const hash = await bcrypt.hash(req.body.pwd_val, 12);
+            const valArr = [hash, req.body.id_val]
+            const pwdUpdateSql = `UPDATE users SET password = ? WHERE id = ?;`;
+            await sql_con.promise().query(pwdUpdateSql, valArr);
+        } else if (req.body.rate_val) {
+            const valArr = [req.body.rate_val, req.body.id_val]
+            const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
+            await sql_con.promise().query(rateUpdateSql, valArr);
+        } else if (req.body.location_val) {
+            console.log(req.body.location_val);
+            const valArr = [req.body.location_val, req.body.id_val]
+            const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
+            console.log(locationUpdateSql);
+            await sql_con.promise().query(locationUpdateSql, valArr);
+        } else if (req.body.delval) {
+            const valArr = [req.body.id_val]
+            const locationDeleteSql = `UPDATE users SET manage_estate = '' WHERE id = ?;`;
+            await sql_con.promise().query(locationDeleteSql, valArr);
+        } else if (req.body.email_val) {
+            const valArr = [req.body.email_val, req.body.id_val]
+            const emailUpdateSql = `UPDATE users SET user_email = ? WHERE id = ?;`;
+            await sql_con.promise().query(emailUpdateSql, valArr);
+        } else if (req.body.phone_val) {
+            var phone_val = req.body.phone_val.replace(/\-/g, '');
+            const valArr = [phone_val, req.body.id_val]
+            const phoneUpdateSql = `UPDATE users SET user_phone = ? WHERE id = ?;`;
+            await sql_con.promise().query(phoneUpdateSql, valArr);
+        }
+        res.send(200)
+    } catch (error) {
+        res.send(404)
     }
-    res.send(200)
+
 })
 
 

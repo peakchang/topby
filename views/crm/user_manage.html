@@ -87,7 +87,7 @@
                             {{user.nick}}
                         </td>
                         <td class="border border-slate-300 p-2 text-center">
-                            <select name="" id="" class="rounded border border-slate-300 py-1 px-3">
+                            <select name="" class="rounded border border-slate-300 py-1 px-3">
                                 <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>일반</option>
                                 <option value="2" {% if user.rate==2 %} SELECTED {% endif %}>분양사</option>
                                 <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
@@ -129,13 +129,13 @@
                                         <li>
                                             <div class="flex p-2 rounded">
                                                 <div class="flex items-center h-5">
-                                                    <input id="chk{{loop.index}}" type="checkbox" value="{{location}}"
+                                                    <input id="{{user.userid}}chk{{loop.index}}" type="checkbox" value="{{location}}"
                                                         class="bg-gray-100 border-gray-300" {% if user.manage_estate %}
                                                         {% set melist=user.manage_estate.split(',') %} {% if location in
                                                         melist %} checked {% endif %} {% endif %}>
                                                 </div>
                                                 <div class="ml-2 text-sm">
-                                                    <label for="chk{{loop.index}}" class="font-medium text-gray-900">
+                                                    <label for="{{user.userid}}chk{{loop.index}}" class="font-medium text-gray-900">
                                                         <div>{{location}}</div>
                                                     </label>
                                                 </div>
@@ -194,7 +194,8 @@
             console.log(res);
             location.reload()
         }).catch((err) => {
-            console.log(err);
+            alert('이메일은 중복될수 없습니다. (다른 회원이 사용중인 이메일 입니다)')
+            location.reload()
         })
     })
 
@@ -202,7 +203,7 @@
         const phone_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.firstElementChild.value
         if(!phone_val){
-            alert('전화번호를 입력해주세요! 코딩 시로!')
+            alert('전화번호를 입력해주세요!')
             return false
         }
         axios.post('/crm/user_manage', {phone_val, id_val}).then((res) => {
@@ -254,9 +255,8 @@
         })
     })
 
-    document.querySelector('.del_location').addEventListener('click', function () {
+    $('.del_location').click(function(){
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
-
         $.ajax({
             method: 'post', url: '/crm/user_manage', data: { delval: 'on', id_val }, success: function (data) {
                 console.log('성공!!!');
@@ -266,5 +266,18 @@
             }
         })
     })
+
+    //document.querySelector('.del_location').addEventListener('click', function() {
+    //    const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
+    //    console.log(id_val)
+    //    $.ajax({
+    //        method: 'post', url: '/crm/user_manage', data: { delval: 'on', id_val }, success: function (data) {
+    //            console.log('성공!!!');
+    //            location.reload()
+    //       }, error: function (err) {
+    //            console.log(err);
+    //        }
+    //    })
+    //})
 </script>
 {% endblock %}
