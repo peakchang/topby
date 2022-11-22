@@ -119,8 +119,15 @@ router.use('/upload_db', chkRateMaster, async (req, res, next) => {
     const getFormStatusSql = `SELECT * FROM form_status WHERE fs_id=1`;
     const getFormStatus = await sql_con.promise().query(getFormStatusSql)
     const getForm = getFormStatus[0][0];
-    console.log(getForm);
-    const estate_list = getForm.fs_estate_list.split(',');
+    // console.log(getForm);
+    // const estate_list = getForm.fs_estate_list.split(',');
+
+    const getSiteListSql = "SELECT * FROM site_list";
+    const getSiteListResult = await sql_con.promise().query(getSiteListSql)
+    const estate_list = [];
+    for (const getSiteListFor of getSiteListResult[0]) {
+        estate_list.push(getSiteListFor.sl_site_name)
+    }
     const marketer_list = getForm.fs_marketer_list.split(',');
 
 
@@ -330,10 +337,19 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
         var getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
     } else if (req.user.rate == 5) {
-        const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;
-        const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql);
-        var getUserEstateList = getUserEstateTemp[0][0].fs_estate_list.split(',');
+        // const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;
+        // const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql);
+        // var getUserEstateList = getUserEstateTemp[0][0].fs_estate_list.split(',');
+
+        const getSiteListSql = "SELECT * FROM site_list";
+        const getSiteListResult = await sql_con.promise().query(getSiteListSql)
+        var getUserEstateList = [];
+        for (const getSiteListFor of getSiteListResult[0]) {
+            getUserEstateList.push(getSiteListFor.sl_site_name)
+        }
     }
+
+    console.log(getUserEstateList);
 
 
     if (req.query.sc) {
@@ -342,11 +358,9 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         var pageCount = 30;
     }
 
-
+    console.log(req.user.rate);
 
     var getEst = '';
-
-    console.log(req.user.rate);
     if (req.user.rate < 5) {
         if (req.query.est) {
             var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
@@ -360,6 +374,12 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                     getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
                 }
             }
+        }
+    } else {
+        if (req.query.est) {
+            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
+        } else {
+            var getEst = "";
         }
     }
 
@@ -407,7 +427,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+
+    console.log(setDbSql);
 
     console.log(setDbSql)
 
@@ -431,9 +455,17 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
     const userListTemp = await sql_con.promise().query(userLoadSql);
     const user_list = userListTemp[0];
 
-    const locationListSql = `SELECT fs_estate_list FROM form_status WHERE fs_id = 1;`;
-    const locationListTemp = await sql_con.promise().query(locationListSql);
-    const location_list = locationListTemp[0][0].fs_estate_list.split(',')
+    // const locationListSql = `SELECT fs_estate_list FROM form_status WHERE fs_id = 1;`;
+    // const locationListTemp = await sql_con.promise().query(locationListSql);
+    // const location_list = locationListTemp[0][0].fs_estate_list.split(',')
+
+    const getSiteListSql = "SELECT * FROM site_list";
+    const getSiteListResult = await sql_con.promise().query(getSiteListSql)
+    const location_list = [];
+    for (const getSiteListFor of getSiteListResult[0]) {
+        location_list.push(getSiteListFor.sl_site_name)
+    }
+
     console.log(location_list);
 
     res.render('crm/user_manage', { master_load, user_list, location_list });
@@ -506,16 +538,19 @@ router.post('/use_axios', async (req, res, next) => {
     } else if (req.body.siteVal) {
         const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
         await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
-    } else if (req.body.delVal) {
-        console.log(req.body.siteUpdateList);
-        console.log(req.body.siteNameList);
-        console.log(req.body.siteLinkList);
+    } else if (req.body.btnVal) {
 
-        // for (const update_id of siteUpdateList) {
-        //     let updateSql = `UPDATE site_list SET sl_site_name`
-        // }
-        // const insertSiteSql = `INSERT INTO site_list (sl_site_name, sl_site_link, sl_created_at) VALUES (?,?,?);`;
-        // await sql_con.promise().query(insertSiteSql, [req.body.siteVal, req.body.siteLinkVal, now]);
+        if (req.body.btnVal == "site_update") {
+            for (let i = 0; i < req.body.siteUpdateList.length; i++) {
+                const updateStatusSql = `UPDATE site_list SET sl_site_name = ?, sl_site_link = ? WHERE sl_id = ?`;
+                await sql_con.promise().query(updateStatusSql, [req.body.siteNameList[i], req.body.siteLinkList[i], req.body.siteUpdateList[i]]);
+            }
+        } else {
+            for (let i = 0; i < req.body.siteUpdateList.length; i++) {
+                const deleteStatusSql = `DELETE FROM site_list WHERE sl_id = ?`;
+                await sql_con.promise().query(deleteStatusSql, [req.body.siteUpdateList[i]]);
+            }
+        }
     }
 
 
@@ -538,13 +573,13 @@ router.use('/', chkRateMaster, async (req, res, next) => {
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
             const marketerList = 'FB,' + req.body.marketer_list
-            let insertArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list, marketerList];
-            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_estate_list, fs_marketer_list) VALUES (?,?,?,?);`;
+            let insertArr = [req.body.estate_status, req.body.estate_status_color, marketerList];
+            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_marketer_list) VALUES (?,?,?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
             const marketerList = 'FB,' + req.body.marketer_list
-            let updatetArr = [req.body.estate_status, req.body.estate_status_color, req.body.estate_list, marketerList];
-            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_estate_list=?, fs_marketer_list=? WHERE fs_id=1`;
+            let updatetArr = [req.body.estate_status, req.body.estate_status_color, marketerList];
+            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_marketer_list=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }
