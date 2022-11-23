@@ -19,7 +19,7 @@ router.use((req, res, next) => {
 });
 
 
-router.get('/hy1', (req, res, next) => {
+router.get('/hy5371', (req, res, next) => {
     res.render('side/hynjang1')
 })
 
