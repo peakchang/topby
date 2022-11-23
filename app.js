@@ -21,6 +21,7 @@ const crmRouter = require('./routes/crm');
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
+const sideRouter = require('./routes/side');
 const passportConfig = require('./passport');
 
 
@@ -95,6 +96,8 @@ app.use('/', mainRouter);
 app.use('/crm', crmRouter);
 app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
+app.use('/side', sideRouter);
+
 
 app.use((req, res, next) => {
     const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
