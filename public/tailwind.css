@@ -576,14 +576,20 @@ video {
 .right-2 {
   right: 0.5rem;
 }
+.bottom-0 {
+  bottom: 0px;
+}
+.left-0 {
+  left: 0px;
+}
 .bottom-6 {
   bottom: 1.5rem;
 }
 .z-10 {
   z-index: 10;
 }
-.z-50 {
-  z-index: 50;
+.z-20 {
+  z-index: 20;
 }
 .mx-auto {
   margin-left: auto;
