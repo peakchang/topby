@@ -739,6 +739,9 @@ video {
 .w-3\/4 {
   width: 75%;
 }
+.w-3\/5 {
+  width: 60%;
+}
 .w-9 {
   width: 2.25rem;
 }
@@ -1029,6 +1032,14 @@ video {
 .bg-cyan-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(8 145 178 / var(--tw-bg-opacity));
+}
+.bg-yellow-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(161 98 7 / var(--tw-bg-opacity));
+}
+.bg-cyan-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(14 116 144 / var(--tw-bg-opacity));
 }
 .bg-gray-300 {
   --tw-bg-opacity: 1;

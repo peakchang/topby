@@ -6,6 +6,34 @@ const sql_con = require('./index');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+    let makeMiniSiteTable = `CREATE TABLE IF NOT EXISTS hy_site(
+        hy_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        hy_num varchar(10) NOT NULL UNIQUE,
+        hy_title VARCHAR(255) ,
+        hy_description TEXT ,
+        hy_keywords TEXT ,
+        hy_site_name VARCHAR(255) ,
+        hy_businessname VARCHAR(100) ,
+        hy_type VARCHAR(100) ,
+        hy_scale VARCHAR(100) ,
+        hy_areasize VARCHAR(100) ,
+        hy_house_number VARCHAR(100) ,
+        hy_location VARCHAR(100) ,
+        hy_scheduled VARCHAR(100) ,
+        hy_builder VARCHAR(100) ,
+        hy_conduct VARCHAR(100) ,
+        hy_features TEXT ,
+        hy_image_list TEXT ,
+        hy_callnumber VARCHAR(100) ,
+        hy_creted_at DATETIME
+    );`;
+    try {
+        sql_con.query(makeMiniSiteTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
+
     let makeVisitChkTable = `CREATE TABLE IF NOT EXISTS visit_chk(
         vc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         vc_ip VARCHAR(100),
@@ -30,7 +58,7 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
-    
+
 
 
     let makeChkJishoTable = `CREATE TABLE IF NOT EXISTS chkjisho(
@@ -153,7 +181,7 @@ exports.tableSetting = async () => {
     }
 
 
-    
+
 
 
 

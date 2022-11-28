@@ -115,6 +115,7 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
 
   const getFormStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
   const getFormStatus = await sql_con.promise().query(getFormStatusSql)
+  console.log(getFormStatus[0]);
   const getStatusList = getFormStatus[0][0].fs_estate_status.split(',')
   const getStatusColor = getFormStatus[0][0].fs_estate_status_color.split(',')
 

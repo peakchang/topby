@@ -51,6 +51,32 @@ router.use((req, res, next) => {
 // const upload = multer();
 
 
+router.use('/side', async (req, res, next) => {
+    if (req.method == 'POST') {
+        try {
+            var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            const newHySql = `INSERT INTO hy_site (hy_num,hy_title,hy_creted_at) VALUES (?,?,?)`
+            await sql_con.promise().query(newHySql, [req.body.new_site_num, req.body.new_site_title, now])
+        } catch (error) {
+
+        }
+    }
+
+    const getSiteListSql = `SELECT * FROM hy_site`;
+    const getSiteListAll = await sql_con.promise().query(getSiteListSql)
+    const get_site_list = getSiteListAll[0];
+    res.render('crm/work_side', { get_site_list })
+})
+
+router.use('/side_detail/:id', async (req, res, next) => {
+    if (req.method == 'POST') {
+
+    }
+
+    console.log(req.params.id);
+    res.render('crm/work_side_detail',)
+})
+
 
 router.get('/down_db', chkRateMaster, async (req, res, next) => {
     var pathBasic = `${app_root_path}/public/temp/down.txt`;

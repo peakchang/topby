@@ -19,8 +19,16 @@ router.use((req, res, next) => {
 });
 
 
-router.get('/hy5371', (req, res, next) => {
-    res.render('side/hynjang1')
+router.get('/:name', (req, res, next) => {
+    // hy5371
+    console.log(req.params.name);
+    if (req.params.name == "dfdfdf") {
+        res.render('side/hynjang1')
+    } else {
+        const err = new Error('존재하지 않는 url 입니다');
+        err.status = 404;
+        next(err);
+    }
 })
 
 
