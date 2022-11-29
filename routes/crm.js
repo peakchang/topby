@@ -53,12 +53,21 @@ router.use((req, res, next) => {
 
 router.use('/side', async (req, res, next) => {
     if (req.method == 'POST') {
-        try {
-            var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-            const newHySql = `INSERT INTO hy_site (hy_num,hy_title,hy_creted_at) VALUES (?,?,?)`
-            await sql_con.promise().query(newHySql, [req.body.new_site_num, req.body.new_site_title, now])
-        } catch (error) {
 
+        console.log(req.body);
+        if (req.body.submit_val == 'site_update') {
+            if(typeof(req.body.site_id) == 'string'){
+                const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
+                await sql_con.promise().query(updateHySql, [req.body.site_num, parseInt(req.body.site_id)])
+            }
+        } else {
+            try {
+                var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+                const newHySql = `INSERT INTO hy_site (hy_num,hy_title,hy_creted_at) VALUES (?,?,?)`
+                await sql_con.promise().query(newHySql, [req.body.new_site_num, req.body.new_site_title, now])
+            } catch (error) {
+
+            }
         }
     }
 
@@ -69,11 +78,12 @@ router.use('/side', async (req, res, next) => {
 })
 
 router.use('/side_detail/:id', async (req, res, next) => {
+    console.log(req.params.id);
     if (req.method == 'POST') {
 
     }
 
-    console.log(req.params.id);
+
     res.render('crm/work_side_detail',)
 })
 
