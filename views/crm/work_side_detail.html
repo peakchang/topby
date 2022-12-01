@@ -118,18 +118,35 @@
                 </tr>
             </table>
 
+
             <div class="mt-3 text-center">
                 <div class="text-xl">이미지 리스트</div>
 
-                <div class="h-28 mb-3 rounded-lg border-dashed border-1 border-indigo-600 dropBox">
+                <!-- <div class="h-28 mb-3 rounded-lg border-dashed border-1 border-indigo-600 dropBox">
                     <div class="flex flex-col justify-center items-center h-full">
                         <span class="text-xl">이미지를 드래그해주세요</span>
                         <span class="text-4xl text-neutral-500"><i class="fa fa-plus-circle"
                                 aria-hidden="true"></i></span>
                     </div>
+                </div> -->
+
+
+                <div class="drop-zone" style="height: 500px; width:500px; background-color:beige; ">또는 파일을 여기로 드래그하세요.
                 </div>
-                <button type="button" class="border rounded-lg px-4 py-2 bg-yellow-700 text-white">이미지 추가</button>
+                <input type="file" id="file" multiple>
+
+
+                <!-- <button type="button" class="border rounded-lg px-4 py-2 bg-yellow-700 text-white">이미지 추가</button> -->
             </div>
+
+
+
+            <h3>업로드된 파일</h3>
+            <div id="preview">
+
+            </div>
+            <input type="file" id="file-input" multiple /><br>
+            <span class="chkchk">체쿠체쿠</span></br>
 
 
             <button class="border rounded-lg py-2 text-white bg-cyan-700 text-xl w-3/5">등록하기</button>
@@ -142,36 +159,149 @@
         console.log('aslidjfliasjdfljaf');
     })
 
-    const $drop = document.querySelector(".dropBox");
-    const $title = document.querySelector(".dropBox h1");
 
-    // 드래그한 파일 객체가 해당 영역에 놓였을 때
-    $drop.ondrop = (e) => {
-        e.preventDefault();
-        $drop.className = "dropBox";
 
-        // 파일 리스트
-        const files = [...e.dataTransfer?.files];
+    var $file = document.getElementById("file")
+    var dropZone = document.querySelector(".drop-zone")
 
-        $title.innerHTML = files.map(v => v.name).join("<br>");
+    var showFiles = function (files) {
+        dropZone.innerHTML = ""
+        for (var i = 0, len = files.length; i < len; i++) {
+            dropZone.innerHTML += "<p>" + files[i].name + "</p>"
+        }
     }
 
-    // ondragover 이벤트가 없으면 onDrop 이벤트가 실핻되지 않습니다.
-    $drop.ondragover = (e) => {
-        e.preventDefault();
+    var selectFile = function (files) {
+        // input file 영역에 드랍된 파일들로 대체
+        $file.files = files
+        showFiles($file.files)
+
     }
+
+    $file.addEventListener("change", function (e) {
+        showFiles(e.target.files)
+    })
 
     // 드래그한 파일이 최초로 진입했을 때
-    $drop.ondragenter = (e) => {
-        e.preventDefault();
+    dropZone.addEventListener("dragenter", function (e) {
+        e.stopPropagation()
+        e.preventDefault()
 
-        $drop.classList.add("active");
+        console.log('파일이 진입함!!!');
+        // toggleClass("dragenter")
+    })
+
+    // 드래그한 파일이 dropZone 영역을 벗어났을 때
+    dropZone.addEventListener("dragleave", function (e) {
+        e.stopPropagation()
+        e.preventDefault()
+
+        // toggleClass("dragleave")
+    })
+
+    // 드래그한 파일이 dropZone 영역에 머물러 있을 때
+    dropZone.addEventListener("dragover", function (e) {
+        e.stopPropagation()
+        e.preventDefault()
+
+        console.log('파일이 머무는중!!!');
+
+        // toggleClass("dragover")
+    })
+
+    // 드래그한 파일이 드랍되었을 때
+
+    var fileInput = document.querySelector('#file-input');
+    var setFileList = Array.from(fileInput.files)
+    dropZone.addEventListener("drop", function (e) {
+        e.preventDefault()
+        toggleClass("drop")
+        var data = e.dataTransfer.files;
+        for (let i = 0; i < data.length; i++) {
+            const getData = data[i];
+            console.log(getData);
+            setFileList.push(getData)
+        }
+        console.log(setFileList);
+
+
+        // setFileList.push(data.files)
+        // console.log(setFileList);
+        // var files = e.dataTransfer && e.dataTransfer.files
+        // console.log(files)
+
+
+        // if (files != null) {
+        //     if (files.length < 1) {
+        //         alert("폴더 업로드 불가")
+        //         return
+        //     }
+        //     selectFile(files)
+        // } else {
+        //     alert("ERROR")
+        // }
+
+        // const fileInput = document.querySelector('#file-input');
+        // const preview = document.querySelector('#preview');
+
+        // console.log(fileInput);
+
+
+    })
+
+
+
+    const handler = {
+        init() {
+            const fileInput = document.querySelector('#file-input');
+            const preview = document.querySelector('#preview');
+            fileInput.addEventListener('change', () => {
+                console.dir(fileInput)
+                const files = Array.from(fileInput.files)
+                console.log(files);
+                files.forEach(file => {
+                    preview.innerHTML += `
+                        <p id="${file.lastModified}">
+                            ${file.name}
+                            <button data-index='${file.lastModified}' class='file-remove'>X</button>
+                        </p>`;
+                });
+            });
+        },
+
+        removeFile: () => {
+            document.addEventListener('click', (e) => {
+                if (e.target.className !== 'file-remove') return;
+                const removeTargetId = e.target.dataset.index;
+                const removeTarget = document.getElementById(removeTargetId);
+                const files = document.querySelector('#file-input').files;
+                const dataTranster = new DataTransfer();
+
+                // document.querySelector('#file-input').files =
+                //             Array.from(files).filter(file => file.lastModified !== removeTarget);
+
+
+                Array.from(files)
+                    .filter(file => file.lastModified != removeTargetId)
+                    .forEach(file => {
+                        dataTranster.items.add(file);
+                    });
+
+                document.querySelector('#file-input').files = dataTranster.files;
+
+                removeTarget.remove();
+            })
+        }
     }
 
-    // 드래그한 파일이 영역을 벗어났을 때
-    $drop.ondragleave = (e) => {
-        e.preventDefault();
+    handler.init()
+    handler.removeFile()
 
-        $drop.classList.remove("active");
-    }
+
+    $('.chkchk').click(function (e) {
+        let fileInput = document.querySelector('#file-input');
+        let setFileList = Array.from(fileInput.files)
+        console.log(setFileList);
+    })
+
 </script>
