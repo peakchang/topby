@@ -64,15 +64,19 @@ const upload = multer({
         },
         filename(req, file, cb) {
             //파일명 설정
-            const ext = path.extname(file.originalname);
-            const filename = randomChracter(6);
-            console.log(filename);
-
-            cb(null, filename + Date.now() + ext);
+            cb(null, file.originalname);
         },
     }),
     // limits: { fileSize: 10 * 1024 * 1024 },
 });
+
+
+
+router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
+    
+    res.send(200)
+})
+
 
 router.get('/side_detail/:id', async (req, res, next) => {
     console.log('get 입니다~~~');
@@ -89,10 +93,7 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
     res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
 })
 
-router.post('/arr_image', upload.single('testimg'), async (req, res, next) => {
-    
-    res.send(200)
-})
+
 
 
 router.use('/side', async (req, res, next) => {
