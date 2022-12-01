@@ -11,7 +11,7 @@ const fs = require('fs')
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
-const { setDbData, getDbData, getExLength } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform } = require('winston');
@@ -51,12 +51,56 @@ router.use((req, res, next) => {
 // const upload = multer();
 
 
+const upload = multer({
+    storage: multer.diskStorage({
+        // 경로를 설정
+        destination(req, file, cb) {
+            try {
+                fs.readdirSync(`uploads/${req.body.hy_num}`);
+            } catch (error) {
+                fs.mkdirSync(`uploads/${req.body.hy_num}`);
+            }
+            cb(null, `uploads/${req.body.hy_num}`);
+        },
+        filename(req, file, cb) {
+            //파일명 설정
+            const ext = path.extname(file.originalname);
+            const filename = randomChracter(6);
+            console.log(filename);
+
+            cb(null, filename + Date.now() + ext);
+        },
+    }),
+    // limits: { fileSize: 10 * 1024 * 1024 },
+});
+
+router.get('/side_detail/:id', async (req, res, next) => {
+    console.log('get 입니다~~~');
+    const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
+    const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
+    const get_hy_info = getHyInfo[0][0];
+    res.render('crm/work_side_detail', { get_hy_info })
+})
+
+
+router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
+    console.log('여기가 POST는 맞는거지?? 멀터는 씨발 ㅠ');
+    // res.redirect(`crm/work_side_detail/${req.params.id}`)
+    res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
+})
+
+router.post('/arr_image', upload.single('testimg'), async (req, res, next) => {
+    
+    res.send(200)
+})
+
+
 router.use('/side', async (req, res, next) => {
     if (req.method == 'POST') {
 
         console.log(req.body);
         if (req.body.submit_val == 'site_update') {
-            if(typeof(req.body.site_id) == 'string'){
+            if (typeof (req.body.site_id) == 'string') {
                 const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
                 await sql_con.promise().query(updateHySql, [req.body.site_num, parseInt(req.body.site_id)])
             }
@@ -77,15 +121,7 @@ router.use('/side', async (req, res, next) => {
     res.render('crm/work_side', { get_site_list })
 })
 
-router.use('/side_detail/:id', async (req, res, next) => {
-    console.log(req.params.id);
-    if (req.method == 'POST') {
 
-    }
-
-
-    res.render('crm/work_side_detail',)
-})
 
 
 router.get('/down_db', chkRateMaster, async (req, res, next) => {
