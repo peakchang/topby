@@ -11,7 +11,7 @@ const fs = require('fs')
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
-const { setDbData, getDbData, getExLength } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform } = require('winston');
@@ -51,12 +51,109 @@ router.use((req, res, next) => {
 // const upload = multer();
 
 
+const upload = multer({
+    storage: multer.diskStorage({
+        // 경로를 설정
+        destination(req, file, cb) {
+            try {
+                fs.readdirSync(`uploads/${req.body.hy_num}`);
+            } catch (error) {
+                console.log(error);
+                fs.mkdirSync(`uploads/${req.body.hy_num}`);
+            }
+            cb(null, `uploads/${req.body.hy_num}`);
+        },
+        filename(req, file, cb) {
+            //파일명 설정
+            cb(null, file.originalname);
+        },
+    }),
+    // limits: { fileSize: 10 * 1024 * 1024 },
+});
+
+
+router.post('/del_image', async (req, res, next) => {
+    const updateDelListSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    await sql_con.promise().query(updateDelListSql, [req.body.getUpdateImgList, req.body.hy_num]);
+    console.log(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`);
+    console.log(req.body.getDelTargetImg);
+
+    fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function (ex) {
+        if (ex) {
+            console.log('파일 있음!!!');
+            fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
+                console.log(err);
+            })
+        } else {
+            console.log('파일 없음!!!');
+        }
+    })
+
+
+    res.send(200)
+})
+
+router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
+    console.log(req.body);
+
+
+    try {
+        const getHyImgListSql = `SELECT hy_image_list FROM hy_site WHERE hy_num = ?`;
+        const getHyImgList = await sql_con.promise().query(getHyImgListSql, [req.body.hy_num]);
+        var get_hy_img_list = getHyImgList[0][0].hy_image_list;
+        if(get_hy_img_list){
+            var SetHyImgList = `${get_hy_img_list},${req.body.fileListStr}`
+        }else{
+            var SetHyImgList = req.body.fileListStr
+        }
+        
+    } catch (error) {
+        var SetHyImgList = req.body.fileListStr
+    }
+
+    console.log(SetHyImgList);
+
+
+    const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    await sql_con.promise().query(hyImgListUpdateSql, [SetHyImgList, req.body.hy_num]);
+
+    console.log('아니 왜 안되 씨발~~~~~~~~~~~~~~~~~~~');
+    var SetHyImgList = SetHyImgList.split(',')
+    const testVal = '가가가가가가가'
+    res.send({ SetHyImgList })
+})
+
+
+router.get('/side_detail/:id', async (req, res, next) => {
+
+    console.log('get 입니다~~~');
+    const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
+    const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
+    var get_hy_info = getHyInfo[0][0];
+    try {
+        get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
+    } catch (error) {
+        get_hy_info.hy_image_arr = []
+    }
+    res.render('crm/work_side_detail', { get_hy_info })
+})
+
+
+router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
+    console.log('여기가 POST는 맞는거지?? 멀터는 씨발 ㅠ');
+    // res.redirect(`crm/work_side_detail/${req.params.id}`)
+    res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
+})
+
+
+
+
 router.use('/side', async (req, res, next) => {
     if (req.method == 'POST') {
 
         console.log(req.body);
         if (req.body.submit_val == 'site_update') {
-            if(typeof(req.body.site_id) == 'string'){
+            if (typeof (req.body.site_id) == 'string') {
                 const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
                 await sql_con.promise().query(updateHySql, [req.body.site_num, parseInt(req.body.site_id)])
             }
@@ -77,15 +174,7 @@ router.use('/side', async (req, res, next) => {
     res.render('crm/work_side', { get_site_list })
 })
 
-router.use('/side_detail/:id', async (req, res, next) => {
-    console.log(req.params.id);
-    if (req.method == 'POST') {
 
-    }
-
-
-    res.render('crm/work_side_detail',)
-})
 
 
 router.get('/down_db', chkRateMaster, async (req, res, next) => {
