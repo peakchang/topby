@@ -71,18 +71,60 @@ const upload = multer({
 });
 
 
+router.post('/del_image', async (req, res, next) => {
+    const updateDelListSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    await sql_con.promise().query(updateDelListSql, [req.body.getUpdateImgList, req.body.hy_num]);
+    console.log(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`);
+    console.log(req.body.getDelTargetImg);
+
+    fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function(ex) {
+        if(ex){
+            console.log('파일 있음!!!');
+            fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
+                console.log(err);
+            })
+        }else{
+            console.log('파일 없음!!!');
+        }
+    })
+
+
+    res.send(200)
+})
 
 router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
-    
-    res.send(200)
+
+    console.log('받기는 받는거잖아?!?!?!?!?!?!?!?');
+    console.log(req.body);
+
+    const getHyImgListSql = `SELECT hy_image_list FROM hy_site WHERE hy_num = ?`;
+    const getHyImgList = await sql_con.promise().query(getHyImgListSql, [req.body.hy_num]);
+    var get_hy_img_list = getHyImgList[0][0].hy_image_list;
+    if (get_hy_img_list) {
+        var SetHyImgList = `${get_hy_img_list},${req.body.fileListStr}`
+    } else {
+        var SetHyImgList = req.body.fileListStr
+    }
+    console.log(SetHyImgList);
+
+
+    const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    await sql_con.promise().query(hyImgListUpdateSql, [SetHyImgList, req.body.hy_num]);
+
+    var SetHyImgList = SetHyImgList.split(',')
+    const testVal = '가가가가가가가'
+    res.send({ SetHyImgList })
 })
 
 
 router.get('/side_detail/:id', async (req, res, next) => {
+
     console.log('get 입니다~~~');
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     const get_hy_info = getHyInfo[0][0];
+    get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
+    console.log(get_hy_info);
     res.render('crm/work_side_detail', { get_hy_info })
 })
 
