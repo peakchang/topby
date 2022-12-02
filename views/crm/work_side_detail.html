@@ -232,19 +232,15 @@
         </form>
     </div>
 
+    <input type="file" name="" id="fake_file" class="hidden fake_file" multiple>
+
     <span class="testclick">dkdkdkdkdkdkdkdk</span>
 </body>
 
 <script>
 
-    $('.testclick').click(function (e) {
-        console.log('alsidjfliasjdfiajsdlifj');
-        var testArr = [1,2,3,4,5,6,7,8,9];
-        var testArr1 = changeArrayOrder(testArr,2,-1);
-        console.log(testArr1);
-    })
 
-    
+
 
     $('.move_left,.move_right').click(function (e) {
 
@@ -262,7 +258,7 @@
 
             const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
             const thisIndex = $(this.parentNode).index();
-            var changeImgList = changeArrayOrder(imgList,thisIndex,-1).join(',');
+            var changeImgList = changeArrayOrder(imgList, thisIndex, -1).join(',');
             document.querySelector('input[name=hy_image_list]').value = changeImgList
         } else {
             if (!this.parentNode.nextElementSibling) {
@@ -277,7 +273,7 @@
 
             const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
             const thisIndex = $(this.parentNode).index();
-            var changeImgList = changeArrayOrder(imgList,thisIndex,1).join(',');
+            var changeImgList = changeArrayOrder(imgList, thisIndex, 1).join(',');
             document.querySelector('input[name=hy_image_list]').value = changeImgList
         }
     })
@@ -309,16 +305,77 @@
 
     const $drop = document.querySelector(".dropBox");
     const dragItems = $('.drag_items')
-    console.log(dragItems);
     // 드래그한 파일 객체가 해당 영역에 놓였을 때
 
-    $($drop).click(function(e){
-        console.log('lskdjflasjdflajdf');
+    $($drop).click(function (e) {
+        $('#fake_file').trigger('click')
     })
+
+    $('#fake_file').change(function (e) {
+        
+        const preFileList = document.querySelector('input[name=hy_image_list]').value.split(',');
+
+        const files = this.files;
+        const formData = new FormData();
+
+        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        for (let i = 0; i < files.length; i++) {
+            if (check.test(files[i].name)) {
+                alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
+                return false
+            } else if (preFileList.includes(files[i].name)) {
+                alert('중복되는 파일이 있습니다! 확인해주세요!')
+                return false
+            } else {
+                preFileList.push(files[i].name)
+            }
+        }
+
+        const fileListStr = preFileList.join(',');
+        formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
+        formData.append('fileListStr', fileListStr);
+
+
+
+        for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
+
+        $.ajax({
+            url: '/crm/arr_image',
+            dataType: 'json',
+            // async: false,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
+            }, success: function (data) {
+                $('.imge_list').empty()
+                for (let i = 0; i < data.SetHyImgList.length; i++) {
+                    const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
+                            <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
+                                    class="fa fa-times-circle"></i></span>
+                            <div class="h-full flex items-center">
+                            <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
+                            </div>
+                        </div>`
+                    $('.imge_list').append(template)
+                }
+                location.reload()
+
+                // const SetImgListStr = data.SetHyImgList.join(',');
+                // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
+            }, error: function () {
+                console.log('failed!!!');
+            }
+        });
+
+    })
+
+
 
     $('.dragItems').on({
         'dragstart': function (e) {
-            console.log('dlsjflsjdfljsdf');
         }
     })
     $drop.ondrop = (e) => {
@@ -357,7 +414,6 @@
 
         for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
 
-        console.log(formData);
         $.ajax({
             url: '/crm/arr_image',
             dataType: 'json',
@@ -370,17 +426,16 @@
                 console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
             }, success: function (data) {
                 $('.imge_list').empty()
-                console.log(data.SetHyImgList);
-                // for (let i = 0; i < data.SetHyImgList.length; i++) {
-                //     const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
-                //             <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
-                //                     class="fa fa-times-circle"></i></span>
-                //             <div class="h-full flex items-center">
-                //             <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
-                //             </div>
-                //         </div>`
-                //     $('.imge_list').append(template)
-                // }
+                for (let i = 0; i < data.SetHyImgList.length; i++) {
+                    const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
+                            <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
+                                    class="fa fa-times-circle"></i></span>
+                            <div class="h-full flex items-center">
+                            <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
+                            </div>
+                        </div>`
+                    $('.imge_list').append(template)
+                }
                 location.reload()
 
                 // const SetImgListStr = data.SetHyImgList.join(',');
@@ -395,7 +450,7 @@
     // ondragover 이벤트가 없으면 onDrop 이벤트가 실핻되지 않습니다.
     $drop.ondragover = (e) => {
         e.preventDefault();
-        console.log('꺄~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
         $drop.classList.add("dropactive");
     }
 
@@ -403,19 +458,17 @@
 
     $drop.ondragenter = (e) => {
         e.preventDefault();
-        console.log('진입~~~!!!!!!!!!!!!!');
+
         // $drop.classList.add("active");
     }
 
     // 드래그한 파일이 영역을 벗어났을 때
     $drop.ondragleave = (e) => {
         e.preventDefault();
-        console.log('빠져나감~~~~~~~~~~~');
         $drop.classList.remove("dropactive");
     }
 
     $('#formFile').change(function (e) {
-        console.log('sldjflsjdflisjdf');
         const previewImage = document.querySelector('.preview_main_image')
         readImage(e.target, previewImage)
     })
@@ -428,7 +481,6 @@
             const reader = new FileReader()
             // 이미지가 로드가 된 경우
             reader.onload = e => {
-                console.log(e.target.result);
                 previewImage.src = e.target.result
             }
             // reader가 이미지 읽도록 하기
