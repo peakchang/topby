@@ -13,6 +13,16 @@ const randomChracter = (length) => {
     return text;
 }
 
+const changeArrayOrder = function (list, targetIdx, moveValue) {
+    if (list.length < 0) return;
+    const newPosition = targetIdx + moveValue;
+    if (newPosition < 0 || newPosition >= list.length) return;
+    const tempList = JSON.parse(JSON.stringify(list));
+    const target = tempList.splice(targetIdx, 1)[0];
+    tempList.splice(newPosition, 0, target);
+    return tempList;
+};
+
 const counter = ($counter, max, rapid) => {
     let now = max;
     const handle = setInterval(() => {

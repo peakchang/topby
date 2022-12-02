@@ -24,33 +24,6 @@ router.use((req, res, next) => {
     next();
 });
 
-// const uploadEx = multer({
-//     storage: multer.diskStorage({
-//         destination(req, file, cb) {
-//             cb(null, 'uploads/');
-//         },
-//         filename(req, file, cb) {
-//             const ext = path.extname(file.originalname); // 확장자 뽑기
-//             console.log(file.originalname);
-//             console.log(ext);
-//             cb(null, file.originalname);
-//         },
-//     }),
-//     limits: { fileSize: 5 * 1024 * 1024 },
-// });
-
-// const uploadEx = multer({
-//     storage: multer.memoryStorage(),
-//     limits: { fileSize: 5 * 1024 * 1024 },
-// });
-// const excelFile = xlsx.readFile(`./uploads/${req.file.originalname}`);
-// let worksheet = excelFile.Sheets["Sheet1"]
-// const wsLength = getExLength(worksheet)
-// console.log(wsLength);
-
-// const upload = multer();
-
-
 const upload = multer({
     storage: multer.diskStorage({
         // 경로를 설정
@@ -88,8 +61,6 @@ router.post('/del_image', async (req, res, next) => {
             console.log('파일 없음!!!');
         }
     })
-
-
     res.send(200)
 })
 
@@ -97,28 +68,27 @@ router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
     console.log(req.body);
 
 
-    try {
-        const getHyImgListSql = `SELECT hy_image_list FROM hy_site WHERE hy_num = ?`;
-        const getHyImgList = await sql_con.promise().query(getHyImgListSql, [req.body.hy_num]);
-        var get_hy_img_list = getHyImgList[0][0].hy_image_list;
-        if(get_hy_img_list){
-            var SetHyImgList = `${get_hy_img_list},${req.body.fileListStr}`
-        }else{
-            var SetHyImgList = req.body.fileListStr
-        }
-        
-    } catch (error) {
-        var SetHyImgList = req.body.fileListStr
-    }
+    // try {
+    //     const getHyImgListSql = `SELECT hy_image_list FROM hy_site WHERE hy_num = ?`;
+    //     const getHyImgList = await sql_con.promise().query(getHyImgListSql, [req.body.hy_num]);
+    //     var get_hy_img_list = getHyImgList[0][0].hy_image_list;
+    //     if(get_hy_img_list){
+    //         var SetHyImgList = `${get_hy_img_list},${req.body.fileListStr}`
+    //     }else{
+    //         var SetHyImgList = req.body.fileListStr
+    //     }
+    // } catch (error) {
+    //     var SetHyImgList = req.body.fileListStr
+    // }
 
-    console.log(SetHyImgList);
+    // console.log(SetHyImgList);
 
 
     const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
-    await sql_con.promise().query(hyImgListUpdateSql, [SetHyImgList, req.body.hy_num]);
+    await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
 
     console.log('아니 왜 안되 씨발~~~~~~~~~~~~~~~~~~~');
-    var SetHyImgList = SetHyImgList.split(',')
+    var SetHyImgList = req.body.fileListStr.split(',')
     const testVal = '가가가가가가가'
     res.send({ SetHyImgList })
 })
@@ -135,6 +105,8 @@ router.get('/side_detail/:id', async (req, res, next) => {
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
+
+    console.log(get_hy_info.hy_image_arr);
     res.render('crm/work_side_detail', { get_hy_info })
 })
 
