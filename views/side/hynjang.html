@@ -147,40 +147,118 @@
             <img src="/img/{{ setData.hy_num }}/{{ set_image }}" alt="" class="mx-auto">
             {% endfor %}
             {% endif %}
-            
-            
+
+
         </div>
     </div>
 
-    <div class="hidden fixed bottom-0 left-0 bg-white z-20 w-full form_area">
-        <div class="container mx-auto max-w-4xl px-1 border">
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
-            dsfsdfsdfs<br>
+    <form method="post">
+
+
+        <div class="hidden fixed bottom-0 left-0 bg-white z-20 w-full form_area ">
+            <div class="container mx-auto max-w-4xl px-1 border relative text-center py-5 rounded-lg">
+
+                <span class="absolute top-1 right-2 text-4xl text-red-400 cursor-pointer close_form">
+                    <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                </span>
+
+                <h2 class="text-2xl font-bold">분양가 및 브로셔 신청하기</h2>
+                <div class="my-4 w-full md:w-3/4 mx-auto grid grid-cols-3 gap-2">
+
+                    <div class="flex items-center text-center mx-auto mb-2">
+                        이름
+                    </div>
+                    <div class="col-span-2 flex">
+                        <input type="text" class="border border-slate-300 px-4 py-1 rounded-md w-full"
+                            placeholder="이름을 입력하세요!">
+                    </div>
+
+
+
+
+                    <div class="flex items-center text-center mx-auto">
+                        전화번호
+                    </div>
+                    <div class="col-span-2 flex">
+                        <select name="" id="" class="border border-slate-300 px-4 py-1 rounded-md w-full">
+                            <option value="010">010</option>
+                        </select>
+                        <span class="flex items-center px-1">-</span>
+                        <input type="text" class="border border-slate-300 px-4 py-1 rounded-md w-full">
+                        <span class="flex items-center px-1">-</span>
+                        <input type="text" class="border border-slate-300 px-4 py-1 rounded-md w-full">
+                    </div>
+
+                </div>
+
+                <button class="w-full md:w-3/4 bg-red-400 text-white rounded-md py-1 font-bold">신청 완료하기</button>
+
+            </div>
         </div>
-    </div>
+    </form>
+
+    <button
+        class="border border-blue-500 p-3 md:p-4 rounded-full fixed bottom-28 right-3 md:right-7 z-10 bg-blue-500">
+
+
+        {% if setData.hy_callnumber %}
+        <a href="TEL:{{setData.hy_callnumber}}">
+            <span class="animate-pulse font-semibold text-sm text-white">
+                전화상담
+            </span>
+        </a>
+        {% else %}
+        <a href="TEL:1661-9726">
+            <span class="animate-pulse font-semibold text-sm text-white">
+                전화상담
+            </span>
+        </a>
+        {% endif %}
+        
+    </button>
 
     <button
         class="border border-emerald-600 p-3 md:p-4 rounded-full fixed bottom-6 right-3 md:right-7 z-10 bg-emerald-600">
         <span class="animate-pulse font-semibold text-sm text-white open_form">
-            지금바로<br>
-            상담신청
+            관심고객<br>
+            등록하기
         </span>
     </button>
 
 
+    <div class="border-t py-5">
+        <div class="container px-5 mx-auto max-w-4xl md:grid md:grid-cols-5 md:gap-2">
+            <div class="text-center mx-auto" style="max-width: 150px;">
+                <img src="/img/topby_base/logo.png" alt="" class="mx-auto">
+            </div>
+            <div class="md:col-span-4 text-center md:text-left">
+                <span class="inline-block mr-4 text-sm">대표 : 박창현</span>
+                <span class="inline-block mr-4 text-sm">회사명 : 애드피크</span>
+                <span class="inline-block mr-4 text-sm">주소 : 경기도 부천시 장말로 105동 1002호</span>
+                <span class="inline-block mr-4 text-sm">개인정보책임자 : 박창용</span>
+                <span class="inline-block mr-4 text-sm">사업자등록번호 : 123-45-78910</span>
+                <span class="inline-block mr-4 text-sm">전화번호 : 1661-7726</span>
+                <a href="/" target="_blank">
+                    <span class="inline-block mr-4 text-sm text-cyan-600 font-bold">분양 광고 및 사이트 문의 클릭!</span>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+    
+
+
     <script>
-        $('.open_form').click(function(e){
+        $('.open_form').click(function (e) {
             console.log('alsdjfliajsdlfjasd');
             $('.form_area').slideDown()
 
         })
+
+        $('.close_form').click(function (e) {
+            console.log('alsdjfliajsdlfjasd');
+            $('.form_area').slideUp()
+
+        })
     </script>
 </body>
-
