@@ -19,11 +19,15 @@ router.use((req, res, next) => {
 });
 
 
-router.get('/:name', (req, res, next) => {
-    // hy5371
+router.get('/:name', async (req, res, next) => {
     console.log(req.params.name);
-    if (req.params.name == "dfdfdf") {
-        res.render('side/hynjang1')
+    const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
+    const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
+    if (nameChk[0][0]) {
+        const setData = nameChk[0][0];
+        setData.hy_image_list_arr = setData.hy_image_list.split(',');
+        console.log(setData);
+        res.render('side/hynjang', { setData })
     } else {
         const err = new Error('존재하지 않는 url 입니다');
         err.status = 404;

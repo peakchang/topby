@@ -23,6 +23,7 @@ exports.tableSetting = async () => {
         hy_builder VARCHAR(100) ,
         hy_conduct VARCHAR(100) ,
         hy_features TEXT ,
+        hy_main_image VARCHAR(100),
         hy_image_list TEXT ,
         hy_callnumber VARCHAR(100) ,
         hy_creted_at DATETIME

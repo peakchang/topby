@@ -51,6 +51,10 @@ router.post('/del_image', async (req, res, next) => {
     console.log(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`);
     console.log(req.body.getDelTargetImg);
 
+    fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
+        console.log(err);
+    })
+
     fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function (ex) {
         if (ex) {
             console.log('파일 있음!!!');
@@ -65,31 +69,10 @@ router.post('/del_image', async (req, res, next) => {
 })
 
 router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
-    console.log(req.body);
-
-
-    // try {
-    //     const getHyImgListSql = `SELECT hy_image_list FROM hy_site WHERE hy_num = ?`;
-    //     const getHyImgList = await sql_con.promise().query(getHyImgListSql, [req.body.hy_num]);
-    //     var get_hy_img_list = getHyImgList[0][0].hy_image_list;
-    //     if(get_hy_img_list){
-    //         var SetHyImgList = `${get_hy_img_list},${req.body.fileListStr}`
-    //     }else{
-    //         var SetHyImgList = req.body.fileListStr
-    //     }
-    // } catch (error) {
-    //     var SetHyImgList = req.body.fileListStr
-    // }
-
-    // console.log(SetHyImgList);
-
-
+    console.log(req.body.fileListStr);
     const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
     await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
-
-    console.log('아니 왜 안되 씨발~~~~~~~~~~~~~~~~~~~');
     var SetHyImgList = req.body.fileListStr.split(',')
-    const testVal = '가가가가가가가'
     res.send({ SetHyImgList })
 })
 
@@ -102,18 +85,38 @@ router.get('/side_detail/:id', async (req, res, next) => {
     var get_hy_info = getHyInfo[0][0];
     try {
         get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
+        if(!get_hy_info.hy_image_arr[0]){
+            get_hy_info.hy_image_arr.splice(0,1)
+        }
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
-
-    console.log(get_hy_info.hy_image_arr);
+    get_hy_info.hy_description = get_hy_info.hy_description.trim()
+    get_hy_info.hy_features = get_hy_info.hy_features.trim()
+    
+    console.log(get_hy_info);
     res.render('crm/work_side_detail', { get_hy_info })
 })
 
 
 router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
-    console.log('여기가 POST는 맞는거지?? 멀터는 씨발 ㅠ');
-    // res.redirect(`crm/work_side_detail/${req.params.id}`)
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    // console.log(req.file.originalname);
+    try {
+        var mainImgFileName = req.file.originalname
+    } catch (error) {
+        var mainImgFileName = req.body.main_img_file_name
+    }
+    console.log("*****************************");
+
+
+    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+
+    const allUpdateArr = [req.body.hy_title ,req.body.hy_description ,req.body.hy_keywords , req.body.hy_site_name ,req.body.hy_businessname ,req.body.hy_type ,req.body.hy_scale ,req.body.hy_areasize ,req.body.hy_house_number ,req.body.hy_location ,req.body.hy_scheduled ,req.body.hy_builder ,req.body.hy_conduct ,req.body.hy_features, mainImgFileName ,req.body.hy_image_list ,req.body.hy_callnumber , now, req.body.hy_id]
+    await sql_con.promise().query(allUpdateSql, allUpdateArr);
+
+
+
     res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
 })
 
