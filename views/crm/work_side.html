@@ -44,6 +44,7 @@
                     </th>
                     <th class="border border-slate-300 py-2 text-center">아이디</th>
                     <th class="border border-slate-300 py-2 text-center">현장명</th>
+                    <th class="border border-slate-300 py-2 text-center">바로보기</th>
                 </tr>
 
                 {% for site in get_site_list %}
@@ -56,13 +57,18 @@
                         <input type="text"
                             class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
                             name="site_num" value="{{ site.hy_num }}" placeholder="현장명을 입력하세요">
-
                     </td>
 
                     <td class="border border-slate-300 py-2 text-center">
                         <span class="open_detail cursor-pointer text-blue-600">{{ site.hy_title }}</span>
-
                     </td>
+
+                    <td class="border border-slate-300 py-2 text-center">
+                        <a href="/side/{{ site.hy_num }}" target="_blank">
+                            <button type="button" class="p-2 rounded-lg bg-green-200">바로가기</button>
+                        </a>
+                    </td>
+
                 </tr>
                 {% endfor %}
             </table>

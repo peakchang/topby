@@ -91,8 +91,8 @@ router.get('/side_detail/:id', async (req, res, next) => {
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
-    get_hy_info.hy_description = get_hy_info.hy_description.trim()
-    get_hy_info.hy_features = get_hy_info.hy_features.trim()
+    // get_hy_info.hy_description = get_hy_info.hy_description.trim()
+    // get_hy_info.hy_features = get_hy_info.hy_features.trim()
     
     console.log(get_hy_info);
     res.render('crm/work_side_detail', { get_hy_info })

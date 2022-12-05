@@ -81,7 +81,7 @@
     <div class="mb-24">
         <div class="container mx-auto max-w-4xl mt-6 px-1">
             <div>
-                <img src="/img/{{ setData.hy_num }}/{{ setData.hy_main_image }}" alt="">
+                <img src="/img/{{ setData.hy_num }}/{{ setData.hy_main_image }}" alt="" class="mx-auto">
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 border-t-2 my-3 py-3 border-b-2">
                 <table>
@@ -142,15 +142,17 @@
             </div>
 
 
+            {% if setData.hy_image_list_arr %}
             {% for set_image in setData.hy_image_list_arr %}
-            <img src="/img/{{ setData.hy_num }}/{{ set_image }}" alt="">
+            <img src="/img/{{ setData.hy_num }}/{{ set_image }}" alt="" class="mx-auto">
             {% endfor %}
+            {% endif %}
             
             
         </div>
     </div>
 
-    <div class="hidden fixed bottom-0 left-0 bg-white z-20 w-full">
+    <div class="hidden fixed bottom-0 left-0 bg-white z-20 w-full form_area">
         <div class="container mx-auto max-w-4xl px-1 border">
             dsfsdfsdfs<br>
             dsfsdfsdfs<br>
@@ -166,9 +168,19 @@
 
     <button
         class="border border-emerald-600 p-3 md:p-4 rounded-full fixed bottom-6 right-3 md:right-7 z-10 bg-emerald-600">
-        <span class="animate-pulse font-semibold text-sm text-white">
+        <span class="animate-pulse font-semibold text-sm text-white open_form">
             지금바로<br>
             상담신청
         </span>
     </button>
+
+
+    <script>
+        $('.open_form').click(function(e){
+            console.log('alsdjfliajsdlfjasd');
+            $('.form_area').slideDown()
+
+        })
+    </script>
 </body>
+

@@ -57,8 +57,13 @@
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">간략설명</th>
                     <td class="border border-slate-300 py-1 text-center">
                         
+                        {% if get_hy_info.hy_description %}
                         <textarea name="hy_description" id="" rows="3"
                             class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_description | trim }}</textarea>
+                        {% else %}
+                        <textarea name="hy_description" id="" rows="3"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -152,8 +157,13 @@
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">특장점</th>
                     <td class="border border-slate-300 py-1 text-center">
+                        {% if get_hy_info.hy_features %}
                         <textarea name="hy_features" id="" rows="12"
                             class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_features | trim}}</textarea>
+                        {% else %}
+                        <textarea name="hy_features" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
                     </td>
                 </tr>
 

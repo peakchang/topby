@@ -25,7 +25,10 @@ router.get('/:name', async (req, res, next) => {
     const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
     if (nameChk[0][0]) {
         const setData = nameChk[0][0];
-        setData.hy_image_list_arr = setData.hy_image_list.split(',');
+        if(setData.hy_image_list){
+            setData.hy_image_list_arr = setData.hy_image_list.split(',');
+        }
+        
         console.log(setData);
         res.render('side/hynjang', { setData })
     } else {
