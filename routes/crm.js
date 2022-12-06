@@ -406,6 +406,7 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
+    console.log(req.user.rate);
 
     if (req.user.rate < 5) {
         const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
@@ -448,7 +449,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     var getEst = '';
 
 
-    if (req.user.rate < 5) {
+    if (req.user.rate == 5) {
         if (req.query.est && !startDay) {
             var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
         } else if (req.query.est && startDay) {
