@@ -471,9 +471,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                 }
             }
         } else {
-            const err = new Error('존재하지 않는 url 입니다');
-            err.status = 404;
-            next(err);
+            res.redirect('/')
+            return
         }
 
     }
