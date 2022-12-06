@@ -458,8 +458,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var getEst = "";
         }
     } else {
-        console.log('여기는 들어오는거 맞지?!?!?!?!?!?');
-        console.log(getUserEstateList);
         if (getUserEstateList[0]) {
             for (let i = 0; i < getUserEstateList.length; i++) {
                 if (i == 0) {
