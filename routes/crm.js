@@ -474,25 +474,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             res.redirect('/')
             return
         }
-
     }
-
-
-
-
-
-
-    // else {
-    //     for (let i = 0; i < getUserEstateList.length; i++) {
-    //         if (i == 0) {
-    //             var setJull = 'WHERE'
-    //             getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-    //         } else {
-    //             var setJull = 'OR'
-    //             getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-    //         }
-    //     }
-    // }
 
 
 
