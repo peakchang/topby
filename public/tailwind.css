@@ -757,6 +757,9 @@ video {
 .w-9\/12 {
   width: 75%;
 }
+.w-28 {
+  width: 7rem;
+}
 .w-80 {
   width: 20rem;
 }
@@ -1179,6 +1182,9 @@ video {
 }
 .pr-14 {
   padding-right: 3.5rem;
+}
+.pl-1 {
+  padding-left: 0.25rem;
 }
 .pb-3 {
   padding-bottom: 0.75rem;

@@ -1,5 +1,4 @@
 exports.isLoggedIn = (req, res, next) => {
-    console.log('미들웨어에는 들어오는것인가????');
     if (req.isAuthenticated()) {
         next();
     } else {
@@ -24,7 +23,6 @@ exports.chkRateManager = (req, res, next) => {
         if (req.isAuthenticated() && parseInt(req.user.rate) > 1) {
             next();
         } else {
-            console.log('여기로 오는걸까요????');
             // res.send(`
             // <script>
             // alert('등급이 낮습니다. 관리자에게 문의 해주세요');
@@ -34,10 +32,8 @@ exports.chkRateManager = (req, res, next) => {
             res.redirect(`/auth/login?move=/crm/estate_manager`);
         }
     } catch (error) {
-        console.log('요~~~~~~~~~~~~~~기로 오는걸까요????');
         const message = encodeURIComponent(movePath);
 
-        // console.log('lasjfdljasldfjasfd');
         // res.redirect(`/auth/login?move=${message}`);
         res.redirect(`/crm/estate_manager`);
     }
@@ -50,7 +46,6 @@ exports.chkRateMaster = (req, res, next) => {
         if (req.isAuthenticated() && parseInt(req.user.rate) == 5) {
             next();
         } else {
-            console.log('여기로 오는걸까요????');
             // res.send(`
             // <script>
             // alert('관리자만 이용 가능한 메뉴입니다.');
@@ -61,7 +56,6 @@ exports.chkRateMaster = (req, res, next) => {
             res.redirect(`/crm/estate_manager`);
         }
     } catch (error) {
-        console.log('요~~~~~~~~~~~~~~기로 오는걸까요????');
         // const message = encodeURIComponent(movePath);
         // res.redirect(`/auth/login?move=${message}`);
         res.redirect(`/auth/login?move=/crm/estate_manager`);

@@ -31,7 +31,7 @@ const upload = multer({
             try {
                 fs.readdirSync(`uploads/${req.body.hy_num}`);
             } catch (error) {
-                console.log(error);
+
                 fs.mkdirSync(`uploads/${req.body.hy_num}`);
             }
             cb(null, `uploads/${req.body.hy_num}`);
@@ -48,28 +48,20 @@ const upload = multer({
 router.post('/del_image', async (req, res, next) => {
     const updateDelListSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
     await sql_con.promise().query(updateDelListSql, [req.body.getUpdateImgList, req.body.hy_num]);
-    console.log(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`);
-    console.log(req.body.getDelTargetImg);
-
     fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
-        console.log(err);
     })
 
     fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function (ex) {
         if (ex) {
-            console.log('파일 있음!!!');
             fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
-                console.log(err);
             })
         } else {
-            console.log('파일 없음!!!');
         }
     })
     res.send(200)
 })
 
 router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
-    console.log(req.body.fileListStr);
     const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
     await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
     var SetHyImgList = req.body.fileListStr.split(',')
@@ -78,41 +70,39 @@ router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
 
 
 router.get('/side_detail/:id', async (req, res, next) => {
-
-    console.log('get 입니다~~~');
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
     try {
         get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
-        if(!get_hy_info.hy_image_arr[0]){
-            get_hy_info.hy_image_arr.splice(0,1)
+        if (!get_hy_info.hy_image_arr[0]) {
+            get_hy_info.hy_image_arr.splice(0, 1)
         }
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
     // get_hy_info.hy_description = get_hy_info.hy_description.trim()
     // get_hy_info.hy_features = get_hy_info.hy_features.trim()
-    
-    console.log(get_hy_info);
+
+
     res.render('crm/work_side_detail', { get_hy_info })
 })
 
 
 router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-    // console.log(req.file.originalname);
+
     try {
         var mainImgFileName = req.file.originalname
     } catch (error) {
         var mainImgFileName = req.body.main_img_file_name
     }
-    console.log("*****************************");
+
 
 
     const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
 
-    const allUpdateArr = [req.body.hy_title ,req.body.hy_description ,req.body.hy_keywords , req.body.hy_site_name ,req.body.hy_businessname ,req.body.hy_type ,req.body.hy_scale ,req.body.hy_areasize ,req.body.hy_house_number ,req.body.hy_location ,req.body.hy_scheduled ,req.body.hy_builder ,req.body.hy_conduct ,req.body.hy_features, mainImgFileName ,req.body.hy_image_list ,req.body.hy_callnumber , now, req.body.hy_id]
+    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, mainImgFileName, req.body.hy_image_list, req.body.hy_callnumber, now, req.body.hy_id]
     await sql_con.promise().query(allUpdateSql, allUpdateArr);
 
 
@@ -126,7 +116,6 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
 router.use('/side', async (req, res, next) => {
     if (req.method == 'POST') {
 
-        console.log(req.body);
         if (req.body.submit_val == 'site_update') {
             if (typeof (req.body.site_id) == 'string') {
                 const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
@@ -177,8 +166,6 @@ router.get('/down_db', chkRateMaster, async (req, res, next) => {
     const downDbSql = `SELECT * FROM application_form ${addQuery} GROUP BY af_mb_phone ORDER BY af_id DESC`;
     const downDbList = await sql_con.promise().query(downDbSql)
 
-    console.log(downDbSql);
-
 
     for (const downDb of downDbList[0]) {
         const db_name = downDb.af_mb_name
@@ -197,9 +184,8 @@ router.get('/down_db', chkRateMaster, async (req, res, next) => {
 
 
 router.use('/upload_db', chkRateMaster, async (req, res, next) => {
-    console.log(__dirname);
+
     if (req.method == 'POST') {
-        console.log()
         const getDbList = req.body.dblist_text.split('\r\n');
         var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -219,7 +205,6 @@ router.use('/upload_db', chkRateMaster, async (req, res, next) => {
     const getFormStatusSql = `SELECT * FROM form_status WHERE fs_id=1`;
     const getFormStatus = await sql_con.promise().query(getFormStatusSql)
     const getForm = getFormStatus[0][0];
-    // console.log(getForm);
     // const estate_list = getForm.fs_estate_list.split(',');
 
     const getSiteListSql = "SELECT * FROM site_list";
@@ -250,7 +235,6 @@ router.get('/wh_datas', async (req, res, next) => {
         let allSearchSql = `SELECT * FROM audit_webhook ORDER BY aw_id DESC;`;
         let alldatas = await sql_con.promise().query(allSearchSql)
         let alldata = alldatas[0]
-        console.log(alldata);
         res.render('crm/wh_alldata', { alldata });
     } catch (error) {
         next(error)
@@ -263,7 +247,6 @@ router.get('/all_data', async (req, res, next) => {
         let allSearchSql = `SELECT * FROM webhookdatas ORDER BY wh_id DESC;`;
         let alldatas = await sql_con.promise().query(allSearchSql)
         let alldata = alldatas[0]
-        console.log(alldata);
         res.render('crm/work_alldata', { alldata });
     } catch (error) {
         next(error)
@@ -282,7 +265,6 @@ router.post('/estate_work/update', async (req, res, next) => {
         await sql_con.promise().query(updateSql)
     } else {
         for await (const on_db_id of set_db_list) {
-            console.log(on_db_id);
             let updateSql = `UPDATE application_form SET af_mb_status = '${estate_status}' WHERE af_id=${on_db_id}`;
             await sql_con.promise().query(updateSql)
         }
@@ -294,11 +276,10 @@ router.post('/estate_work/update', async (req, res, next) => {
 
 router.post('/estate_work/delete', async (req, res, next) => {
     var delArr = [req.body.set_db_list]
-    for await (const delOn of delArr) {
+    for await (const delOn of delArr[0]) {
         const delSql = `DELETE FROM application_form WHERE af_id = ?`;
         await sql_con.promise().query(delSql, [delOn])
     }
-
     res.send(200);
 })
 
@@ -319,8 +300,6 @@ router.use('/estate_detail/:id', async (req, res, next) => {
 
 
     if (req.method == 'POST') {
-        console.log(load_info);
-        console.log(req.body.add_memo);
         if (req.body.add_memo) {
             const addMemoSql = `INSERT INTO memos (mo_depend_id, mo_estate, mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?,?,?)`;
             const addMemoArr = [load_info[0].af_id, load_info[0].af_form_name, load_info[0].af_mb_phone, req.user.nick, req.body.write_memo, now];
@@ -349,7 +328,6 @@ router.use('/modify', async (req, res, next) => {
     const userInfo = req.user
     var { user_nick, user_pwd, user_email } = req.body;
     if (req.method == 'POST') {
-        console.log('포스트다~~~~~~~~~~~~~~~~~~~');
         const re_nick = user_nick ? user_nick : userInfo.nick
         if (user_pwd) {
             var re_pwd = await bcrypt.hash(user_pwd, 12);
@@ -400,7 +378,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         // AND af_form_type_in='분양'
 
         const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount)
-        // console.log(all_data);
 
         const getSiteListSql = "SELECT * FROM site_list";
         const getSiteListResult = await sql_con.promise().query(getSiteListSql)
@@ -419,10 +396,8 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         all_data.ed = endDay
         add_query = req.url;
 
-        // console.log(all_data);
         res.render('crm/work_estate', { all_data, add_query });
     } catch (error) {
-        console.log(error);
         res.send('일단 에러')
     }
 
@@ -449,45 +424,58 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         }
     }
 
-    console.log(getUserEstateList);
-
-
     if (req.query.sc) {
         var pageCount = parseInt(req.query.sc);
     } else {
         var pageCount = 30;
     }
 
-    console.log(req.user.rate);
+    var startDay = req.query.sd ? req.query.sd : "";
+    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
+    var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
 
-    var getEst = '';
-    if (req.user.rate < 5) {
-        if (req.query.est) {
-            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
-        } else {
-            for (let i = 0; i < getUserEstateList.length; i++) {
-                if (i == 0) {
-                    var setJull = 'WHERE'
-                    getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                } else {
-                    var setJull = 'OR'
-                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                }
-            }
-        }
+
+    console.log(endDay);
+    if (startDay && endDay) {
+        var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
+        var sdSearchQ = `WHERE a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
     } else {
-        if (req.query.est) {
-            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
-        } else {
-            var getEst = "";
-        }
+        var sdCountQ = ``;
+        var sdSearchQ = ``;
     }
 
 
 
 
+    var getEst = '';
+
+
+    if (req.query.est && !startDay) {
+        var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
+    } else if (req.query.est && startDay) {
+        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+    } else {
+        var getEst = "";
+    }
+
+
+
+    // else {
+    //     for (let i = 0; i < getUserEstateList.length; i++) {
+    //         if (i == 0) {
+    //             var setJull = 'WHERE'
+    //             getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+    //         } else {
+    //             var setJull = 'OR'
+    //             getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+    //         }
+    //     }
+    // }
+
+
+
     if (req.query.status) {
-        if (getEst) {
+        if (getEst || startDay) {
             var getStatus = `AND af_mb_status = '${req.query.status}'`;
         } else {
             var getStatus = `WHERE af_mb_status = '${req.query.status}'`;
@@ -496,17 +484,16 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         var getStatus = '';
     }
 
-    console.log('----------------------------');
-    console.log(getEst);
-    console.log(getStatus);
+
 
     // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
-    const allCountSql = `SELECT COUNT(*) FROM application_form ${getEst} ${getStatus};`;
+    const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus};`;
+    console.log(allCountSql);
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
 
-    console.log(allCount);
+
 
     if (req.user.rate < 5) {
         if (req.query.est) {
@@ -529,17 +516,32 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql);
-
-    console.log(setDbSql)
-
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
+
+    // console.log(all_data['wdata']);
+    for await (const data of all_data.wdata) {
+        const addMemoSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_created_at DESC LIMIT 3;`
+        const addMemo = await sql_con.promise().query(addMemoSql, [data.af_id])
+        if (addMemo[0][0]) {
+            data['main_memo'] = []
+            for (let i = 0; i < addMemo[0].length; i++) {
+                data['main_memo'].push(addMemo[0][i].mo_memo)
+            }
+        }
+    }
+
     all_data.estate_list = getUserEstateList;
     all_data.est = req.query.est
     all_data.status = req.query.status
     all_data.sc = req.query.sc
+    all_data.sd = req.query.sd
+    all_data.ed = endDay
+
+
+
 
     res.render('crm/work_estate_manager', { all_data });
 })
@@ -566,8 +568,6 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
         location_list.push(getSiteListFor.sl_site_name)
     }
 
-    console.log(location_list);
-
     res.render('crm/user_manage', { master_load, user_list, location_list });
 })
 
@@ -584,10 +584,8 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
             const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
             await sql_con.promise().query(rateUpdateSql, valArr);
         } else if (req.body.location_val) {
-            console.log(req.body.location_val);
             const valArr = [req.body.location_val, req.body.id_val]
             const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
-            console.log(locationUpdateSql);
             await sql_con.promise().query(locationUpdateSql, valArr);
         } else if (req.body.delval) {
             const valArr = [req.body.id_val]
@@ -613,14 +611,13 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
 
 router.post('/memo_manage', async (req, res, next) => {
     if (req.body.memo_val) {
-        console.log(req.body);
+
         let nowTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
         const memoArr = [req.body.id_val, req.body.estate_val, req.body.ph_val, req.user.nick, req.body.memo_val, nowTime];
         const memoInsertSql = `INSERT INTO memos (mo_depend_id, mo_estate, mo_phone, mo_manager, mo_memo, mo_created_at) VALUES (?,?,?,?,?,?);`;
         await sql_con.promise().query(memoInsertSql, memoArr);
         res.send(200)
     } else if (req.body.load_memo) {
-        console.log(req.body);
         const memoLoadSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_id DESC`;
         const memoLoadTemp = await sql_con.promise().query(memoLoadSql, [req.body.id_val]);
         const memoLoad = memoLoadTemp[0]

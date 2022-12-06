@@ -19,8 +19,11 @@
 <div class="container">
     <form>
         <div class="my-4">
+            <input type="date" class="border rounded-lg py-1 px-2 text-sm now_date mb-2" name="sd" value="{{ all_data.sd }}">
+            ~
+            <input type="date" class="border rounded-lg py-1 px-2 text-sm mb-2" name="ed" value="{{ all_data.ed }}">
 
-            <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+            <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg mb-2">
                 <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
                 <option value="{{estate}}" {% if all_data.est==estate %} selected {% endif %}>{{estate}}</option>
@@ -34,12 +37,14 @@
                 {% endfor %}
             </select>
 
-            <select name="sc" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+            <select name="sc" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg mb-2">
                 <option value="30" {% if all_data.sc == 30 %}selected{% endif %}>30</option>
                 <option value="50" {% if all_data.sc == 50 %}selected{% endif %}>50</option>
                 <option value="100" {% if all_data.sc == 100 %}selected{% endif %}>100</option>
             </select>
 
+            <input type="text" name="nm" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="이름검색">
+            <input type="text" name="ph" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="전화번호검색">
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
 
         </div>
@@ -70,7 +75,7 @@
                         <td class="border border-slate-300 py-2 text-center px-3 relative">
 
 
-                            <div
+                            <!-- <div
                                 class="hidden absolute z-10 w-64 text-sm font-light text-gray-500 bg-white rounded-lg border border-gray-200 shadow-sm transition-opacity duration-300 mt-8 memo_list">
                                 <div class="mt-1">
                                     <input type="text" class="border border-slate-300 p-1 text-center w-3/4"
@@ -82,16 +87,22 @@
                                     <button type="button"
                                         class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center close_memo">닫기</button>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="">
+                                {% if data.main_memo %}
+                                
+                                {% for memo_data in data.main_memo %}
                                 <div>
-                                    {{ data.mo_memo }}
+                                    {{ memo_data }}
                                 </div>
+                                {% endfor %}
+                                </div>
+                                {% endif %}
 
 
-                                <button type="button"
-                                    class="open_memo ml-1 text-sm px-4 bg-green-500 hover:bg-green-700 text-white rounded mt-1">메모 목록</button>
+                                <!-- <button type="button"
+                                    class="open_memo ml-1 text-sm px-4 bg-green-500 hover:bg-green-700 text-white rounded mt-1">메모 목록</button> -->
                             </div>
                         </td>
                         <td class="border border-slate-300 py-2 text-center">

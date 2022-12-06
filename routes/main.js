@@ -36,7 +36,6 @@ router.use('/testpp', async (req, res, next) => {
     const downDbSql = `SELECT * FROM application_form GROUP BY af_mb_phone ORDER BY af_id DESC`;
     const downDbList = await sql_con.promise().query(downDbSql)
 
-    console.log(downDbList[0]);
 
     const result = await new Promise((resolve, reject) => {
         var dbContent = ''
@@ -53,7 +52,6 @@ router.use('/testpp', async (req, res, next) => {
 
     var now = moment(Date.now()).format('YYYY-MM-DD');
     const downFileName = `${now}_file.txt`;
-    console.log(result);
     res.setHeader('Content-Disposition', `attachment; filename=${downFileName}`) // 이게 핵심 
     res.sendFile(`${app_root_path}/public/temp/down.txt`)
 
@@ -61,7 +59,6 @@ router.use('/testpp', async (req, res, next) => {
 })
 
 router.use('/testmain', (req, res, next) => {
-    console.log('alsdjfiasjdfiajsdf');
     res.render('topby/top_main_test')
 })
 
@@ -79,7 +76,7 @@ router.use('/chk_jisho', async (req, res, next) => {
     if (req.method == 'POST') {
         const jishoSql = `INSERT INTO chkjisho (cj_get_time, cj_created_at) VALUES (?, ?);`;
         await sql_con.promise().query(jishoSql, [req.body.on_time, now])
-        console.log('request is recieve!! it`s POST!!!');
+
     }
     res.sendStatus(200)
 })
@@ -99,7 +96,6 @@ router.use('/test', (req, res, next) => {
     var get_form_name = get_form_name.replace('투자', '')
     var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
-    console.log(reFormName);
     res.send('aldsjflaisjdflajsdf')
 })
 
@@ -145,7 +141,6 @@ router.get('/', async (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    console.log('진짜 여기로 오는걸까나~~~~~~~~~????????? 궁금하다요~~~~~~~');
     console.log(req.body);
     res.send(200);
 })
