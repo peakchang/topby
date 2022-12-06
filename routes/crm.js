@@ -434,8 +434,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
     var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
 
-
-    console.log(endDay);
     if (startDay && endDay) {
         var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
         var sdSearchQ = `WHERE a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
@@ -450,13 +448,26 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     var getEst = '';
 
 
-    if (req.query.est && !startDay) {
-        var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
-    } else if (req.query.est && startDay) {
-        var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+    if (req.user.rate < 5) {
+        if (req.query.est && !startDay) {
+            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
+        } else if (req.query.est && startDay) {
+            var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+        } else {
+            var getEst = "";
+        }
     } else {
-        var getEst = "";
+        for (let i = 0; i < getUserEstateList.length; i++) {
+            if (i == 0) {
+                var setJull = 'WHERE'
+                getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+            } else {
+                var setJull = 'OR'
+                getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+            }
+        }
     }
+
 
 
 
