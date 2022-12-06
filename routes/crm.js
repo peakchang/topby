@@ -458,6 +458,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var getEst = "";
         }
     } else {
+        // 절대 지우면 안됨!! 각 현장 담당자별로 해당 DB만 확인 가능하게 하는 추가 쿼리문!!
         if (getUserEstateList[0]) {
             for (let i = 0; i < getUserEstateList.length; i++) {
                 if (i == 0) {
@@ -473,8 +474,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             return
         }
     }
-
-
 
     if (req.query.status) {
         if (getEst || startDay) {
