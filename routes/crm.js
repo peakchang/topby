@@ -459,16 +459,22 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         }
     } else {
 
-
-        for (let i = 0; i < getUserEstateList.length; i++) {
-            if (i == 0) {
-                var setJull = 'WHERE'
-                getEst = `${setJull} af_form_name LIKE4444 '%${getUserEstateList[i]}%'`;
-            } else {
-                var setJull = 'OR'
-                getEst = `${getEst} ${setJull} af_form_name LIKE44444 '%${getUserEstateList[i]}%'`;
+        if (getUserEstateList) {
+            for (let i = 0; i < getUserEstateList.length; i++) {
+                if (i == 0) {
+                    var setJull = 'WHERE'
+                    getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                } else {
+                    var setJull = 'OR'
+                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                }
             }
+        } else {
+            const err = new Error('존재하지 않는 url 입니다');
+            err.status = 404;
+            next(err);
         }
+
     }
 
 
