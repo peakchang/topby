@@ -54,6 +54,7 @@ router.use('/:name', async (req, res, next) => {
     
     const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
     const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
+    console.log(nameChk[0]);
     if (nameChk[0][0]) {
         const setData = nameChk[0][0];
         if(setData.hy_image_list){
