@@ -74,6 +74,20 @@
                             name="hy_keywords" placeholder="" value="{{get_hy_info.hy_keywords}}">
                     </td>
                 </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">타겟현장</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <select name="hy_set_site" id="" class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto">
+                            <option value="">현장을 선택하세요</option>
+                            {% for site in get_site_list %}
+                            <option value="{{site.sl_site_name}}" {% if get_hy_info.hy_set_site == site.sl_site_name %} SELECTED {% endif %}>{{site.sl_site_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+
+
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">사이트명</th>
                     <td class="border border-slate-300 py-1 text-center">

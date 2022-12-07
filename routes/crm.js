@@ -73,6 +73,13 @@ router.get('/side_detail/:id', async (req, res, next) => {
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
+
+    const getSiteListSql = `SELECT sl_id,sl_site_name FROM site_list`;
+    const getSiteList = await sql_con.promise().query(getSiteListSql);
+    var get_site_list = getSiteList[0];
+    console.log(get_site_list);
+
+
     try {
         get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
         if (!get_hy_info.hy_image_arr[0]) {
@@ -85,7 +92,7 @@ router.get('/side_detail/:id', async (req, res, next) => {
     // get_hy_info.hy_features = get_hy_info.hy_features.trim()
 
 
-    res.render('crm/work_side_detail', { get_hy_info })
+    res.render('crm/work_side_detail', { get_hy_info, get_site_list })
 })
 
 
@@ -100,9 +107,9 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
 
 
 
-    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
 
-    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, mainImgFileName, req.body.hy_image_list, req.body.hy_callnumber, now, req.body.hy_id]
+    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, mainImgFileName, req.body.hy_image_list, req.body.hy_callnumber, now, req.body.hy_id]
     await sql_con.promise().query(allUpdateSql, allUpdateArr);
 
 

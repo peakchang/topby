@@ -14,6 +14,7 @@ exports.tableSetting = async () => {
         hy_keywords TEXT ,
         hy_site_name VARCHAR(255) ,
         hy_businessname VARCHAR(100) ,
+        hy_set_site VARCHAR(100) ,
         hy_type VARCHAR(100) ,
         hy_scale VARCHAR(100) ,
         hy_areasize VARCHAR(100) ,

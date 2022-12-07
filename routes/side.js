@@ -19,8 +19,15 @@ router.use((req, res, next) => {
 });
 
 
-router.get('/:name', async (req, res, next) => {
-    console.log(req.params.name);
+router.use('/:name', async (req, res, next) => {
+
+    if(req.method == "POST"){
+        console.log(req.params.name);
+        console.log('포스트당~~~~~~~~~~~~~~~');
+        res.send(`<script type="text/javascript">alert("등록이 완료 되었습니다. 전문 상담원이 빠른 시간 내에 연락 드리도록 하겠습니다."); window.location = document.referrer; </script>`);
+        return
+    }
+    
     const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
     const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
     if (nameChk[0][0]) {
@@ -28,8 +35,6 @@ router.get('/:name', async (req, res, next) => {
         if(setData.hy_image_list){
             setData.hy_image_list_arr = setData.hy_image_list.split(',');
         }
-        
-        console.log(setData);
         res.render('side/hynjang', { setData })
     } else {
         const err = new Error('존재하지 않는 url 입니다');
