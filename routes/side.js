@@ -24,9 +24,21 @@ router.use('/:name', async (req, res, next) => {
     if(req.method == "POST"){
         console.log(req.params.name);
         console.log('포스트당~~~~~~~~~~~~~~~');
+
+        var setPhone = `${req.body.phnum_1}${req.body.phnum_2}${req.body.phnum_3}`
+        var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+
+        const inserSiteDbSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_created_at) VALUES (?,?,?,?,?,?)`;
+        await sql_con.promise().query(inserSiteDbSql, [req.body.hy_set_site, '분양', 'SITE', req.body.af_mb_name, setPhone, now ]);
+
+
+
         res.send(`<script type="text/javascript">alert("등록이 완료 되었습니다. 전문 상담원이 빠른 시간 내에 연락 드리도록 하겠습니다."); window.location = document.referrer; </script>`);
         return
     }
+
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    console.log(now);
     
     const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
     const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);

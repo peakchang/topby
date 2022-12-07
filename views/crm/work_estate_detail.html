@@ -7,20 +7,20 @@
 
 
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장</th>
-                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].af_form_name }}</td>
+                    <th class="border bg-slate-100 border-slate-300 py-2 text-center">현장</th>
+                    <td class="border border-slate-300 py-2 text-center">{{ load_info[0].af_form_name }}</td>
                 </tr>
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">이름</th>
-                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].af_mb_name }}</td>
+                    <th class="border bg-slate-100 border-slate-300 py-2 text-center">이름</th>
+                    <td class="border border-slate-300 py-2 text-center">{{ load_info[0].af_mb_name }}</td>
                 </tr>
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">전화번호</th>
-                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].af_mb_phone }}</td>
+                    <th class="border bg-slate-100 border-slate-300 py-2 text-center">전화번호</th>
+                    <td class="border border-slate-300 py-2 text-center">{{ load_info[0].af_mb_phone }}</td>
                 </tr>
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">상태</th>
-                    <td class="border border-slate-300 py-1 text-center">
+                    <th class="border bg-slate-100 border-slate-300 py-2 text-center">상태</th>
+                    <td class="border border-slate-300 py-2 text-center">
                         <select name="" id="" class="border border-pink-800 px-2 py-1 rounded">
                             <option value="">상태값 선택</option>
                             {% for status_list in estate_status_list %}
@@ -33,8 +33,14 @@
                 </tr>
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">접수시간</th>
-                    <td class="border border-slate-300 py-1 text-center">{{ load_info[0].af_created_at |
+                    <td class="border border-slate-300 py-2 text-center">{{ load_info[0].af_created_at |
                         date("YY/MM/DD HH:mm:ss") }}</td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">접수경로</th>
+                    <td class="border border-slate-300 py-2 text-center">
+                        {{ load_info[0].af_form_location }}
+                    </td>
                 </tr>
             </table>
 
