@@ -43,8 +43,8 @@
                 <option value="100" {% if all_data.sc == 100 %}selected{% endif %}>100</option>
             </select>
 
-            <input type="text" name="nm" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="이름검색">
-            <input type="text" name="ph" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="전화번호검색">
+            <input type="text" name="nm" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="이름검색" value="{{ all_data.nm }}">
+            <input type="text" name="ph" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="전화번호검색" value="{{ all_data.ph }}">
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
 
         </div>

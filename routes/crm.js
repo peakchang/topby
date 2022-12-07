@@ -485,11 +485,31 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         var getStatus = '';
     }
 
+    if (req.query.nm) {
+        if (getEst || startDay || getStatus) {
+            var getName = `AND af_mb_name LIKE '%${req.query.nm}%'`;
+        } else {
+            var getName = `WHERE af_mb_name LIKE '%${req.query.nm}%'`;
+        }
+    } else {
+        var getName = '';
+    }
+
+    if (req.query.ph) {
+        if (getEst || startDay || getStatus || getName) {
+            var getPhone = `AND af_mb_phone LIKE '%${req.query.ph}%'`;
+        } else {
+            var getPhone = `WHERE af_mb_phone LIKE '%${req.query.ph}%'`;
+        }
+    } else {
+        var getPhone = '';
+    }
+
 
 
     // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
     // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
-    const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus};`;
+    const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus} ${getName} ${getPhone};`;
     console.log(allCountSql);
     const allCountQuery = await sql_con.promise().query(allCountSql)
     const allCount = Object.values(allCountQuery[0][0])[0]
@@ -517,7 +537,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
+    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ${getName} ${getPhone} ORDER BY a.af_id DESC`;
 
     console.log(setDbSql);
     const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
@@ -540,6 +560,9 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
     all_data.sc = req.query.sc
     all_data.sd = req.query.sd
     all_data.ed = endDay
+    all_data.nm = req.query.nm
+    all_data.ph = req.query.ph
+
 
 
 
