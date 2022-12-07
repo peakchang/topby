@@ -33,7 +33,7 @@ router.use('/:name', async (req, res, next) => {
         await sql_con.promise().query(inserSiteDbSql, [req.body.hy_set_site, '분양', 'SITE', req.body.af_mb_name, setPhone, now ]);
 
         const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
-        const findUserData = await mysql_conn.promise().query(userFindSql, [req.body.hy_set_site]);
+        const findUserData = await sql_con.promise().query(userFindSql, [req.body.hy_set_site]);
         const findUser = findUserData[0][0];
 
         const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
