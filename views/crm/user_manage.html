@@ -24,6 +24,9 @@
             <div class="table_area">
                 <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
                     <tr>
+                        <th class="border border-slate-300 py-2 text-center px-2">
+                            <input type="checkbox" name="" id="" class="allchk">
+                        </th>
                         <th class="border border-slate-300 py-2 text-center">아이디</th>
                         <th class="border border-slate-300 py-2 text-center">닉네임</th>
                         <th class="border border-slate-300 py-2 text-center">등급</th>
@@ -36,7 +39,8 @@
 
                     {% for master in master_load %}
                     <tr class="dblist">
-                        <input type="hidden" name="" value="{{ master.id }}">
+                        <td class="border border-slate-300 p-2 text-center">
+                        </td>
                         <td class="border border-slate-300 p-2 text-center">
                             {{master.userid}}
                         </td>
@@ -76,7 +80,11 @@
 
                     {% for user in user_list %}
                     <tr class="dblist">
-                        <input type="hidden" name="" value="{{ user.id }}">
+                        <td class="border border-slate-300 p-2 text-center">
+                            <input type="hidden" name="" value="{{ user.id }}">
+                            <input type="checkbox" name="" id="" class="user_chk">
+                        </td>
+                        
                         <td class="border border-slate-300 p-2 text-center">
                             {{user.userid}}
 
