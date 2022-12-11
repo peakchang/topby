@@ -88,14 +88,22 @@ router.post('/', async (req, res) => {
             var get_phone = temp_phone.replace('+820', '0')
         } else if (temp_phone.includes('+82')) {
             var get_phone = temp_phone.replace('+82', '0')
+        } else if (temp_phone.includes('10')) {
+            var get_phone = `0${temp_phone}`;
         } else {
-            var temp_phone = getLeadsData.field_data[0].values[0];
-            var get_name = getLeadsData.field_data[1].values[0];
-            if (temp_phone.includes('+820')) {
-                var get_phone = temp_phone.replace('+820', '0')
-            } else if (temp_phone.includes('+82')) {
-                var get_phone = temp_phone.replace('+82', '0')
+            try {
+                var temp_phone = getLeadsData.field_data[0].values[0];
+                var get_name = getLeadsData.field_data[1].values[0];
+                if (temp_phone.includes('+820')) {
+                    var get_phone = temp_phone.replace('+820', '0')
+                } else if (temp_phone.includes('+82')) {
+                    var get_phone = temp_phone.replace('+82', '0')
+                }
+            } catch (error) {
+                var get_name = getLeadsData.field_data[0].values[0];
+                var temp_phone = getLeadsData.field_data[1].values[0]
             }
+
         }
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
@@ -122,7 +130,7 @@ router.post('/', async (req, res) => {
         const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
         const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
         const chkFormInSiteList = chkFormInSiteListData[0][0]
-        if(!chkFormInSiteList){
+        if (!chkFormInSiteList) {
             const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
             await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
         }
@@ -193,7 +201,7 @@ router.post('/', async (req, res) => {
         res.sendStatus(200);
         console.log('success!!!!!');
     } catch (error) {
-        
+
 
         const getDataStr = JSON.stringify(req.body)
         console.log(getDataStr);
@@ -202,7 +210,7 @@ router.post('/', async (req, res) => {
 
         res.sendStatus(200);
 
-        
+
     }
 
 })

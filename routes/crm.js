@@ -221,6 +221,7 @@ router.use('/upload_db', chkRateMaster, async (req, res, next) => {
         estate_list.push(getSiteListFor.sl_site_name)
     }
     const marketer_list = getForm.fs_marketer_list.split(',');
+    // const marketer_list = "";
 
 
     res.render('crm/upload_db', { estate_list, marketer_list })
