@@ -82,7 +82,7 @@
                     <tr class="dblist">
                         <td class="border border-slate-300 p-2 text-center">
                             <input type="hidden" name="" value="{{ user.id }}">
-                            <input type="checkbox" name="" id="" class="user_chk">
+                            <input type="checkbox" name="" class="user_chk">
                         </td>
                         
                         <td class="border border-slate-300 p-2 text-center">
@@ -254,7 +254,7 @@
         document.querySelector('.now_location').innerHTML = locationArr.join()
         const location_val = locationArr.join();
         console.log(location_val);
-        console.log(location_val);
+        console.log(id_val);
         $.ajax({
             method: 'post', url: '/crm/user_manage', data: { location_val, id_val }, success: function (data) {
                 console.log('성공!!!');

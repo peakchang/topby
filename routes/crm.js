@@ -616,6 +616,10 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
             const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
             await sql_con.promise().query(rateUpdateSql, valArr);
         } else if (req.body.location_val) {
+
+            console.log(req.body.location_val);
+            console.log(req.body.id_val);
+
             const valArr = [req.body.location_val, req.body.id_val]
             const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
             await sql_con.promise().query(locationUpdateSql, valArr);
