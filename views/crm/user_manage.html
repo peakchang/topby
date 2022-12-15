@@ -243,7 +243,8 @@
     })
 
     $('.set_location').click(function (e) {
-        const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
+
+        const id_val = this.parentNode.parentNode.parentNode.parentNode.children[0].children[0].value
         const chkList = $(this.previousElementSibling.children).find('input');
         var locationArr = [];
         for (let i = 0; i < chkList.length; i++) {
