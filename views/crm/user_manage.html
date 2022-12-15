@@ -227,7 +227,7 @@
 
     $('.change_rate').click(function () {
         const rate_val = this.previousElementSibling.value;
-        const id_val = this.parentNode.parentNode.firstElementChild.value
+        const id_val = this.parentNode.parentNode.children[0].children[0].value
 
         $.ajax({
             method: 'post', url: '/crm/user_manage', data: { rate_val, id_val }, success: function (data) {
