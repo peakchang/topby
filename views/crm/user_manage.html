@@ -254,12 +254,10 @@
         }
         document.querySelector('.now_location').innerHTML = locationArr.join()
         const location_val = locationArr.join();
-        console.log(location_val);
-        console.log(id_val);
         $.ajax({
             method: 'post', url: '/crm/user_manage', data: { location_val, id_val }, success: function (data) {
                 console.log('성공!!!');
-                // location.reload()
+                location.reload()
             }, error: function (err) {
                 console.log(err);
             }
