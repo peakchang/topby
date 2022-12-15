@@ -209,7 +209,7 @@
 
     $('.change_phone').click(function(e){
         const phone_val = this.previousElementSibling.value;
-        const id_val = this.parentNode.parentNode.firstElementChild.value
+        const id_val = this.parentNode.parentNode.children[0].children[0].value
         if(!phone_val){
             alert('전화번호를 입력해주세요!')
             return false
