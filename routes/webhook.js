@@ -157,16 +157,19 @@ router.post('/', async (req, res) => {
 
         const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
         const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
-        const findUser = findUserData[0][0];
+        const findUser = findUserData[0];
+
 
         console.log(userFindSql);
         console.log('***************** pass second');
-        console.log(findUser);
-        console.log(findUser.user_email);
 
-        const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
-        const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
-        mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
+        for await (const goUser of findUser) {
+            console.log(goUser.user_email);
+            const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
+            const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+            mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
+        }
+
 
 
 
