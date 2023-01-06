@@ -23,7 +23,7 @@ const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
 const sideRouter = require('./routes/side');
 const passportConfig = require('./passport');
-
+const siteRouter = require('./routes/site');
 
 const app = express();
 var xhub = require('express-x-hub');
@@ -97,6 +97,7 @@ app.use('/crm', crmRouter);
 app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
 app.use('/side', sideRouter);
+app.use('/test_site', siteRouter);
 
 
 app.use((req, res, next) => {

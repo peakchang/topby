@@ -1,0 +1,135 @@
+<div class="fix_pc open_modal fixed bottom-0 right-0 hidden sm:block cursor-pointer">
+    <div class="">
+        <img src="/temp/customer_pc.png" alt="">
+    </div>
+</div>
+
+
+<div class="fix_m open_modal fixed bottom-16 right-3 block sm:hidden cursor-pointer w-20">
+    <div class="">
+        <img src="/temp/customer_m.png" alt="">
+    </div>
+</div>
+
+
+
+
+
+<div class="fix_m_call fixed bottom-0 left-0 block sm:hidden cursor-pointer">
+    <a href="tel:1644-9714">
+        <img src="/temp/call_m.png" alt="">
+    </a>
+</div>
+
+
+<div class="form_modal flex fixed top-0 left-0 w-full h-full bg-slate-400 z-50  justify-center items-center">
+
+
+    <div class="modal-card bg-white w-5/6 lg:w-1/2 p-2 rounded-sm">
+
+        <header class="text-center relative py-3">
+            <p class="text-xl">상담신청하기</p>
+            <button class="model_close absolute top-1 right-2 text-3xl text-slate-600" aria-label="close">
+                <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+            </button>
+        </header>
+
+        <section class="">
+            <form class="" action="" method="post">
+                <div class="">
+                    <div class="bg-gray-200 rounded-md p-3">
+                        <div class="text-center mb-3">
+                            전문 상담원이 빠른시간안에 연락 드리겠습니다.
+                        </div>
+
+                        <div class="text-center">
+                            <input type="text" class="rounded-lg border border-gray-300 px-4 py-2 mb-2 w-10/12 md:w-2/3"
+                                name="by_name" value="" placeholder="성함(필수)" required>
+                        </div>
+                        <div class="text-center">
+                            <input type="text" class="rounded-lg border border-gray-300 px-4 py-2 mb-2 w-10/12 md:w-2/3"
+                                name="by_phnum" value="" placeholder="연락처(필수)" required>
+                        </div>
+
+                        <div
+                            class="rounded-lg border border-gray-300 px-4 py-2 mb-2 w-10/12 md:w-2/3 bg-white mx-auto h-36 overflow-auto text-sm">
+                            개인정보 수집동의<br>
+                            ​1. 수집하는 개인정보 내용 상담, 문의신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다.<br>
+                            - 수집항목 : 이름, 연락처<br>
+                            - 수집방법 : http://luca-831.shop/ 통한 수집 (온라인 상담 예약)<br>
+                            <br>
+                            2. 개인정보의 수집 및 이용방법 수집한 개인정보를 다음의 목적을 위해 활용합니다.<br>
+                            - 모델하우스 예약 및 온라인 상담<br>
+                            <br>
+                            3. 개인정보의 보유 및 이용기간 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit"
+                                class="w-10/12 md:w-2/3 bg-red-500 text-white py-3 rounded-xl">신청하기</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+<div id="ft">
+    <div class="">
+        <div class="">
+
+            <div class="">
+                <div class="">
+                    <img src="" alt="">
+                </div>
+            </div>
+
+            <div class="">
+                <!-- <span>통신판매업신고번호 : 부천 2021-4849494 </span> -->
+                <span>개인정보 보호책임자 : 김은정 </span>
+                <span>대표 : 박창현 </span>
+                <span>회사명 : 다름기획 </span>
+                <span>주소 : 경기도 의정부시 신흥로 181, 4층 </span>
+                <span>사업자번호 : 240-06-01900 </span>
+                <span>전화 : 1644-9714</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $('.form_modal').hide()
+
+
+
+    var open_modal = document.querySelectorAll('.open_modal');
+    $(open_modal).click(() => {
+        $('.form_modal').show()
+    })
+
+    var modal_background = document.querySelector('.modal-background');
+    var model_close = document.querySelector('.model_close');
+    $(modal_background).click(() => {
+        $('.form_modal').hide()
+    })
+    $(model_close).click(() => {
+        $('.form_modal').hide()
+    })
+
+
+</script>
