@@ -42,50 +42,58 @@
 
     <section class="flex w-5/6 lg:max-w-xl mx-auto mb-4">
         <div>
-            <img src="/temp/main_logo.jpg" alt="">
+            <a href="/site/np">
+                <img src="/temp/main_logo.jpg" alt="">
+            </a>
         </div>
         <div>
-            <img src="/temp/main_ph.jpg" alt="">
+            <a href="tel:1688-7683">
+                <img src="/temp/main_ph.jpg" alt="">
+            </a>
         </div>
     </section>
 
     <ul class="flex justify-between mx-auto font-semibold my-3 w-full text-sm px-8 lg:px-0 lg:max-w-3xl lg:text-xl">
-        <li class="border-l"><a href="">입지환경</a></li>
-        <li><a href="">조감도</a></li>
-        <li><a href="">층별</a></li>
-        <li><a href="">타입</a></li>
-        <li><a href="">프리미엄</a></li>
-        <li><a href="">커뮤니티</a></li>
+        <li><a href="/site/pg1">입지환경</a></li>
+        <li><a href="/site/pg2">조감도</a></li>
+        <li><a href="/site/pg3">층별</a></li>
+        <li><a href="/site/pg4">타입</a></li>
+        <li><a href="/site/pg5">프리미엄</a></li>
+        <li><a href="/site/pg6">커뮤니티</a></li>
     </ul>
-
-
+    
+    
     <div class="hidden fix_section fixed top-0 left-0 z-50 bg-white w-full">
-        <section class="flex w-5/6 lg:max-w-sm mx-auto mb-4">
+        <section class="flex w-2/3 lg:max-w-sm mx-auto mb-2">
             <div>
-                <img src="/temp/main_logo.jpg" alt="">
+                <a href="/site/np">
+                    <img src="/temp/main_logo.jpg" alt="">
+                </a>
             </div>
             <div>
-                <img src="/temp/main_ph.jpg" alt="">
+                <a href="tel:1688-7683">
+                    <img src="/temp/main_ph.jpg" alt="">
+                </a>
             </div>
         </section>
     
         <ul class="flex justify-between mx-auto font-semibold my-3 w-full text-sm px-8 lg:px-0 lg:max-w-3xl lg:text-xl">
-            <li class="border-l"><a href="">입지환경</a></li>
-            <li><a href="">조감도</a></li>
-            <li><a href="">층별</a></li>
-            <li><a href="">타입</a></li>
-            <li><a href="">프리미엄</a></li>
-            <li><a href="">커뮤니티</a></li>
+            <li><a href="/site/pg1">입지환경</a></li>
+            <li><a href="/site/pg2">조감도</a></li>
+            <li><a href="/site/pg3">층별</a></li>
+            <li><a href="/site/pg4">타입</a></li>
+            <li><a href="/site/pg5">프리미엄</a></li>
+            <li><a href="/site/pg6">커뮤니티</a></li>
         </ul>
     </div>
-
+    
     <script>
         document.addEventListener('scroll', function () {
             // console.log(document.documentElement.scrollTop);
-            if(document.documentElement.scrollTop > 400){
+            if (document.documentElement.scrollTop > 400) {
                 console.log('보이게 하자!!');
                 $('.fix_section').slideDown()
-            }else{
+            } else {
                 console.log('안보이게 하자!!');
                 $('.fix_section').slideUp()
             }

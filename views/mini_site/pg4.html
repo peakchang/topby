@@ -1,0 +1,71 @@
+{% include 'mini_site/header.html' %}
+
+<style>
+    .active {
+        background-color: white;
+    }
+
+    .type_menu li {
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="max-w-6xl mx-auto px-1">
+    <ul class="type_menu grid grid-cols-3 lg:grid-cols-5 text-center">
+        <li class="border border-r-0 border-gray-400 py-2 mb-1 bg-neutral-200 active">30TYPE</li>
+        <li class="border border-r-0 border-gray-400 py-2 mb-1 bg-neutral-200">55TYPE</li>
+        <li class="border lg:border-r-0 border-gray-400 py-2 mb-1 bg-neutral-200">78TYPE</li>
+        <li class="border border-r-0 border-gray-400 py-2 mb-1 bg-neutral-200">89TYPE</li>
+        <li class="border border-gray-400 py-2 mb-1 bg-neutral-200">180TYPE</li>
+    </ul>
+</div>
+
+
+<div class="type_img_list">
+    <section class="w-full max-w-6xl mx-auto px-1">
+        <div>
+            <img src="/temp/30type.jpg" class="mx-auto" alt="">
+        </div>
+    </section>
+
+    <section class="hidden w-full max-w-6xl mx-auto px-1">
+        <div>
+            <img src="/temp/55type.jpg" class="mx-auto" alt="">
+        </div>
+    </section>
+
+    <section class="hidden w-full max-w-6xl mx-auto px-1">
+        <div>
+            <img src="/temp/78type.jpg" class="mx-auto" alt="">
+        </div>
+    </section>
+
+    <section class="hidden w-full max-w-6xl mx-auto px-1">
+        <div>
+            <img src="/temp/89type.jpg" class="mx-auto" alt="">
+        </div>
+    </section>
+
+    <section class="hidden w-full max-w-6xl mx-auto px-1">
+        <div>
+            <img src="/temp/180type.jpg" class="mx-auto" alt="">
+        </div>
+    </section>
+</div>
+
+
+
+<script>
+    $('.type_menu li').click(function () {
+        const type_img_list = document.querySelectorAll('.type_img_list section');
+        var chkIdx = $(this).index()
+        $('.type_img_list section').hide()
+        $(type_img_list[chkIdx]).show()
+
+        $('.type_menu li').removeClass('active');
+        $(this).addClass('active')
+    })
+</script>
+
+{% include 'mini_site/footer.html' %}
