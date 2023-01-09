@@ -51,7 +51,7 @@ router.use('/:id', async(req, res, next) => {
         addCustomerSql = `INSERT INTO application_form (af_form_name,af_form_type_in,af_mb_name,af_mb_phone,af_created_at) VALUES (?,?,?,?,?)`;
         await sql_con.promise().query(addCustomerSql, ['내포메타피아','분양(파워링크)',req.body.by_name, req.body.by_phnum, now]);
 
-        const mailSubject = `내포메타피아 고객명 ${req.body.by_name} 접수되었습니다. (파워링크)`;
+        const mailSubject = `(파워링크) 내포메타피아 고객명 ${req.body.by_name} 접수되었습니다.`;
         const mailContent = `현장: 내포메타피아 / 이름 : ${req.body.by_name} / 전화번호 : ${req.body.by_phnum}`;
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
