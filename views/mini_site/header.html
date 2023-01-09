@@ -107,14 +107,14 @@
     {% if not cookies.del_pop %}
     <div
         class="main-popup fixed left-4 lg:left-1/3 top-10 lg:top-1/4 z-50 bg-white border border-gray-500 rounded-md overflow-hidden">
-        <a href="tel:1688-7683">
-            <div class="px-5 py-1 text-right">
-                오늘은 그만보기 <span class="text-xl popup-close"><i class="fa fa-times-circle-o"
-                        aria-hidden="true"></i></span>
-            </div>
-            <div class="max-w-xs">
-                <img src="/temp/popup_img.jpg" alt="">
-            </div>
+
+        <div class="popup-close px-5 py-1 text-right">
+            오늘은 그만보기 <span class="text-xl"><i class="fa fa-times-circle-o" aria-hidden="true"></i></span>
+        </div>
+        <a href="tel:1688-7683"></a>
+        <div class="max-w-xs">
+            <img src="/temp/popup_img.jpg" alt="">
+        </div>
         </a>
     </div>
     {% endif %}
