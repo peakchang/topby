@@ -40,6 +40,7 @@
 <body>
 
 
+
     <section class="flex w-5/6 lg:max-w-xl mx-auto mb-4">
         <div>
             <a href="/site/np">
@@ -61,8 +62,8 @@
         <li><a href="/site/pg5">프리미엄</a></li>
         <li><a href="/site/pg6">커뮤니티</a></li>
     </ul>
-    
-    
+
+
     <div class="hidden fix_section fixed top-0 left-0 z-50 bg-white w-full">
         <section class="flex w-2/3 lg:max-w-sm mx-auto mb-2">
             <div>
@@ -76,7 +77,7 @@
                 </a>
             </div>
         </section>
-    
+
         <ul class="flex justify-between mx-auto font-semibold my-3 w-full text-sm px-8 lg:px-0 lg:max-w-3xl lg:text-xl">
             <li><a href="/site/pg1">입지환경</a></li>
             <li><a href="/site/pg2">조감도</a></li>
@@ -86,7 +87,10 @@
             <li><a href="/site/pg6">커뮤니티</a></li>
         </ul>
     </div>
-    
+
+
+
+
     <script>
         document.addEventListener('scroll', function () {
             // console.log(document.documentElement.scrollTop);
@@ -98,4 +102,39 @@
                 $('.fix_section').slideUp()
             }
         });
+    </script>
+    
+    {% if not cookies.del_pop %}
+    <div
+        class="main-popup fixed left-4 lg:left-1/3 top-10 lg:top-1/4 z-50 bg-white border border-gray-500 rounded-md overflow-hidden">
+        <div class="px-5 py-1 text-right">
+            오늘은 그만보기 <span class="text-xl popup-close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></span>
+        </div>
+        <div class="max-w-xs">
+            <img src="/temp/popup_img.jpg" alt="">
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    <script>
+        function setCookie(name, value, exp) {
+            var date = new Date();
+            date.setTime(date.getTime() + exp * 24 * 60 * 60 * 1000);
+            document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+        }
+
+        function getCookie(name) {
+            var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+            return value ? value[2] : null;
+        }
+
+        $('.popup-close').click(function (e) {
+            setCookie('del_pop', 'on', 1);
+            $('.main-popup').hide()
+
+            console.log(getCookie('del_pop'));
+
+        })
     </script>

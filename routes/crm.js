@@ -19,10 +19,11 @@ const { IGComment } = require('facebook-nodejs-business-sdk');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-router.use((req, res, next) => {
-    res.locals.user = req.user;
-    next();
-});
+// router.use((req, res, next) => {
+//     console.log(req.user);
+//     res.locals.user = req.user;
+//     next();
+// });
 
 const upload = multer({
     storage: multer.diskStorage({
