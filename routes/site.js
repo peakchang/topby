@@ -56,7 +56,7 @@ router.use('/:id', async(req, res, next) => {
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
     }
-    
+
     res.render('mini_site/main',)
 })
 
