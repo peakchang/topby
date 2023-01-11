@@ -24,6 +24,7 @@ const webhookRouter = require('./routes/webhook');
 const sideRouter = require('./routes/side');
 const passportConfig = require('./passport');
 const siteRouter = require('./routes/site');
+const nworkRouter = require('./routes/nwork');
 
 const app = express();
 var xhub = require('express-x-hub');
@@ -98,7 +99,7 @@ app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
 app.use('/side', sideRouter);
 app.use('/site', siteRouter);
-
+app.use('/nwork', nworkRouter);
 
 app.use((req, res, next) => {
     const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

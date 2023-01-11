@@ -1,10 +1,29 @@
 const { now } = require('moment');
 const nodemon = require('nodemon');
 const sql_con = require('./index');
-
+const nsql_con = require('./sub_db');
 
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
+
+    let makeNworkTable = `CREATE TABLE IF NOT EXISTS nwork(
+        n_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        n_ua varchar(10),
+        n_id varchar(100),
+        n_pwd varchar(100),
+        n_update DATETIME,
+        n_status varchar(100),
+        n_temp1 varchar(255),
+        n_temp2 varchar(255),
+        n_info varchar(255),
+        n_profile varchar(20) NULL
+    );`;
+    try {
+        nsql_con.query(makeNworkTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
 
     let makeMiniSiteTable = `CREATE TABLE IF NOT EXISTS hy_site(
         hy_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,

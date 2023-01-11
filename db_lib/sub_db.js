@@ -4,5 +4,5 @@ module.exports = mysql.createConnection({
     host: process.env.HOST || 'localhost',
     user: 'root',
     password: process.env.DBPWD,
-    database: process.env.SCHEMA
+    database: process.env.SCHEMA2
 })
