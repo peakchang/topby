@@ -140,6 +140,12 @@ router.get('/', async (req, res, next) => {
     res.render('topby/topby_main', { userInfo });
 })
 
+
+
+
+
+
+
 router.post('/', (req, res, next) => {
     console.log(req.body);
     res.send(200);
