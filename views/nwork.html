@@ -38,7 +38,7 @@
                     <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
                 </div>
                 <div class="">
-                    <button name="add_id" value="ok" class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold" >등록하기</button>
+                    <button name="btn_val" value="add_id" class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold" >등록하기</button>
                 </div>
                 <div>
                     {% if errCount %}
@@ -48,8 +48,8 @@
             </div>
             <div class="border-l-2 border-stone-600 col-span-3 relative px-1">
                 <div class="text-right py-4 px-12 fixed top-0 right-0 w-2/3 bg-white">
-                    <button name="delete" value="ok" class="bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
-                    <button name="update" value="ok" class="bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</button>
+                    <button name="btn_val" value="delete" class="bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
+                    <button name="btn_val" value="update" class="bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</button>
                 </div>
 
                 <table class="table-auto border-collapse w-full mx-auto mt-14 mb-20">
@@ -82,18 +82,28 @@
                     </tr>
 
                     {% for id_list in get_all_id_list %}
-                    <tr>
-                        <td class="border border-slate-300"><input type="checkbox" class="idchk" name="" id=""
-                                value="{{ id_list.n_idx }}"></td>
+                    <tr class="text-sm">
+                        <input type="hidden" name="n_idx" value="{{ id_list.n_idx }}">
+                        <td class="border border-slate-300"><input type="checkbox" name="chk_list" class="idchk" id=""
+                                value="{{loop.index0}}"></td>
+                        
                         <td class="border border-slate-300">{{ id_list.n_ua }}</td>
                         <td class="border border-slate-300">{{ id_list.n_id }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_pwd }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_update }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_status }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_status }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_status }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_info }}</td>
-                        <td class="border border-slate-300">{{ id_list.n_profile }}</td>
+                        <td class="border border-slate-300"><input type="text" name="n_pwd" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_pwd }}"></td>
+                        <td class="border border-slate-300">
+                            {% if id_list.n_update %}
+                            <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_update | date("YY-MM-DD") }}">
+                            {% else %}
+                            <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-28">
+                            {% endif %}
+
+                        </td>
+                        <td class="border border-slate-300"><input type="text" name="n_status" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_status }}"></td>
+
+                        <td class="border border-slate-300"><input type="text" name="n_temp1" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp1 }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_temp2" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp2 }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_info" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_info }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_profile" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_profile }}"></td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -102,96 +112,7 @@
     </form>
 
 
-
-
-    <div class="form_modal flex fixed top-0 left-0 w-full h-full z-50  justify-center items-center">
-        <div class="modal-card bg-white w-full p-2 rounded-sm">
-            <table class="table-auto border-collapse w-full mx-auto mt-14 mb-20 modify_table">
-                <tr>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                    <td>234234234</td>
-                </tr>
-            </table>
-            <div class="text-center ">
-                <button class="bg-red-700 text-white px-5 mr-5 rounded-lg close_modal">닫기</button>
-                <button class="bg-blue-600 text-white px-5 rounded-lg update_val">수정</button>
-            </div>
-        </div>
-
-    </div>
-    <input type="text">
     <script>
-        $('.form_modal').hide()
-
-        $('.id_modify').click(function (e) {
-            console.log('ssssssssssssssssssssssssss');
-            var allList = document.querySelectorAll('.idchk')
-            var checkedAllList = []
-            for (let i = 0; i < allList.length; i++) {
-                if (allList[i].checked) {
-                    checkedAllList.push(allList[i].value)
-                }
-            }
-
-            if (checkedAllList.length > 0) {
-                axios.post('/nwork/ajax_work', { checkedAllList }).then((res) => {
-                    console.log(res.data);
-                    $('.modify_table').empty()
-                    for (let i = 0; i < res.data.length; i++) {
-                        var template = `<tr>
-                            <input type="hidden" value="${res.data[i].n_idx}">
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_ua}">
-                            </td>
-
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_id}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_pwd}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_update}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_status}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_temp1}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_temp2}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_info}">
-                            </td>
-                            <td class="border border-slate-300 w-2/12">
-                                <input type="text" value="${res.data[i].n_profile}">
-                            </td>
-                            </tr>`
-                        $('.modify_table').append(template)
-                    }
-                }).catch((err) => {
-
-                })
-
-                $('.form_modal').show()
-            } else {
-                alert('선택된 값이 없습니다.')
-            }
-        })
-
-        $('.close_modal').click(function (e) {
-            $('.form_modal').hide()
-        })
     </script>
 </body>
 

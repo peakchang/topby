@@ -70,12 +70,14 @@ router.use('/gethook', async (req, res, next) => {
 router.use('/', async (req, res, next) => {
 
     // var now = moment(Date.now()).add(-3, 'days').format('YYYY-MM-DD');
+    // var now = moment(Date.now()).subtract(7, 'days').format('YYYY-MM-DD');
+    
     // console.log(now);
 
 
     if (req.method == 'POST') {
         console.log('포스트 여기 아니야?!?!?!?!??!');
-        if (req.body.add_id == 'ok') {
+        if (req.body.btn_val == 'add_id') {
             const idArr = req.body.id_list.split('\r\n');
             var errCount = 0
             for await (const idLine of idArr) {
@@ -94,6 +96,28 @@ router.use('/', async (req, res, next) => {
                     }
                 }
             }
+        }else if(req.body.btn_val == 'update'){
+            console.log(req.body);
+            if(typeof(req.body.chk_list) == 'string'){
+                const getArrNum = Number(req.body.chk_list);
+
+                var getDate = req.body.n_update[getArrNum]
+                if(getDate == ''){
+                    var setDate = null
+                }else{
+                    var setDate = moment(getDate, "YY-MM-DD").format("YY-MM-DD")
+                    // var setDate = getDate
+                }
+
+                console.log(setDate);
+
+                const updateSqlValList = [req.body.n_pwd[getArrNum],req.body.n_status[getArrNum],req.body.n_temp1[getArrNum],req.body.n_temp2[getArrNum],req.body.n_info[getArrNum],req.body.n_profile[getArrNum],req.body.n_idx[getArrNum]]
+                const updateIdListSql = `UPDATE nwork SET n_pwd=?, n_update='${setDate}', n_status=?, n_temp1=?, n_temp2=?, n_info=?, n_profile=? WHERE n_idx = ?`;
+
+                console.log(updateIdListSql);
+                await nsql_con.promise().query(updateIdListSql, updateSqlValList);
+                console.log(getArrNum);
+            }
         }
 
     }
@@ -103,8 +127,6 @@ router.use('/', async (req, res, next) => {
 
     res.render('nwork', { get_all_id_list, errCount })
 })
-
-
 
 
 module.exports = router;
