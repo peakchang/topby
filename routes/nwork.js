@@ -43,6 +43,16 @@ router.use('/gethook', async (req, res, next) => {
     if (req.body.errchk == 'ok' || req.query.errchk == 'ok') {
         if (req.body.n_id) {
             var getId = req.body.n_id;
+        }else{
+            var getId = req.query.n_id;
+        }
+        
+        var now = moment(Date.now()).format('YYYY-MM-DD');
+        const updateSql = `UPDATE nwork SET n_update = ? WHERE n_id = ?;`;
+        await nsql_con.promise().query(updateSql, [now, getId]);
+    } else {
+        if (req.body.n_id) {
+            var getId = req.body.n_id;
             var errchk = req.body.errchk;
         } else {
             var getId = req.query.n_id;
@@ -51,17 +61,6 @@ router.use('/gethook', async (req, res, next) => {
 
         const updateSql = `UPDATE nwork SET n_status = ? WHERE n_id = ?;`;
         await nsql_con.promise().query(updateSql, [errchk, getId]);
-        console.log(updateSql);
-    } else {
-        if (req.body.n_id) {
-            var getId = req.body.n_id;
-        }else{
-            var getId = req.query.n_id;
-        }
-        
-        var now = moment(Date.now()).format('YYYY-MM-DD');
-        const updateSql = `UPDATE nwork SET n_update = ? WHERE n_id = ?;`;
-        await nsql_con.promise().query(updateSql, [now, getId]);
     }
 
     res.send(200)
