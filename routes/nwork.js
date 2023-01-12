@@ -39,7 +39,7 @@ router.use('/getnidmain', async (req, res, next) => {
     res.json(getIdPwd)
 })
 
-router.post('/gethook', async (req, res, next) => {
+router.use('/gethook', async (req, res, next) => {
     console.log(req.body);
     console.log(req.method);
     
