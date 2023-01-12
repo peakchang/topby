@@ -40,10 +40,6 @@ router.use('/getnidmain', async (req, res, next) => {
 })
 
 router.use('/gethook', async (req, res, next) => {
-    console.log(req.body);
-    console.log(req.method);
-    console.log(req.query);
-    
     if (req.body.errchk == 'ok' || req.query.errchk == 'ok') {
         if (req.body.n_id) {
             var getId = req.body.n_id;
@@ -63,7 +59,7 @@ router.use('/gethook', async (req, res, next) => {
             var getId = req.query.n_id;
         }
         
-        var now = moment(Date.now()).add(-4, 'days').format('YYYY-MM-DD');
+        var now = moment(Date.now()).format('YYYY-MM-DD');
         const updateSql = `UPDATE nwork SET n_update = ? WHERE n_id = ?;`;
         await nsql_con.promise().query(updateSql, [now, getId]);
     }
