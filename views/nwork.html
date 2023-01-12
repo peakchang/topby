@@ -29,6 +29,8 @@
 </head>
 
 <body>
+
+    
     <form action="/nwork" method="post">
         <div class="container grid grid-cols-4 text-center mx-auto">
             <div class="pt-3  h-full">
@@ -36,15 +38,18 @@
                     <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
                 </div>
                 <div class="">
-                    <button name="add_id"
-                        class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold">등록하기</button>
+                    <button name="add_id" value="ok" class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold" >등록하기</button>
                 </div>
-
+                <div>
+                    {% if errCount %}
+                    <span>중복된 아이디 갯수 : {{ errCount }}</span>
+                    {% endif %}
+                </div>
             </div>
             <div class="border-l-2 border-stone-600 col-span-3 relative px-1">
                 <div class="text-right py-4 px-12 fixed top-0 right-0 w-2/3 bg-white">
-                    <button name="delete" class="bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
-                    <span class="bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</span>
+                    <button name="delete" value="ok" class="bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
+                    <button name="update" value="ok" class="bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</button>
                 </div>
 
                 <table class="table-auto border-collapse w-full mx-auto mt-14 mb-20">

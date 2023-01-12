@@ -23,7 +23,8 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
-
+    // ALTER TABLE nwork MODIFY COLUMN n_update DATE NULL;
+    // ALTER TABLE nwork MODIFY COLUMN n_id varchar(100) NOT NULL UNIQUE;
 
     let makeMiniSiteTable = `CREATE TABLE IF NOT EXISTS hy_site(
         hy_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
