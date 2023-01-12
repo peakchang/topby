@@ -6,16 +6,29 @@ const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-router.use('/ajax_work', async (req, res, next) => {
-    if (req.body.checkedAllList) {
-        console.log(req.body.checkedAllList);
-        var sendList = []
-        for await (const sqlid of req.body.checkedAllList) {
-            var getListSql = `SELECT * FROM nwork WHERE n_idx = ?`;
-            var getList = await nsql_con.promise().query(getListSql, [sqlid]);
-            sendList.push(getList[0][0])
-        }
-        res.send(sendList)
+// router.use('/ajax_work', async (req, res, next) => {
+//     if (req.body.checkedAllList) {
+//         console.log(req.body.checkedAllList);
+//         var sendList = []
+//         for await (const sqlid of req.body.checkedAllList) {
+//             var getListSql = `SELECT * FROM nwork WHERE n_idx = ?`;
+//             var getList = await nsql_con.promise().query(getListSql, [sqlid]);
+//             sendList.push(getList[0][0])
+//         }
+//         res.send(sendList)
+//     }
+// })
+
+router.use('/axios_work', async (req, res, next) => {
+    if (req.body.updateDataObj) {
+        console.log(req.body.updateDataObj);
+        const data = req.body.updateDataObj;
+        const dataArr = [data.n_pwd, data.n_update ? data.n_update : null, data.n_status, data.n_temp1, data.n_temp2, data.n_info, data.n_profile, data.n_idx]
+        console.log(dataArr);
+        const updateIdListSql = `UPDATE nwork SET n_pwd=?, n_update=?, n_status=?, n_temp1=?, n_temp2=?, n_info=?, n_profile=? WHERE n_idx = ?`;
+        await nsql_con.promise().query(updateIdListSql, dataArr);
+
+        res.send('sendList')
     }
 })
 
@@ -43,10 +56,10 @@ router.use('/gethook', async (req, res, next) => {
     if (req.body.errchk == 'ok' || req.query.errchk == 'ok') {
         if (req.body.n_id) {
             var getId = req.body.n_id;
-        }else{
+        } else {
             var getId = req.query.n_id;
         }
-        
+
         var now = moment(Date.now()).format('YYYY-MM-DD');
         const updateSql = `UPDATE nwork SET n_update = ? WHERE n_id = ?;`;
         await nsql_con.promise().query(updateSql, [now, getId]);
@@ -71,10 +84,7 @@ router.use('/', async (req, res, next) => {
 
     // var now = moment(Date.now()).add(-3, 'days').format('YYYY-MM-DD');
     // var now = moment(Date.now()).subtract(7, 'days').format('YYYY-MM-DD');
-    
     // console.log(now);
-
-
     if (req.method == 'POST') {
         console.log('포스트 여기 아니야?!?!?!?!??!');
         if (req.body.btn_val == 'add_id') {
@@ -96,29 +106,6 @@ router.use('/', async (req, res, next) => {
                     }
                 }
             }
-        }else if(req.body.btn_val == 'update'){
-            console.log(req.body);
-            
-            // if(typeof(req.body.chk_list) == 'string'){
-            //     const getArrNum = Number(req.body.chk_list);
-
-            //     var getDate = req.body.n_update[getArrNum]
-            //     if(getDate == ''){
-            //         var setDate = null
-            //     }else{
-            //         var setDate = moment(getDate, "YY-MM-DD").format("YY-MM-DD")
-            //         // var setDate = getDate
-            //     }
-
-            //     console.log(setDate);
-
-            //     const updateSqlValList = [req.body.n_pwd[getArrNum],req.body.n_status[getArrNum],req.body.n_temp1[getArrNum],req.body.n_temp2[getArrNum],req.body.n_info[getArrNum],req.body.n_profile[getArrNum],req.body.n_idx[getArrNum]]
-            //     const updateIdListSql = `UPDATE nwork SET n_pwd=?, n_update='${setDate}', n_status=?, n_temp1=?, n_temp2=?, n_info=?, n_profile=? WHERE n_idx = ?`;
-
-            //     console.log(updateIdListSql);
-            //     await nsql_con.promise().query(updateIdListSql, updateSqlValList);
-            //     console.log(getArrNum);
-            // }
         }
 
     }

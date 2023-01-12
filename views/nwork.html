@@ -30,7 +30,7 @@
 
 <body>
 
-    
+
     <form action="/nwork" method="post">
         <div class="container grid grid-cols-4 text-center mx-auto">
             <div class="pt-3  h-full">
@@ -38,7 +38,8 @@
                     <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
                 </div>
                 <div class="">
-                    <button name="btn_val" value="add_id" class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold" >등록하기</button>
+                    <button name="btn_val" value="add_id"
+                        class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold">등록하기</button>
                 </div>
                 <div>
                     {% if errCount %}
@@ -48,8 +49,10 @@
             </div>
             <div class="border-l-2 border-stone-600 col-span-3 relative px-1">
                 <div class="text-right py-4 px-12 fixed top-0 right-0 w-2/3 bg-white">
-                    <button name="btn_val" value="delete" class="bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
-                    <button name="btn_val" value="update" class="bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</button>
+                    <button type="button" name="ax_btn" value="delete"
+                        class="ax_btn bg-red-700 py-1 text-white px-5 rounded-lg">삭제</button>
+                    <button type="button" name="ax_btn" value="update"
+                        class="ax_btn bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer">수정</button>
                 </div>
 
                 <table class="table-auto border-collapse w-full mx-auto mt-14 mb-20">
@@ -83,27 +86,33 @@
 
                     {% for id_list in get_all_id_list %}
                     <tr class="text-sm">
-                        <input type="hidden" name="n_idx" value="{{ id_list.n_idx }}">
                         <td class="border border-slate-300"><input type="checkbox" name="chk_list" class="idchk" id=""
-                                value="{{loop.index0}}"></td>
-                        
+                                value="{{ id_list.n_idx }}"></td>
+
                         <td class="border border-slate-300">{{ id_list.n_ua }}</td>
                         <td class="border border-slate-300">{{ id_list.n_id }}</td>
-                        <td class="border border-slate-300"><input type="text" name="n_pwd" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_pwd }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_pwd"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_pwd }}"></td>
                         <td class="border border-slate-300">
                             {% if id_list.n_update %}
-                            <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_update | date("YY-MM-DD") }}">
+                            <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-28"
+                                value="{{ id_list.n_update | date(" YY-MM-DD") }}">
                             {% else %}
                             <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-28">
                             {% endif %}
 
                         </td>
-                        <td class="border border-slate-300"><input type="text" name="n_status" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_status }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_status"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_status }}"></td>
 
-                        <td class="border border-slate-300"><input type="text" name="n_temp1" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp1 }}"></td>
-                        <td class="border border-slate-300"><input type="text" name="n_temp2" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp2 }}"></td>
-                        <td class="border border-slate-300"><input type="text" name="n_info" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_info }}"></td>
-                        <td class="border border-slate-300"><input type="text" name="n_profile" class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_profile }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_temp1"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp1 }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_temp2"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_temp2 }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_info"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_info }}"></td>
+                        <td class="border border-slate-300"><input type="text" name="n_profile"
+                                class="border border-gray-400 rounded-sm w-28" value="{{ id_list.n_profile }}"></td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -113,6 +122,38 @@
 
 
     <script>
+        $('.ax_btn').click(function (e) {
+            if (this.value == 'update') {
+                console.log('salfjalsjdf');
+                const idChkList = document.querySelectorAll('.idchk');
+                for (const chkId of idChkList) {
+                    if (chkId.checked) {
+                        const updateDataObj = {
+                            n_idx: chkId.value,
+                            n_pwd: chkId.parentNode.parentNode.children[3].firstElementChild.value,
+                            n_update: chkId.parentNode.parentNode.children[4].firstElementChild.value,
+                            n_status: chkId.parentNode.parentNode.children[5].firstElementChild.value,
+                            n_temp1: chkId.parentNode.parentNode.children[6].firstElementChild.value,
+                            n_temp2: chkId.parentNode.parentNode.children[7].firstElementChild.value,
+                            n_info: chkId.parentNode.parentNode.children[8].firstElementChild.value,
+                            n_profile: chkId.parentNode.parentNode.children[9].firstElementChild.value,
+                        }
+                        console.log(updateDataObj);
+
+                        axios.post('/nwork/axios_work', {updateDataObj}).then((res) => {
+                            console.log(res);
+                        }).catch((err) => {
+                            console.error(err);
+                        })
+
+                    }
+                }
+                location.reload()
+
+            } else {
+                console.log('delete!');
+            }
+        })
     </script>
 </body>
 
