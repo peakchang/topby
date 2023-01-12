@@ -39,7 +39,7 @@ router.use('/getnidmain', async (req, res, next) => {
     res.json(getIdPwd)
 })
 
-router.use('/gethook', async (req, res, next) => {
+router.post('/gethook', async (req, res, next) => {
     console.log(req.body);
     if (req.body.errchk == 'ok') {
         const getId = req.body.n_id;
