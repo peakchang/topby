@@ -42,18 +42,30 @@ router.use('/getnidmain', async (req, res, next) => {
 router.use('/gethook', async (req, res, next) => {
     console.log(req.body);
     console.log(req.method);
+    console.log(req.query);
     
-    if (req.body.errchk == 'ok') {
-        const getId = req.body.n_id;
-        const errchk = req.body.errchk;
+    if (req.body.errchk == 'ok' || req.query.errchk == 'ok') {
+        if (req.body.n_id) {
+            var getId = req.body.n_id;
+            var errchk = req.body.errchk;
+        } else {
+            var getId = req.query.n_id;
+            var errchk = req.query.errchk;
+        }
+
         const updateSql = `UPDATE nwork SET n_status = ? WHERE n_id = ?;`;
-        await nsql_con.promise().query(updateSql, [errchk,getId]);
+        await nsql_con.promise().query(updateSql, [errchk, getId]);
         console.log(updateSql);
     } else {
-        const getId = req.body.n_id;
+        if (req.body.n_id) {
+            var getId = req.body.n_id;
+        }else{
+            var getId = req.query.n_id;
+        }
+        
         var now = moment(Date.now()).add(-4, 'days').format('YYYY-MM-DD');
         const updateSql = `UPDATE nwork SET n_update = ? WHERE n_id = ?;`;
-        await nsql_con.promise().query(updateSql, [now,getId]);
+        await nsql_con.promise().query(updateSql, [now, getId]);
     }
 
     res.send(200)
@@ -64,7 +76,7 @@ router.use('/', async (req, res, next) => {
 
     // var now = moment(Date.now()).add(-3, 'days').format('YYYY-MM-DD');
     // console.log(now);
-    
+
 
     if (req.method == 'POST') {
         console.log('포스트 여기 아니야?!?!?!?!??!');
@@ -94,7 +106,7 @@ router.use('/', async (req, res, next) => {
     const getAllIdList = await nsql_con.promise().query(getAllIdSql);
     const get_all_id_list = getAllIdList[0]
 
-    res.render('nwork', { get_all_id_list , errCount})
+    res.render('nwork', { get_all_id_list, errCount })
 })
 
 
