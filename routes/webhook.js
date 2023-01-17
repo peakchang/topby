@@ -205,7 +205,7 @@ router.post('/', async (req, res) => {
         console.log('success!!!!!');
     } catch (error) {
 
-
+        console.log(error);
         const getDataStr = JSON.stringify(req.body)
         console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
