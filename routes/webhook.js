@@ -69,41 +69,20 @@ router.post('/', async (req, res) => {
 
     try {
 
-
-        console.log('에러를 찾아보자!!!!!!');
-
-
-
-
-
-
-
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
 
-        console.log(leadsId);
-        console.log('*************************************************************************************');
 
         let formId = getData.entry[0].changes[0].value.form_id
 
-        console.log(formId);
-        console.log('*************************************************************************************');
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-        console.log(nowDateTime);
-        console.log('*************************************************************************************');
         let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
         let LeadsData = await doRequest({ uri: leadsUrl });
 
         let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
         let formData = await doRequest({ uri: formUrl });
 
-
-        console.log(LeadsData);
-        console.log('*************************************************************************************');
-
-        console.log(formData);
-        console.log('*************************************************************************************');
 
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
