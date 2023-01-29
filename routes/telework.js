@@ -35,6 +35,7 @@ router.post('/updatework', async (req, res, next) => {
 })
 
 router.post('/gethook', async (req, res, next) => {
+    console.log(req.body);
 
     
     try {
