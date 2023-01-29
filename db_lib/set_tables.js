@@ -6,6 +6,17 @@ const nsql_con = require('./sub_db');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+
+    let makeHiddenLinkTable = `CREATE TABLE IF NOT EXISTS hidden_link(
+        hidden_chk varchar(10),
+        hidden_link varchar(255)
+    );`
+    try {
+        sql_con.query(makeHiddenLinkTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
     let makeNworkTable = `CREATE TABLE IF NOT EXISTS nwork(
         n_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         n_ua varchar(10),
@@ -207,6 +218,11 @@ exports.tableSetting = async () => {
 
 
 
+    // ALTER TABLE users ADD COLUMN status VARCHAR(5) AFTER rate;
+    // ALTER TABLE users ADD COLUMN type VARCHAR(10) AFTER manage_estate;
+    // ALTER TABLE users ADD COLUMN authvalue VARCHAR(120) AFTER type;
+    // ALTER TABLE users ADD COLUMN macvalue VARCHAR(120) AFTER authvalue;
+    // INSERT INTO hidden_link (hidden_chk) VALUES ('main');
 
 
     // ALTER TABLE memos CHANGE id mo_id INT;

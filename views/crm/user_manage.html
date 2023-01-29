@@ -98,9 +98,9 @@
                             <select name="" class="rounded border border-slate-300 py-1 px-3">
                                 <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>일반</option>
                                 <option value="2" {% if user.rate==2 %} SELECTED {% endif %}>분양사</option>
-                                <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
+                                <!-- <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
                                 <option value="4" {% if user.rate==4 %} SELECTED {% endif %}>미정</option>
-                                <option value="5" {% if user.rate==5 %} SELECTED {% endif %}>관리자</option>
+                                <option value="5" {% if user.rate==5 %} SELECTED {% endif %}>관리자</option> -->
                             </select>
 
                             <button type="button"
@@ -228,6 +228,8 @@
     $('.change_rate').click(function () {
         const rate_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.children[0].children[0].value
+
+        console.log(rate_val);
 
         $.ajax({
             method: 'post', url: '/crm/user_manage', data: { rate_val, id_val }, success: function (data) {

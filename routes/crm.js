@@ -70,7 +70,7 @@ router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
 })
 
 
-router.get('/side_detail/:id', async (req, res, next) => {
+router.get('/side_detail/:id', chkRateMaster, async (req, res, next) => {
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
@@ -97,7 +97,7 @@ router.get('/side_detail/:id', async (req, res, next) => {
 })
 
 
-router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
+router.post('/side_detail/:id', chkRateMaster, upload.single('main_img'), async (req, res, next) => {
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
     try {
@@ -121,7 +121,7 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
 
 
 
-router.use('/side', async (req, res, next) => {
+router.use('/side', chkRateMaster, async (req, res, next) => {
     if (req.method == 'POST') {
 
         if (req.body.submit_val == 'site_update') {
@@ -251,7 +251,7 @@ router.get('/wh_datas', async (req, res, next) => {
 })
 
 
-router.get('/all_data', async (req, res, next) => {
+router.get('/all_data', chkRateMaster, async (req, res, next) => {
     try {
         let allSearchSql = `SELECT * FROM webhookdatas ORDER BY wh_id DESC;`;
         let alldatas = await sql_con.promise().query(allSearchSql)
@@ -263,7 +263,7 @@ router.get('/all_data', async (req, res, next) => {
 })
 
 
-router.post('/estate_work/update', async (req, res, next) => {
+router.post('/estate_work/update', chkRateMaster, async (req, res, next) => {
     const set_db_list = req.body['set_db_list[]'];
     const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
     const getStatusText = await sql_con.promise().query(getStatusSql)
@@ -283,7 +283,7 @@ router.post('/estate_work/update', async (req, res, next) => {
 })
 
 
-router.post('/estate_work/delete', async (req, res, next) => {
+router.post('/estate_work/delete', chkRateMaster, async (req, res, next) => {
     var delArr = [req.body.set_db_list]
     for await (const delOn of delArr[0]) {
         const delSql = `DELETE FROM application_form WHERE af_id = ?`;
@@ -333,7 +333,7 @@ router.use('/estate_detail/:id', async (req, res, next) => {
 
 
 
-router.use('/modify', async (req, res, next) => {
+router.use('/modify', chkRateManager, async (req, res, next) => {
     const userInfo = req.user
     var { user_nick, user_pwd, user_email } = req.body;
     if (req.method == 'POST') {
@@ -355,8 +355,6 @@ router.use('/modify', async (req, res, next) => {
 
 // chkRateMaster
 router.use('/estate_work', chkRateMaster, async (req, res, next) => {
-
-
     try {
 
         var pageCount = req.query.sc ? parseInt(req.query.sc) : 30;
@@ -586,7 +584,7 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
     const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
     const master_load = masterLoadTemp[0];
 
-    const userLoadSql = `SELECT * FROM users WHERE rate < 5;`;
+    const userLoadSql = `SELECT * FROM users WHERE rate < 5 AND type IS NULL;`;
     const userListTemp = await sql_con.promise().query(userLoadSql);
     const user_list = userListTemp[0];
 

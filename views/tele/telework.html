@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- SUIT 폰트 CSS -->
+    <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
+    <!-- 폰트어썸 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- 부트스트랩 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <!-- 혹시 모르니 Jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- front_lib -->
+    <script src="/lib/front_lib.js"></script>
+
+    <link href="/base_style.css" rel="stylesheet" />
+    <link href="/tailwind.css" rel="stylesheet" />
+    <style>
+        .suit-font {
+            font-family: 'SUIT';
+        }
+
+        @media screen and (max-width: 1588px) {
+            .table_wrap {
+                width: 100%;
+                overflow: auto;
+            }
+
+            .table_area {
+                width: 100%;
+                min-width: 1000px;
+            }
+
+
+        }
+
+        .onmi {
+            max-width: 100px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5 mb-5" style="max-width: 1050px;">
+        <form>
+            <div class="table_wrap">
+                <div class="table_area">
+                    <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
+                        <tr>
+                            <th class="border border-slate-300 py-2 text-center">아이디</th>
+                            <th class="border border-slate-300 py-2 text-center">닉네임</th>
+                            {% if user_info.rate == 5 %}
+                            <th class="border border-slate-300 py-2 text-center">등급</th>
+                            {% endif %}
+                            <th class="border border-slate-300 py-2 text-center">비번 변경</th>
+                            <th class="border border-slate-300 py-2 text-center">이메일</th>
+                            <th class="border border-slate-300 py-2 text-center">인증번호</th>
+                            <th class="border border-slate-300 py-2 text-center">가입일</th>
+                        </tr>
+
+
+                        {% for user in user_list %}
+                        <tr class="dblist">
+
+                            <td class="border border-slate-300 p-2 text-center">
+                                {{user.userid}}
+                                <input type="hidden" name="" value="{{ user.id }}">
+                            </td>
+                            <td class="border border-slate-300 p-2 text-center">
+                                {{user.nick}}
+                            </td>
+
+                            {% if user_info.rate == 5 %}
+                            <td class="border border-slate-300 p-2 text-center">
+
+                                <div class="flex">
+                                    <select name="" class="rounded border border-slate-300 py-1 px-3">
+                                        <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>미인증</option>
+                                        <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>인증</option>
+                                        <!-- <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
+                                        <option value="4" {% if user.rate==4 %} SELECTED {% endif %}>미정</option>
+                                        <option value="5" {% if user.rate==5 %} SELECTED {% endif %}>관리자</option> -->
+                                    </select>
+
+                                    <button type="button"
+                                        class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_rate">변경</button>
+                                </div>
+
+                            </td>
+                            {% endif %}
+
+
+                            <td class="border border-slate-300 p-2 text-center">
+                                <div class="flex">
+                                    <input type="password" class="onmi border border-gray-400 py-1 px-3 rounded">
+                                    <button type="button"
+                                        class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                                </div>
+
+                            </td>
+
+                            <td class="border border-slate-300 p-2 text-center">
+                                <div class="flex">
+                                    <input type="text" class="onmio border border-gray-400 py-1 px-3 rounded"
+                                        value="{{user.user_email}}">
+                                    <button type="button"
+                                        class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                                </div>
+
+                            </td>
+
+                            <td class="border border-slate-300 p-2 text-center">
+
+                                {% if user.authvalue %}
+                                <div class="mb-1">
+                                    {{ user.authvalue }}
+                                </div>
+                                {% endif %}
+
+
+                                {% if user.authvalue %}
+                                <div>
+                                    <button type="button" value="update"
+                                        class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">수정</button>
+                                    {% else %}
+                                    <div>
+                                        <button type="button" value="make"
+                                            class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">발급</button>
+                                        {% endif %}
+
+                                        <button type="button" value="delete"
+                                            class="py-1 px-2 bg-indigo-600 ml-1 rounded text-white uid_work">삭제</button>
+
+                                        <button type="button"
+                                            class="py-1 px-2 bg-rose-600 ml-1 rounded text-white uid_copy">복사</button>
+                                    </div>
+
+
+
+
+                            </td>
+
+
+
+                            <td class="border border-slate-300 p-2 text-center">
+                                {{user.created_at | date("YY/MM/DD HH:mm:ss")}}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <script>
+        $('.change_pwd').click(function () {
+            const pwd_val = this.previousElementSibling.value;
+            const id_val = this.parentNode.parentNode.firstElementChild.firstElementChild.value;
+            if (!pwd_val) {
+                alert('비밀번호를 입력해주세요!')
+                return false
+            }
+            axios.post('/telework/updatework', { pwd_val, id_val }).then((res) => {
+                console.log(res);
+                location.reload();
+                alert('비번 변경이 완료 되었습니다.')
+            }).catch((err) => {
+
+            })
+        })
+
+        // $('.change_email').click(function () {
+        //     const email_val = this.previousElementSibling.value;
+        //     const id_val = this.parentNode.parentNode.firstElementChild.firstElementChild.value;
+
+        //     console.log(email_val);
+        //     console.log(id_val);
+
+        // })
+
+        $('.change_rate').click(function () {
+            const rate_val = this.previousElementSibling.value;
+            const id_val = this.parentNode.parentNode.parentNode.firstElementChild.firstElementChild.value;
+
+            console.log(rate_val);
+            console.log(id_val);
+
+            axios.post('/telework/updatework', { rate_val, id_val }).then((res) => {
+                console.log(res);
+                location.reload();
+                alert('인증키 변경이 완료 되었습니다.')
+            }).catch((err) => {
+
+            })
+        })
+
+        $('.uid_work').click(function (e) {
+            const id_val = this.parentNode.parentNode.parentNode.firstElementChild.firstElementChild.value;
+            const work_type = this.value
+            console.log(id_val);
+            console.log(work_type);
+
+            if (work_type == 'make' || work_type == 'update') {
+                if (work_type == 'make') {
+                    alert('인증 키가 만들어집니다.')
+                } else if (work_type == 'update') {
+                    const chk_uid = confirm('인증 키를 변경합니다. 변경시 기존 키는 삭제되며 다시 셋팅해야 합니다. 진행 하시겠습니까?')
+                    if (!chk_uid) {
+                        return false
+                    }
+                }
+                const update_work = 'on';
+                axios.post('/telework/updatework', { update_work, id_val }).then((res) => {
+                    console.log(res);
+                    location.reload();
+                    alert('인증키 변경이 완료 되었습니다.')
+                }).catch((err) => {
+
+                })
+            } else {
+                const chk_uid = confirm('인증 키가 삭제됩니다. 진행 하시겠습니까?')
+                if (!chk_uid) {
+                    return false
+                }
+                axios.post('/telework/updatework', { work_type, id_val }).then((res) => {
+                    console.log(res);
+                    location.reload();
+                    alert('인증키 변경이 완료 되었습니다.')
+                }).catch((err) => {
+
+                })
+            }
+
+        })
+
+        $('.uid_copy').click(function (e) {
+            console.log(this.parentNode.previousElementSibling.innerHTML.trim());
+            const copy_uid = this.parentNode.previousElementSibling.innerHTML.trim();
+
+            var tempElem = document.createElement('textarea');
+            tempElem.value = copy_uid;
+            document.body.appendChild(tempElem);
+
+            tempElem.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempElem);
+            var copy = document.execCommand('copy');
+            alert('클립보드에 복사 되었습니다. ctrl + v 로 붙여넣기 해주세요!')
+        })
+
+    </script>
+</body>
+
+</html>
