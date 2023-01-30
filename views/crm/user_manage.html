@@ -14,175 +14,213 @@
             min-width: 1300px;
         }
 
-        
+
     }
-    .onmi{max-width: 160px !important;}
+
+    .onmi {
+        max-width: 160px !important;
+    }
 </style>
 <div class="container mt-5 mb-5">
+
     <form>
-        <div class="table_wrap">
-            <div class="table_area">
-                <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
-                    <tr>
-                        <th class="border border-slate-300 py-2 text-center px-2">
-                            <input type="checkbox" name="" id="" class="allchk">
-                        </th>
-                        <th class="border border-slate-300 py-2 text-center">아이디</th>
-                        <th class="border border-slate-300 py-2 text-center">닉네임</th>
-                        <th class="border border-slate-300 py-2 text-center">등급</th>
-                        <th class="border border-slate-300 py-2 text-center">비번 변경</th>
-                        <th class="border border-slate-300 py-2 text-center">이메일</th>
-                        <th class="border border-slate-300 py-2 text-center">휴대폰</th>
-                        <th class="border border-slate-300 py-2 text-center">관리 현장</th>
-                        <th class="border border-slate-300 py-2 text-center">가입일</th>
-                    </tr>
+        <select name="rate" id="" class="border border-zinc-500 rounded-md py-1 px-3">
+            <option value="all">전체</option>
+            <option value="2" selected>분양사</option>
+            <option value="1">일반</option>
+        </select>
+        <button class="border-blue-500 py-1 px-3 rounded-md bg-blue-500 text-white">조회</button>
 
-                    {% for master in master_load %}
-                    <tr class="dblist">
-                        <td class="border border-slate-300 p-2 text-center">
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{master.userid}}
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{master.nick}}
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            마스터
-                        </td>
+        <button type="button" class="border-red-500 py-1 px-3 rounded-md bg-red-500 text-white del_user">삭제</button>
+    </form>
+    <div class="table_wrap mt-3">
+        <div class="table_area">
+            <table class="border-collapse border border-slate-400 w-full text-sm suit-font">
+                <tr>
+                    <th class="border border-slate-300 py-2 text-center px-2">
+                        <input type="checkbox" name="" id="" class="allchk">
+                    </th>
+                    <th class="border border-slate-300 py-2 text-center">아이디</th>
+                    <th class="border border-slate-300 py-2 text-center">닉네임</th>
+                    <th class="border border-slate-300 py-2 text-center">등급</th>
+                    <th class="border border-slate-300 py-2 text-center">비번 변경</th>
+                    <th class="border border-slate-300 py-2 text-center">이메일</th>
+                    <th class="border border-slate-300 py-2 text-center">휴대폰</th>
+                    <th class="border border-slate-300 py-2 text-center">관리 현장</th>
+                    <th class="border border-slate-300 py-2 text-center">가입일</th>
+                </tr>
 
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="password" class="onmi border border-gray-400 py-1 px-3 rounded">
-                            <button type="button"
-                                class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
-                        </td>
+                {% for master in master_load %}
+                <tr class="dblist">
+                    <td class="border border-slate-300 p-2 text-center">
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{master.userid}}
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{master.nick}}
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        마스터
+                    </td>
 
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded" value="{{master.user_email}}">
-                            <button type="button"
-                                class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
-                        </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="password" class="onmi border border-gray-400 py-1 px-3 rounded">
+                        <button type="button"
+                            class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                    </td>
 
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded" value="{{master.user_phone}}">
-                            <button type="button"
-                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
-                        </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded"
+                            value="{{master.user_email}}">
+                        <button type="button"
+                            class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                    </td>
 
-                        
-                        <td class="border border-slate-300 p-2 text-center"></td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{master.created_at | date("YY/MM/DD HH:mm:ss")}}
-                        </td>
-                    </tr>
-                    {% endfor %}
-
-
-                    {% for user in user_list %}
-                    <tr class="dblist">
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="hidden" name="" value="{{ user.id }}">
-                            <input type="checkbox" name="" class="user_chk">
-                        </td>
-                        
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{user.userid}}
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded"
+                            value="{{master.user_phone}}">
+                        <button type="button"
+                            class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
+                    </td>
 
 
+                    <td class="border border-slate-300 p-2 text-center"></td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{master.created_at | date("YY/MM/DD HH:mm:ss")}}
+                    </td>
+                </tr>
+                {% endfor %}
 
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{user.nick}}
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            <select name="" class="rounded border border-slate-300 py-1 px-3">
-                                <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>일반</option>
-                                <option value="2" {% if user.rate==2 %} SELECTED {% endif %}>분양사</option>
-                                <!-- <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
+
+                {% for user in user_list %}
+                <tr class="dblist">
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="checkbox" name="user_chk" class="user_chk">
+                    </td>
+
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{user.userid}}
+
+
+
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{user.nick}}
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        <select name="" class="rounded border border-slate-300 py-1 px-3">
+                            <option value="1" {% if user.rate==1 %} SELECTED {% endif %}>일반</option>
+                            <option value="2" {% if user.rate==2 %} SELECTED {% endif %}>분양사</option>
+                            <!-- <option value="3" {% if user.rate==3 %} SELECTED {% endif %}>미정</option>
                                 <option value="4" {% if user.rate==4 %} SELECTED {% endif %}>미정</option>
                                 <option value="5" {% if user.rate==5 %} SELECTED {% endif %}>관리자</option> -->
-                            </select>
+                        </select>
 
-                            <button type="button"
-                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_rate">변경</button>
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="password" class="onmi border border-gray-400 py-1 px-3 rounded">
-                            <button type="button"
-                                class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
-                        </td>
+                        <button type="button"
+                            class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_rate">변경</button>
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="password" class="onmi border border-gray-400 py-1 px-3 rounded">
+                        <button type="button"
+                            class="py-1 px-2 bg-red-500 ml-1 rounded text-white change_pwd">변경</button>
+                    </td>
 
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded" value="{{user.user_email}}">
-                            <button type="button"
-                                class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
-                        </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded"
+                            value="{{user.user_email}}">
+                        <button type="button"
+                            class="py-1 px-2 bg-green-500 ml-1 rounded text-white change_email">변경</button>
+                    </td>
 
 
-                        <td class="border border-slate-300 p-2 text-center">
-                            <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded" value="{{user.user_phone}}">
-                            <button type="button"
-                                class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
+                    <td class="border border-slate-300 p-2 text-center">
+                        <input type="text" class="onmi border border-gray-400 py-1 px-3 rounded"
+                            value="{{user.user_phone}}">
+                        <button type="button"
+                            class="py-1 px-2 bg-blue-500 ml-1 rounded text-white change_phone">변경</button>
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
 
-                            <div class="mb-1 now_location">
-                                {{user.manage_estate}}
-                            </div>
-                            <div
-                                class="hidden absolute z-10 w-64 text-sm font-light text-gray-500 bg-white rounded-lg border border-gray-200 shadow-sm transition-opacity duration-300 mt-7">
-                                <div>
-                                    <ul class="p-1 space-y-1 text-sm text-gray-700">
-                                        {% for location in location_list %}
-                                        <li>
-                                            <div class="flex p-2 rounded">
-                                                <div class="flex items-center h-5">
-                                                    <input id="{{user.userid}}chk{{loop.index}}" type="checkbox" value="{{location}}"
-                                                        class="bg-gray-100 border-gray-300" {% if user.manage_estate %}
-                                                        {% set melist=user.manage_estate.split(',') %} {% if location in
-                                                        melist %} checked {% endif %} {% endif %}>
-                                                </div>
-                                                <div class="ml-2 text-sm">
-                                                    <label for="{{user.userid}}chk{{loop.index}}" class="font-medium text-gray-900">
-                                                        <div>{{location}}</div>
-                                                    </label>
-                                                </div>
+                        <div class="mb-1 now_location">
+                            {{user.manage_estate}}
+                        </div>
+                        <div
+                            class="hidden absolute z-10 w-64 text-sm font-light text-gray-500 bg-white rounded-lg border border-gray-200 shadow-sm transition-opacity duration-300 mt-7">
+                            <div>
+                                <ul class="p-1 space-y-1 text-sm text-gray-700">
+                                    {% for location in location_list %}
+                                    <li>
+                                        <div class="flex p-2 rounded">
+                                            <div class="flex items-center h-5">
+                                                <input id="{{user.userid}}chk{{loop.index}}" type="checkbox"
+                                                    value="{{location}}" class="bg-gray-100 border-gray-300" {% if
+                                                    user.manage_estate %} {% set melist=user.manage_estate.split(',') %}
+                                                    {% if location in melist %} checked {% endif %} {% endif %}>
                                             </div>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                    <button type="button"
-                                        class="text-white mb-3 bg-green-500 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center set_location">적용</button>
-                                    <button type="button"
-                                        class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center del_location">삭제</button>
-                                </div>
+                                            <div class="ml-2 text-sm">
+                                                <label for="{{user.userid}}chk{{loop.index}}"
+                                                    class="font-medium text-gray-900">
+                                                    <div>{{location}}</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <button type="button"
+                                    class="text-white mb-3 bg-green-500 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center set_location">적용</button>
+                                <button type="button"
+                                    class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center del_location">삭제</button>
                             </div>
+                        </div>
 
-                            <button type="button"
-                                class="text-white mb-3 bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center location_list_toggle">변경하기</button>
+                        <button type="button"
+                            class="text-white mb-3 bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center location_list_toggle">변경하기</button>
 
 
 
-                        </td>
-                        <td class="border border-slate-300 p-2 text-center">
-                            {{user.created_at | date("YY/MM/DD HH:mm:ss")}}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
+                    </td>
+                    <td class="border border-slate-300 p-2 text-center">
+                        {{user.created_at | date("YY/MM/DD HH:mm:ss")}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
-    </form>
+    </div>
 </div>
 
 
 <script>
+
+    $('.del_user').click(function(e){
+        const user_chk_all = document.querySelectorAll('.user_chk');
+        var chk_list = [];
+        for (let i = 0; i < user_chk_all.length; i++) {
+            if(user_chk_all[i].checked){
+                console.log(user_chk_all[i]);
+                var chkCheckBoxVal = user_chk_all[i].previousElementSibling.value
+                chk_list.push(parseInt(chkCheckBoxVal))
+            }
+        }
+
+        axios.post('/crm/user_manage_update', { chk_list }).then((res) => {
+            console.log(res);
+            location.reload()
+        }).catch((err) => {
+            alert('이메일은 중복될수 없습니다. (다른 회원이 사용중인 이메일 입니다)')
+            location.reload()
+        })
+
+    })
     $('.change_pwd').click(function () {
         const pwd_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.firstElementChild.value
 
         $.ajax({
-            method: 'post', url: '/crm/user_manage', data: { pwd_val, id_val }, success: function (e) {
+            method: 'post', url: '/crm/user_manage_update', data: { pwd_val, id_val }, success: function (e) {
                 console.log('성공!!!');
                 location.reload()
             }, error: function (err) {
@@ -198,7 +236,7 @@
         console.log(id_val);
 
 
-        axios.post('/crm/user_manage', {email_val, id_val}).then((res) => {
+        axios.post('/crm/user_manage_update', { email_val, id_val }).then((res) => {
             console.log(res);
             location.reload()
         }).catch((err) => {
@@ -207,14 +245,14 @@
         })
     })
 
-    $('.change_phone').click(function(e){
+    $('.change_phone').click(function (e) {
         const phone_val = this.previousElementSibling.value;
         const id_val = this.parentNode.parentNode.children[0].children[0].value
-        if(!phone_val){
+        if (!phone_val) {
             alert('전화번호를 입력해주세요!')
             return false
         }
-        axios.post('/crm/user_manage', {phone_val, id_val}).then((res) => {
+        axios.post('/crm/user_manage_update', { phone_val, id_val }).then((res) => {
             console.log(res);
             location.reload()
         }).catch((err) => {
@@ -223,7 +261,7 @@
     })
 
 
-    
+
 
     $('.change_rate').click(function () {
         const rate_val = this.previousElementSibling.value;
@@ -232,7 +270,7 @@
         console.log(rate_val);
 
         $.ajax({
-            method: 'post', url: '/crm/user_manage', data: { rate_val, id_val }, success: function (data) {
+            method: 'post', url: '/crm/user_manage_update', data: { rate_val, id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             }, error: function (err) {
@@ -257,7 +295,7 @@
         document.querySelector('.now_location').innerHTML = locationArr.join()
         const location_val = locationArr.join();
         $.ajax({
-            method: 'post', url: '/crm/user_manage', data: { location_val, id_val }, success: function (data) {
+            method: 'post', url: '/crm/user_manage_update', data: { location_val, id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             }, error: function (err) {
@@ -266,10 +304,10 @@
         })
     })
 
-    $('.del_location').click(function(){
+    $('.del_location').click(function () {
         const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
         $.ajax({
-            method: 'post', url: '/crm/user_manage', data: { delval: 'on', id_val }, success: function (data) {
+            method: 'post', url: '/crm/user_manage_update', data: { delval: 'on', id_val }, success: function (data) {
                 console.log('성공!!!');
                 location.reload()
             }, error: function (err) {
@@ -282,7 +320,7 @@
     //    const id_val = this.parentNode.parentNode.parentNode.parentNode.firstElementChild.value
     //    console.log(id_val)
     //    $.ajax({
-    //        method: 'post', url: '/crm/user_manage', data: { delval: 'on', id_val }, success: function (data) {
+    //        method: 'post', url: '/crm/user_manage_update', data: { delval: 'on', id_val }, success: function (data) {
     //            console.log('성공!!!');
     //            location.reload()
     //       }, error: function (err) {

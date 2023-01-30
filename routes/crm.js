@@ -584,9 +584,20 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
     const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
     const master_load = masterLoadTemp[0];
 
-    const userLoadSql = `SELECT * FROM users WHERE rate < 5 AND type IS NULL;`;
+    console.log(req.query.rate);
+
+    if (!req.query.rate) {
+        var userLoadSql = `SELECT * FROM users WHERE rate = 2 AND type IS NULL;`;
+    } else if (req.query.rate == 'all') {
+        var userLoadSql = `SELECT * FROM users WHERE rate < 5 AND type IS NULL;`;
+    } else {
+        var userLoadSql = `SELECT * FROM users WHERE rate = ${parseInt(req.query.rate)} AND type IS NULL;`;
+    }
+
     const userListTemp = await sql_con.promise().query(userLoadSql);
     const user_list = userListTemp[0];
+
+
 
     // const locationListSql = `SELECT fs_estate_list FROM form_status WHERE fs_id = 1;`;
     // const locationListTemp = await sql_con.promise().query(locationListSql);
@@ -603,6 +614,12 @@ router.get('/user_manage', chkRateMaster, async (req, res, next) => {
 })
 
 router.post('/user_manage', chkRateManager, async (req, res, next) => {
+    console.log(req.body);
+    res.redirect('/crm/user_manage');
+})
+
+
+router.post('/user_manage_update', async (req, res, next) => {
 
     try {
         if (req.body.pwd_val) {
@@ -631,6 +648,11 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
             const valArr = [phone_val, req.body.id_val]
             const phoneUpdateSql = `UPDATE users SET user_phone = ? WHERE id = ?;`;
             await sql_con.promise().query(phoneUpdateSql, valArr);
+        } else if (req.body.chk_list) {
+            for await (const i of req.body.chk_list) {
+                const delUserSql = `DELETE FROM users WHERE id = ?`
+                await sql_con.promise().query(delUserSql, [i]);
+            }
         }
         res.send(200)
     } catch (error) {

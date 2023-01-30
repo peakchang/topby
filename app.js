@@ -81,7 +81,7 @@ const sessionOption = {
     cookie: {
         httpOnly: true,
         secure: https_status,
-        maxAge: 60 * 1000 * 30,
+        maxAge: 60 * 1000 * 120,
     },
 };
 
