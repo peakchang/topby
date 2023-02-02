@@ -620,7 +620,6 @@ router.post('/user_manage', chkRateManager, async (req, res, next) => {
 
 
 router.post('/user_manage_update', async (req, res, next) => {
-
     try {
         if (req.body.pwd_val) {
             const hash = await bcrypt.hash(req.body.pwd_val, 12);
