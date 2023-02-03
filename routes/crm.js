@@ -413,162 +413,167 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
-    console.log(req.user.rate);
+    try {
+        console.log(req.user.rate);
 
-    if (req.user.rate < 5) {
-        const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
-        const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
-        var getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
-    } else if (req.user.rate == 5) {
-        // const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;
-        // const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql);
-        // var getUserEstateList = getUserEstateTemp[0][0].fs_estate_list.split(',');
+        if (req.user.rate < 5) {
+            const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
+            const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
+            var getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
+        } else if (req.user.rate == 5) {
+            // const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;
+            // const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql);
+            // var getUserEstateList = getUserEstateTemp[0][0].fs_estate_list.split(',');
 
-        const getSiteListSql = "SELECT * FROM site_list";
-        const getSiteListResult = await sql_con.promise().query(getSiteListSql)
-        var getUserEstateList = [];
-        for (const getSiteListFor of getSiteListResult[0]) {
-            getUserEstateList.push(getSiteListFor.sl_site_name)
+            const getSiteListSql = "SELECT * FROM site_list";
+            const getSiteListResult = await sql_con.promise().query(getSiteListSql)
+            var getUserEstateList = [];
+            for (const getSiteListFor of getSiteListResult[0]) {
+                getUserEstateList.push(getSiteListFor.sl_site_name)
+            }
         }
-    }
 
-    if (req.query.sc) {
-        var pageCount = parseInt(req.query.sc);
-    } else {
-        var pageCount = 30;
-    }
-
-    var startDay = req.query.sd ? req.query.sd : "";
-    var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
-    var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
-
-    if (startDay && endDay) {
-        var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
-        var sdSearchQ = `WHERE a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
-    } else {
-        var sdCountQ = ``;
-        var sdSearchQ = ``;
-    }
-
-
-
-
-    var getEst = '';
-
-
-    if (req.user.rate == 5) {
-        if (req.query.est && !startDay) {
-            var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
-        } else if (req.query.est && startDay) {
-            var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+        if (req.query.sc) {
+            var pageCount = parseInt(req.query.sc);
         } else {
-            var getEst = "";
+            var pageCount = 30;
         }
-    } else {
-        // 절대 지우면 안됨!! 각 현장 담당자별로 해당 DB만 확인 가능하게 하는 추가 쿼리문!!
-        if (getUserEstateList[0]) {
-            for (let i = 0; i < getUserEstateList.length; i++) {
-                if (i == 0) {
-                    var setJull = 'WHERE'
-                    getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                } else {
-                    var setJull = 'OR'
-                    getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+
+        var startDay = req.query.sd ? req.query.sd : "";
+        var endDay = req.query.ed ? req.query.ed : moment(Date.now()).format('YYYY-MM-DD');
+        var endDayRe = moment(endDay).add(1, 'day').format('YYYY-MM-DD');
+
+        if (startDay && endDay) {
+            var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
+            var sdSearchQ = `WHERE a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
+        } else {
+            var sdCountQ = ``;
+            var sdSearchQ = ``;
+        }
+
+
+
+
+        var getEst = '';
+
+
+        if (req.user.rate == 5) {
+            if (req.query.est && !startDay) {
+                var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
+            } else if (req.query.est && startDay) {
+                var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
+            } else {
+                var getEst = "";
+            }
+        } else {
+            // 절대 지우면 안됨!! 각 현장 담당자별로 해당 DB만 확인 가능하게 하는 추가 쿼리문!!
+            if (getUserEstateList[0]) {
+                for (let i = 0; i < getUserEstateList.length; i++) {
+                    if (i == 0) {
+                        var setJull = 'WHERE'
+                        getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                    } else {
+                        var setJull = 'OR'
+                        getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                    }
+                }
+            } else {
+                res.redirect('/')
+                return
+            }
+        }
+
+        if (req.query.status) {
+            if (getEst || startDay) {
+                var getStatus = `AND af_mb_status = '${req.query.status}'`;
+            } else {
+                var getStatus = `WHERE af_mb_status = '${req.query.status}'`;
+            }
+        } else {
+            var getStatus = '';
+        }
+
+        if (req.query.nm) {
+            if (getEst || startDay || getStatus) {
+                var getName = `AND af_mb_name LIKE '%${req.query.nm}%'`;
+            } else {
+                var getName = `WHERE af_mb_name LIKE '%${req.query.nm}%'`;
+            }
+        } else {
+            var getName = '';
+        }
+
+        if (req.query.ph) {
+            if (getEst || startDay || getStatus || getName) {
+                var getPhone = `AND af_mb_phone LIKE '%${req.query.ph}%'`;
+            } else {
+                var getPhone = `WHERE af_mb_phone LIKE '%${req.query.ph}%'`;
+            }
+        } else {
+            var getPhone = '';
+        }
+
+
+
+        // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
+        // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
+        const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus} ${getName} ${getPhone};`;
+        console.log(allCountSql);
+        const allCountQuery = await sql_con.promise().query(allCountSql)
+        const allCount = Object.values(allCountQuery[0][0])[0]
+
+
+
+        if (req.user.rate < 5) {
+            if (req.query.est) {
+                var getEst = `WHERE a.af_form_name LIKE '%${req.query.est}%'`;
+            } else {
+                for (let i = 0; i < getUserEstateList.length; i++) {
+                    if (i == 0) {
+                        var setJull = 'WHERE'
+                        getEst = `${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                    } else {
+                        var setJull = 'OR'
+                        getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+                    }
                 }
             }
-        } else {
-            res.redirect('/')
-            return
         }
-    }
+        // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    if (req.query.status) {
-        if (getEst || startDay) {
-            var getStatus = `AND af_mb_status = '${req.query.status}'`;
-        } else {
-            var getStatus = `WHERE af_mb_status = '${req.query.status}'`;
-        }
-    } else {
-        var getStatus = '';
-    }
+        // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    if (req.query.nm) {
-        if (getEst || startDay || getStatus) {
-            var getName = `AND af_mb_name LIKE '%${req.query.nm}%'`;
-        } else {
-            var getName = `WHERE af_mb_name LIKE '%${req.query.nm}%'`;
-        }
-    } else {
-        var getName = '';
-    }
+        // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    if (req.query.ph) {
-        if (getEst || startDay || getStatus || getName) {
-            var getPhone = `AND af_mb_phone LIKE '%${req.query.ph}%'`;
-        } else {
-            var getPhone = `WHERE af_mb_phone LIKE '%${req.query.ph}%'`;
-        }
-    } else {
-        var getPhone = '';
-    }
+        var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ${getName} ${getPhone} ORDER BY a.af_id DESC`;
 
+        console.log(setDbSql);
+        var all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
 
-
-    // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
-    // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
-    const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus} ${getName} ${getPhone};`;
-    console.log(allCountSql);
-    const allCountQuery = await sql_con.promise().query(allCountSql)
-    const allCount = Object.values(allCountQuery[0][0])[0]
-
-
-
-    if (req.user.rate < 5) {
-        if (req.query.est) {
-            var getEst = `WHERE a.af_form_name LIKE '%${req.query.est}%'`;
-        } else {
-            for (let i = 0; i < getUserEstateList.length; i++) {
-                if (i == 0) {
-                    var setJull = 'WHERE'
-                    getEst = `${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
-                } else {
-                    var setJull = 'OR'
-                    getEst = `${getEst} ${setJull} a.af_form_name LIKE '%${getUserEstateList[i]}%'`;
+        // console.log(all_data['wdata']);
+        for await (const data of all_data.wdata) {
+            const addMemoSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_created_at DESC LIMIT 3;`
+            const addMemo = await sql_con.promise().query(addMemoSql, [data.af_id])
+            if (addMemo[0][0]) {
+                data['main_memo'] = []
+                for (let i = 0; i < addMemo[0].length; i++) {
+                    data['main_memo'].push(addMemo[0][i].mo_memo)
                 }
             }
         }
-    }
-    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' AND a.af_id IN(SELECT max(af_id) FROM application_form GROUP BY af_mb_phone) ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
 
-    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id WHERE a.af_form_type_in = '분양' ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
-
-    // var setDbSql = `SELECT * FROM application_form as a LEFT JOIN memos as m ON a.af_id = m.mo_depend_id ${getEst} ${getStatus} ORDER BY a.af_id DESC`;
-
-    var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ${getName} ${getPhone} ORDER BY a.af_id DESC`;
-
-    console.log(setDbSql);
-    const all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
-
-    // console.log(all_data['wdata']);
-    for await (const data of all_data.wdata) {
-        const addMemoSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_created_at DESC LIMIT 3;`
-        const addMemo = await sql_con.promise().query(addMemoSql, [data.af_id])
-        if (addMemo[0][0]) {
-            data['main_memo'] = []
-            for (let i = 0; i < addMemo[0].length; i++) {
-                data['main_memo'].push(addMemo[0][i].mo_memo)
-            }
-        }
+        all_data.estate_list = getUserEstateList;
+        all_data.est = req.query.est
+        all_data.status = req.query.status
+        all_data.sc = req.query.sc
+        all_data.sd = req.query.sd
+        all_data.ed = endDay
+        all_data.nm = req.query.nm
+        all_data.ph = req.query.ph
+    } catch (error) {
+        all_data = []
     }
 
-    all_data.estate_list = getUserEstateList;
-    all_data.est = req.query.est
-    all_data.status = req.query.status
-    all_data.sc = req.query.sc
-    all_data.sd = req.query.sd
-    all_data.ed = endDay
-    all_data.nm = req.query.nm
-    all_data.ph = req.query.ph
 
 
 
