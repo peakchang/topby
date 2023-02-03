@@ -411,7 +411,15 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 })
 
 
+
+
+
+
+
+
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
+
+    console.log('check now page!!!!! on load page ok~~~~~~~~~~~~~~~~~~~~!!!!!');
 
     try {
         console.log(req.user.rate);
@@ -433,7 +441,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
 
-        console.log('에러체크11111');
+        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 11111');
 
         if (req.query.sc) {
             var pageCount = parseInt(req.query.sc);
@@ -453,7 +461,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var sdSearchQ = ``;
         }
 
-        console.log('에러체크22222');
+        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 22222');
 
 
 
@@ -487,7 +495,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
 
-        console.log('에러체크33333');
+        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 33333');
 
         if (req.query.status) {
             if (getEst || startDay) {
@@ -519,7 +527,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var getPhone = '';
         }
 
-        console.log('에러체크44444');
+        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 44444');
 
 
 
@@ -530,8 +538,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         const allCountQuery = await sql_con.promise().query(allCountSql)
         const allCount = Object.values(allCountQuery[0][0])[0]
 
-        console.log('에러체크55555');
-
+        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 55555');
 
 
 
