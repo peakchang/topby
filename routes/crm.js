@@ -433,6 +433,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
 
+        console.log('에러체크11111');
+
         if (req.query.sc) {
             var pageCount = parseInt(req.query.sc);
         } else {
@@ -450,6 +452,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var sdCountQ = ``;
             var sdSearchQ = ``;
         }
+
+        console.log('에러체크22222');
 
 
 
@@ -483,6 +487,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
 
+        console.log('에러체크33333');
+
         if (req.query.status) {
             if (getEst || startDay) {
                 var getStatus = `AND af_mb_status = '${req.query.status}'`;
@@ -513,6 +519,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var getPhone = '';
         }
 
+        console.log('에러체크44444');
+
 
 
         // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
@@ -521,6 +529,9 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         console.log(allCountSql);
         const allCountQuery = await sql_con.promise().query(allCountSql)
         const allCount = Object.values(allCountQuery[0][0])[0]
+
+        console.log('에러체크55555');
+
 
 
 
