@@ -571,6 +571,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         all_data.nm = req.query.nm
         all_data.ph = req.query.ph
     } catch (error) {
+        console.log('발생한 에러를 표시합니다.');
+        console.log(error);
         all_data = []
     }
 
