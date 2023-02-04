@@ -55,22 +55,7 @@ router.post('/erremail', async(req,res,next) => {
     
     const get_nick = req.body.get_nick;
 
-    const mailContent = `
-    <table style='width:100%; border: 1px solid grey; border-collapse: collapse;'>
-    <tr>
-    <th style='border: 1px solid grey;'>닉네임</th>
-    <td style='border: 1px solid grey;'>${get_nick}</td>
-    </tr>
-    <tr>
-    <th style='border: 1px solid grey;'>에러 로그</th>
-    <td style='border: 1px solid grey;'>${errLog}</td>
-    </tr>
-    <tr>
-    <th style='border: 1px solid grey;'>현재 카운트</th>
-    <td style='border: 1px solid grey;'>${addrCount}</td>
-    </tr>
-    </table>
-    `
+    const mailContent = `연락처 추가 카운트 : ${addrCount} / 닉네임 : ${get_nick}`;
     
     mailSender.sendEmail('changyong112@naver.com', '★★★★★★ 프로그램 에러 확인 요망', mailContent);
     res.send('200')
