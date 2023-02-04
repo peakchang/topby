@@ -92,8 +92,14 @@ router.post('/', async (req, res) => {
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        console.log(`show Leads Data : ${getLeadsData}`);
-        console.log(`show getFromData : ${getFormData}`);
+        console.log('show LeadsData');
+        console.log(LeadsData);
+        console.log('----------------------');
+
+        console.log('show formData');
+        console.log(formData);
+        console.log('----------------------');
+
 
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
@@ -122,17 +128,11 @@ router.post('/', async (req, res) => {
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
 
-        try {
-            var get_form_name = getFormData.name
-            if (get_form_name.includes('인터넷')) {
-                var form_type_in = '인터넷'
-                await sendSms(get_phone, sendMsg)
-            } else {
-                var form_type_in = '분양'
-            }
-
-        } catch (error) {
-            var get_form_name = '';
+        var get_form_name = getFormData.name
+        if (get_form_name.includes('인터넷')) {
+            var form_type_in = '인터넷'
+            await sendSms(get_phone, sendMsg)
+        } else {
             var form_type_in = '분양'
         }
         var get_form_name = get_form_name.replace('분양', '')
@@ -154,8 +154,6 @@ router.post('/', async (req, res) => {
             await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
         }
 
-
-        console.log('여기까지는 정상인가요??')
         const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const getStatusText = await mysql_conn.promise().query(getStatusSql)
         const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
@@ -164,8 +162,8 @@ router.post('/', async (req, res) => {
         let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
         let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
 
-        console.log(formInertSql);
-        console.log('***************** pass first');
+        // console.log(formInertSql);
+        // console.log('***************** pass first');
 
         await mysql_conn.promise().query(formInertSql, getArr)
 
@@ -179,8 +177,8 @@ router.post('/', async (req, res) => {
         const findUser = findUserData[0];
 
 
-        console.log(userFindSql);
-        console.log('***************** pass second');
+        // console.log(userFindSql);
+        // console.log('***************** pass second');
 
         for await (const goUser of findUser) {
             console.log(goUser.user_email);
@@ -206,9 +204,9 @@ router.post('/', async (req, res) => {
         const getSiteInfo = getSiteInfoData[0][0];
 
 
-        console.log(getSiteInfoSql);
-        console.log('***************** pass END!!!!');
-        console.log(getSiteInfo);
+        // console.log(getSiteInfoSql);
+        // console.log('***************** pass END!!!!');
+        // console.log(getSiteInfo);
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
@@ -224,7 +222,7 @@ router.post('/', async (req, res) => {
         console.log('success!!!!!');
     } catch (error) {
 
-        console.log(error); 0
+        console.log(error);
         const getDataStr = JSON.stringify(req.body)
         console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;

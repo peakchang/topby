@@ -38,6 +38,8 @@ router.post('/updatework', async (req, res, next) => {
 
 router.post('/erremail', async(req,res,next) => {
 
+    console.log('in~~~~~~ coming~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
     try {
         var errLog = req.body.err_log;
     } catch (error) {
