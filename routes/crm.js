@@ -427,6 +427,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         if (req.user.rate < 5) {
             const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
             const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
+
+            // 여기서 null 에러 난다 체크 한번 하자!!!
             var getUserEstateList = getUserEstateTemp[0][0].manage_estate.split(',');
         } else if (req.user.rate == 5) {
             // const getUserEstateSql = `SELECT * FROM form_status WHERE fs_id= 1;`;

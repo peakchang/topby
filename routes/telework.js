@@ -7,6 +7,7 @@ require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
+const { mailSender } = require('../db_lib/back_lib.js');
 
 
 router.post('/updatework', async (req, res, next) => {
@@ -34,6 +35,28 @@ router.post('/updatework', async (req, res, next) => {
     res.send('어떻게 되었니?!?!?!?!?')
 })
 
+
+router.post('/erremail', async(req,res,next) => {
+    const errLog = req.body.err_log;
+    const addrCount = req.body.now_add_addr_count;
+    const mailContent = `
+    <table style='width:100%; border: 1px solid grey; border-collapse: collapse;'>
+    <tr>
+    <th style='border: 1px solid grey;'>에러 로그</th>
+    <td style='border: 1px solid grey;'>${errLog}</td>
+    </tr>
+    <tr>
+    <th style='border: 1px solid grey;'>현재 카운트</th>
+    <td style='border: 1px solid grey;'>${addrCount}</td>
+    </tr>
+    </table>
+    `
+
+    
+    mailSender.sendEmail(goUser.user_email, '프로그램 에러 확인 요망', mailContent);
+    res.send('200')
+})
+
 router.post('/gethook', async (req, res, next) => {
     console.log(req.body);
 
@@ -43,7 +66,7 @@ router.post('/gethook', async (req, res, next) => {
         const getUserSql = `SELECT * FROM users WHERE authvalue = ?`;
         const getUser = await sql_con.promise().query(getUserSql, [req.body.get_auth]);
         const get_user = getUser[0][0];
-
+        var get_nick = get_user.nick;
         if(!get_user.macvalue){
             const updateUserMacAddrSql = `UPDATE users SET macvalue = ? WHERE id = ?`;
             await sql_con.promise().query(updateUserMacAddrSql, [req.body.get_mac, get_user.id]);
@@ -60,7 +83,7 @@ router.post('/gethook', async (req, res, next) => {
         var get_status = 'no'
         var hidden_link = ''
     }
-    res.json({ get_status, hidden_link })
+    res.json({ get_status, hidden_link, get_nick })
 })
 
 router.get('/hiddenlink', async (req, res, next) => {
