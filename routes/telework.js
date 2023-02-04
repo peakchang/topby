@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const sql_con = require('../db_lib');
-const { chkRateManagerTele } = require('./middlewares')
+const { chkRateManagerTele, chkRateMaster } = require('./middlewares')
 const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
