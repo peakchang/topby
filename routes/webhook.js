@@ -62,6 +62,11 @@ router.get('/', async (req, res) => {
 });
 
 
+
+
+
+
+
 router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     var getData = req.body
@@ -86,6 +91,9 @@ router.post('/', async (req, res) => {
 
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
+
+        console.log(`show Leads Data : ${getLeadsData}`);
+        console.log(`show getFromData : ${getFormData}`);
 
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
@@ -113,15 +121,20 @@ router.post('/', async (req, res) => {
         }
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
-        var get_form_name = getFormData.name
 
-        if (get_form_name.includes('인터넷')) {
-            var form_type_in = '인터넷'
-            await sendSms(get_phone, sendMsg)
-        } else {
+        try {
+            var get_form_name = getFormData.name
+            if (get_form_name.includes('인터넷')) {
+                var form_type_in = '인터넷'
+                await sendSms(get_phone, sendMsg)
+            } else {
+                var form_type_in = '분양'
+            }
+
+        } catch (error) {
+            var get_form_name = '';
             var form_type_in = '분양'
         }
-
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
@@ -211,7 +224,7 @@ router.post('/', async (req, res) => {
         console.log('success!!!!!');
     } catch (error) {
 
-        console.log(error);0
+        console.log(error); 0
         const getDataStr = JSON.stringify(req.body)
         console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
