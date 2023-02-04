@@ -39,8 +39,14 @@ router.post('/updatework', async (req, res, next) => {
 router.post('/erremail', async(req,res,next) => {
     const errLog = req.body.err_log;
     const addrCount = req.body.now_add_addr_count;
+    const get_nick = req.body.get_nick;
+
     const mailContent = `
     <table style='width:100%; border: 1px solid grey; border-collapse: collapse;'>
+    <tr>
+    <th style='border: 1px solid grey;'>닉네임</th>
+    <td style='border: 1px solid grey;'>${get_nick}</td>
+    </tr>
     <tr>
     <th style='border: 1px solid grey;'>에러 로그</th>
     <td style='border: 1px solid grey;'>${errLog}</td>
@@ -51,9 +57,8 @@ router.post('/erremail', async(req,res,next) => {
     </tr>
     </table>
     `
-
     
-    mailSender.sendEmail(goUser.user_email, '프로그램 에러 확인 요망', mailContent);
+    mailSender.sendEmail('changyong112@naver.com', '★★★★★★ 프로그램 에러 확인 요망', mailContent);
     res.send('200')
 })
 
