@@ -37,8 +37,20 @@ router.post('/updatework', async (req, res, next) => {
 
 
 router.post('/erremail', async(req,res,next) => {
-    const errLog = req.body.err_log;
-    const addrCount = req.body.now_add_addr_count;
+
+    try {
+        var errLog = req.body.err_log;
+    } catch (error) {
+        var errLog = '';
+    }
+
+    try {
+        var addrCount = req.body.now_add_addr_count;
+    } catch (error) {
+        var addrCount = '없음';
+    }
+    
+    
     const get_nick = req.body.get_nick;
 
     const mailContent = `
@@ -91,7 +103,7 @@ router.post('/gethook', async (req, res, next) => {
     res.json({ get_status, hidden_link, get_nick })
 })
 
-router.get('/hiddenlink', async (req, res, next) => {
+router.get('/hiddenlink', chkRateMaster, async (req, res, next) => {
     console.log(req.body);
     const getLinkSql = `SELECT * FROM hidden_link WHERE hidden_chk = ?`;
     const getLink = await sql_con.promise().query(getLinkSql, ['main']);
