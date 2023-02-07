@@ -11,6 +11,7 @@ var received_updates = [];
 const { aligoKakaoNotification } = require('../db_lib/back_lib')
 
 const moment = require('moment');
+const { log } = require('console');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -63,10 +64,6 @@ router.get('/', async (req, res) => {
 
 
 
-
-
-
-
 router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     var getData = req.body
@@ -76,9 +73,12 @@ router.post('/', async (req, res) => {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
 
+        console.log(leadsId);
+
 
         let formId = getData.entry[0].changes[0].value.form_id
 
+        console.log(formId);
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -104,37 +104,43 @@ router.post('/', async (req, res) => {
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
         var temp_phone = getLeadsData.field_data[1].values[0]
-        if (temp_phone.includes('+820')) {
-            var get_phone = temp_phone.replace('+820', '0')
-        } else if (temp_phone.includes('+82')) {
-            var get_phone = temp_phone.replace('+82', '0')
-        } else if (temp_phone.includes('10')) {
-            var get_phone = `0${temp_phone}`;
-        } else {
-            try {
-                var temp_phone = getLeadsData.field_data[0].values[0];
-                var get_name = getLeadsData.field_data[1].values[0];
-                if (temp_phone.includes('+820')) {
-                    var get_phone = temp_phone.replace('+820', '0')
-                } else if (temp_phone.includes('+82')) {
-                    var get_phone = temp_phone.replace('+82', '0')
-                }
-            } catch (error) {
-                var get_name = getLeadsData.field_data[0].values[0];
-                var temp_phone = getLeadsData.field_data[1].values[0]
-            }
-
+        var get_phone = temp_phone.replace('+82','').replace(/[^0-9]/g, "");
+        if (get_phone.charAt(0) != '0'){
+            get_phone = `0${get_phone}`
         }
+
+        // if (temp_phone.includes('+820')) {
+        //     var get_phone = temp_phone.replace('+820', '0')
+        // } else if (temp_phone.includes('+82')) {
+        //     var get_phone = temp_phone.replace('+82', '0')
+        // } else if (temp_phone.includes('10')) {
+        //     var get_phone = `0${temp_phone}`;
+        // } else {
+        //     try {
+        //         var temp_phone = getLeadsData.field_data[0].values[0];
+        //         var get_name = getLeadsData.field_data[1].values[0];
+        //         if (temp_phone.includes('+820')) {
+        //             var get_phone = temp_phone.replace('+820', '0')
+        //         } else if (temp_phone.includes('+82')) {
+        //             var get_phone = temp_phone.replace('+82', '0')
+        //         }
+        //     } catch (error) {
+        //         var get_name = getLeadsData.field_data[0].values[0];
+        //         var temp_phone = getLeadsData.field_data[1].values[0]
+        //     }
+        // }
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
 
         var get_form_name = getFormData.name
-        if (get_form_name.includes('인터넷')) {
-            var form_type_in = '인터넷'
-            await sendSms(get_phone, sendMsg)
-        } else {
-            var form_type_in = '분양'
-        }
+        // if (get_form_name.includes('인터넷')) {
+        //     var form_type_in = '인터넷'
+        //     await sendSms(get_phone, sendMsg)
+        // } else {
+        //     var form_type_in = '분양'
+        // }
+        var form_type_in = '분양'
+        
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')

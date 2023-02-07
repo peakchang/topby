@@ -102,6 +102,18 @@ router.use('/test', (req, res, next) => {
 
 
 router.get('/', async (req, res, next) => {
+
+    var testString = "+8210.2222.3333"
+    var result = testString.replace('+82','').replace(/[^0-9]/g, "");
+    if (result.charAt(0) != '0'){
+        result = `0${result}`
+    }
+    console.log(result);
+
+    const p = 'The quick brown fox jumps over the lazy dog. If the dog reacted, was it really lazy?';
+
+    console.log(p.replace('dog', 'monkey'));
+
     console.log(req.headers['user-agent']);
     console.log(req.get('Referrer'));
     if (req.get('Referrer')) {
