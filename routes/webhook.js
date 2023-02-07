@@ -104,7 +104,7 @@ router.post('/', async (req, res) => {
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
         var temp_phone = getLeadsData.field_data[1].values[0]
-        var get_phone = temp_phone.replace('+82','').replace(/[^0-9]/g, "");
+        var get_phone = String(temp_phone).replace('+82','').replace(/[^0-9]/g, "");
         if (get_phone.charAt(0) != '0'){
             get_phone = `0${get_phone}`
         }
@@ -140,7 +140,7 @@ router.post('/', async (req, res) => {
         //     var form_type_in = '분양'
         // }
         var form_type_in = '분양'
-        
+
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
