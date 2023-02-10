@@ -108,27 +108,7 @@ router.post('/', async (req, res) => {
         if (get_phone.charAt(0) != '0'){
             get_phone = `0${get_phone}`
         }
-
-        // if (temp_phone.includes('+820')) {
-        //     var get_phone = temp_phone.replace('+820', '0')
-        // } else if (temp_phone.includes('+82')) {
-        //     var get_phone = temp_phone.replace('+82', '0')
-        // } else if (temp_phone.includes('10')) {
-        //     var get_phone = `0${temp_phone}`;
-        // } else {
-        //     try {
-        //         var temp_phone = getLeadsData.field_data[0].values[0];
-        //         var get_name = getLeadsData.field_data[1].values[0];
-        //         if (temp_phone.includes('+820')) {
-        //             var get_phone = temp_phone.replace('+820', '0')
-        //         } else if (temp_phone.includes('+82')) {
-        //             var get_phone = temp_phone.replace('+82', '0')
-        //         }
-        //     } catch (error) {
-        //         var get_name = getLeadsData.field_data[0].values[0];
-        //         var temp_phone = getLeadsData.field_data[1].values[0]
-        //     }
-        // }
+        
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
 
@@ -178,8 +158,9 @@ router.post('/', async (req, res) => {
 
         console.log(reFormName);
 
-        const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
-        const findUserData = await mysql_conn.promise().query(userFindSql, [reFormName]);
+        // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
+        const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
+        const findUserData = await mysql_conn.promise().query(userFindSql);
         const findUser = findUserData[0];
 
 
