@@ -1,0 +1,112 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+
+<form method="post">
+    <div class="container mt-3">
+        <div class="mt-4">
+            <button type="button"
+                class="text-white mb-3 bg-emerald-600 hover:bg-emerald-800 font-medium rounded-lg text-sm px-3 py-1 text-center add_site_open">
+                현장 추가
+            </button>
+            <button
+                class="text-white mb-3 bg-indigo-500 hover:bg-indigo-700 font-medium rounded-lg text-sm px-3 py-1 text-center update_site"
+                value="site_update" name="submit_val">
+                수정
+            </button>
+
+            <div class="flex mb-3 create_site_area" style="display:none;">
+                <div class="w-full text-center">
+                    <input type="text"
+                        class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                        name="new_site_num" placeholder="고유번호를 입력하세요">
+                </div>
+                <div class="w-full text-center">
+                    <input type="text"
+                        class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                        name="new_site_title" placeholder="현장명을 입력하세요">
+                </div>
+                <div class="w-full text-left">
+                    <button type="submit"
+                        class="text-white mb-3 bg-red-500 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center add_site"
+                        value="site_insert" name="submit_val">
+                        등록
+                    </button>
+                </div>
+            </div>
+
+
+            <table class="w-full text-sm">
+                <tr>
+                    <th class="border border-slate-300 py-2 text-center" style="width: 50px;">
+                        <input type="checkbox" name="" id="all_chk">
+                    </th>
+                    <th class="border border-slate-300 py-2 text-center">현장명</th>
+                    <th class="border border-slate-300 py-2 text-center">상태</th>
+                </tr>
+
+                {% for site in get_site_list %}
+
+                <tr>
+                    <td class="border border-slate-300 py-2 text-center">
+                        <input type="checkbox" class="site_id" name="site_id" value="{{ site.hy_id }}">
+                    </td>
+                    <td class="border border-slate-300 py-2 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="site_num" value="{{ site.hy_num }}" placeholder="현장명을 입력하세요">
+                    </td>
+
+                    <td class="border border-slate-300 py-2 text-center">
+                        <span class="open_detail cursor-pointer text-blue-600">{{ site.hy_title }}</span>
+                    </td>
+
+                    <td class="border border-slate-300 py-2 text-center">
+                        <a href="/side/{{ site.hy_num }}" target="_blank">
+                            <button type="button" class="p-2 rounded-lg bg-green-200">바로가기</button>
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</form>
+
+<script>
+    $('.add_site_open').click(function (e) {
+        $('.create_site_area').toggle()
+    })
+
+    $('.open_detail').click(function (e) {
+        const thisId = this.parentNode.parentNode.firstElementChild.firstElementChild.value
+        console.log(thisId)
+        var options = 'top=10, left=10, width=700, height=900, status=no, menubar=no, toolbar=no, resizable=no'
+        window.open(`side_detail/${thisId}`, '디테일', options)
+    })
+
+    $('.update_site').click(function (e) {
+
+        const siteId = document.querySelectorAll('.site_id');
+        for (let i = 0; i < siteId.length; i++) {
+            if (siteId[i].checked) {
+                var chkChk = 'ON'
+            }
+        }
+        if (!chkChk) {
+            alert('체크된 값이 없습니다.')
+            return false
+        }
+
+        var chkChange = confirm('정말 변경하시겠습니까? 변경하게 되면 주소값이 변경되므로, 검색 반영에 영향을 끼칠수 있습니다.')
+        if(!chkChange){
+            return false
+        }
+    })
+
+
+
+</script>
+{% endblock %}

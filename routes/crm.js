@@ -25,6 +25,15 @@ moment.tz.setDefault("Asia/Seoul");
 //     next();
 // });
 
+
+
+router.get('/site', async(req,res,next) => {
+    console.log('sdlkjflsjdflsjf');
+    res.render('crm/work_site')
+})
+
+
+
 const upload = multer({
     storage: multer.diskStorage({
         // 경로를 설정
