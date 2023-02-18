@@ -140,7 +140,7 @@
                         }
                         console.log(updateDataObj);
 
-                        axios.post('/nwork/axios_work', {updateDataObj}).then((res) => {
+                        axios.post('/nwork/axios_work', { updateDataObj }).then((res) => {
                             console.log(res);
                         }).catch((err) => {
                             console.error(err);
@@ -151,7 +151,32 @@
                 location.reload()
 
             } else {
-                console.log('delete!');
+                const idChkList = document.querySelectorAll('.idchk');
+                let delIdArr = [];
+                for (const chkId of idChkList) {
+                    if (chkId.checked) {
+                        delIdArr.push(chkId.value)
+                    }
+                }
+
+
+                if (delIdArr.length == 0) {
+                    alert('선택된 아이디가 없습니다.')
+                    return
+                }
+
+
+                const chkDel = confirm('삭제를 진행하시겠습니까?')
+                if (!chkDel) {
+                    return
+                }
+
+
+                axios.post('/nwork/axios_work', { delIdArr }).then((res) => {
+                    console.log(res);
+                }).catch((err) => {
+                    console.error(err);
+                })
             }
         })
     </script>
