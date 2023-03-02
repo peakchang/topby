@@ -103,7 +103,9 @@ router.post('/', async (req, res) => {
 
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
-        var temp_phone = getLeadsData.field_data[1].values[0]
+        var temp_phone = getLeadsData.field_data[1].values[0];
+        console.log(get_name);
+        console.log(typeof(get_name));
         var get_phone = String(temp_phone).replace('+82','').replace(/[^0-9]/g, "");
         if (get_phone.charAt(0) != '0'){
             get_phone = `0${get_phone}`
@@ -169,8 +171,8 @@ router.post('/', async (req, res) => {
 
         for await (const goUser of findUser) {
             console.log(goUser.user_email);
-            const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
-            const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
+            const mailSubjectManager = `${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
+            const mailContentManager = `현장 : ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
         }
 
