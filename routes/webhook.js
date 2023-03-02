@@ -104,6 +104,10 @@ router.post('/', async (req, res) => {
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
         var temp_phone = getLeadsData.field_data[1].values[0];
+        if(get_name.includes('+82')){
+        }else{
+            console.log('no~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        }
         console.log(get_name);
         console.log(typeof(get_name));
         var get_phone = String(temp_phone).replace('+82','').replace(/[^0-9]/g, "");
