@@ -102,22 +102,13 @@ router.post('/', async (req, res) => {
 
 
         // 이름
-        var get_name = getLeadsData.field_data[1].values[0];
-        console.log(get_name);
-        console.log(typeof(get_name));
-        if (get_name.includes('+82')) {
-            var get_name = getLeadsData.field_data[1].values[0];
-            var temp_phone = getLeadsData.field_data[0].values[0];
-        } else {
-            var get_name = getLeadsData.field_data[0].values[0];
-            var temp_phone = getLeadsData.field_data[1].values[0];
-        }
-
-        var get_phone = String(temp_phone).replace('+82', '').replace(/[^0-9]/g, "");
-        if (get_phone.charAt(0) != '0') {
+        var get_name = getLeadsData.field_data[0].values[0];
+        var temp_phone = getLeadsData.field_data[1].values[0]
+        var get_phone = String(temp_phone).replace('+82','').replace(/[^0-9]/g, "");
+        if (get_phone.charAt(0) != '0'){
             get_phone = `0${get_phone}`
         }
-
+        
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
 
