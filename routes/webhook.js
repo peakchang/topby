@@ -152,6 +152,10 @@ router.post('/', async (req, res) => {
         // console.log('***************** pass first');
 
         await mysql_conn.promise().query(formInertSql, getArr)
+
+
+
+
         console.log(reFormName);
 
         // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
@@ -165,8 +169,8 @@ router.post('/', async (req, res) => {
 
         for await (const goUser of findUser) {
             console.log(goUser.user_email);
-            const mailSubjectManager = `현장: ${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
-            const mailContentManager = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+            const mailSubjectManager = `${get_name} 고객 DB 접수되었습니다.`;
+            const mailContentManager = `이름 : ${get_name} / 전화번호 : ${get_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
         }
 
