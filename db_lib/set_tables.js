@@ -6,17 +6,6 @@ const nsql_con = require('./sub_db');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
-
-    let makeHiddenLinkTable = `CREATE TABLE IF NOT EXISTS hidden_link(
-        hidden_chk varchar(10),
-        hidden_link varchar(255)
-    );`
-    try {
-        sql_con.query(makeHiddenLinkTable, async (err, result) => { });
-    } catch (err) {
-        console.error(err);
-    }
-
     let makeNworkTable = `CREATE TABLE IF NOT EXISTS nwork(
         n_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         n_ua varchar(10),
@@ -34,6 +23,19 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+
+    let makeHiddenLinkTable = `CREATE TABLE IF NOT EXISTS hidden_link(
+        hidden_chk varchar(10),
+        hidden_link varchar(255)
+    );`
+    try {
+        sql_con.query(makeHiddenLinkTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
+    
     // ALTER TABLE nwork MODIFY COLUMN n_update DATE NULL;
     // ALTER TABLE nwork MODIFY COLUMN n_id varchar(100) NOT NULL UNIQUE;
 

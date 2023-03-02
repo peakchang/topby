@@ -29,20 +29,62 @@ router.use('/axios_work', async (req, res, next) => {
         await nsql_con.promise().query(updateIdListSql, dataArr);
 
         res.send('sendList')
+    } else if (req.body.delIdArr) {
+        const delList = req.body.delIdArr;
+        for await (const delId of delList) {
+            const delSql = `DELETE FROM nwork WHERE n_idx = ?`;
+            await nsql_con.promise().query(delSql, [delId]);
+        }
     }
-})
+});
 
 
 router.use('/getnid', async (req, res, next) => {
-    const getNidCountSql = `SELECT COUNT(*) FROM nwork WHERE n_update IS NULL OR n_update < CURDATE() - INTERVAL 3 DAY AND n_status IS NULL;`
-    const getNidCount = await nsql_con.promise().query(getNidCountSql);
-    const get_nid_count = getNidCount[0][0]['COUNT(*)'];
-    const getRanVal = Math.floor((Math.random() * (get_nid_count)) + 1)
-    var getIdSql = `SELECT n_ua,n_id,n_pwd FROM nwork WHERE n_idx = ?`;
-    var getId = await nsql_con.promise().query(getIdSql, [getRanVal]);
-    var getIdPwd = getId[0][0];
+    try {
+        const getNidSql = `SELECT * FROM nwork WHERE n_update IS NULL;`
+        const getNid = await nsql_con.promise().query(getNidSql);
+        const get_nid_list = getNid[0];
+        const getRanVal = Math.floor((Math.random() * (get_nid_list.length)) + 1)
+        var getWork = get_nid_list[getRanVal];
+    } catch (error) {
 
-    res.json(getIdPwd)
+    }
+
+    if (!getWork) {
+        try {
+            const getNidSql = `SELECT * FROM nwork WHERE n_update < CURDATE() - INTERVAL 3 DAY ORDER BY n_update;`;
+            const getNid = await nsql_con.promise().query(getNidSql);
+            const get_nid_list = getNid[0];
+            if (get_nid_list.length > 5) {
+                var getRanVal = Math.floor((Math.random() * 5) + 1)
+            } else {
+                var getRanVal = Math.floor((Math.random() * (get_nid_list.length)) + 1)
+            }
+            var getWork = get_nid_list[getRanVal - 1];
+        } catch (error) {
+
+        }
+    } else {
+        // console.log('상태값이 없는 유저가 있다!');
+    }
+
+    try {
+        var now = moment(Date.now()).format('YYYY-MM-DD');
+        const updateUserWork = `UPDATE nwork SET n_update = ? WHERE n_idx = ?`;
+        await nsql_con.promise().query(updateUserWork, [now, getWork.n_idx]);
+        var get_work = {
+            n_ua: getWork.n_ua,
+            n_id: getWork.n_id,
+            n_pwd: getWork.n_pwd
+        }
+    } catch (error) {
+        var get_work = {
+            n_ua: 'noMoreId',
+            n_id: '',
+            n_pwd: ''
+        }
+    }
+    res.json(get_work)
 })
 
 
@@ -82,6 +124,8 @@ router.use('/gethook', async (req, res, next) => {
 
 router.use('/', async (req, res, next) => {
 
+
+
     // var now = moment(Date.now()).add(-3, 'days').format('YYYY-MM-DD');
     // var now = moment(Date.now()).subtract(7, 'days').format('YYYY-MM-DD');
     // console.log(now);
@@ -115,6 +159,8 @@ router.use('/', async (req, res, next) => {
 
     res.render('nwork', { get_all_id_list, errCount })
 })
+
+
 
 
 module.exports = router;
