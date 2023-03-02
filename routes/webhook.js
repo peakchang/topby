@@ -102,7 +102,7 @@ router.post('/', async (req, res) => {
 
 
         // 이름
-
+        var get_name = getLeadsData.field_data[1].values[0];
         if (get_name.includes('+82')) {
             var get_name = getLeadsData.field_data[1].values[0];
             var temp_phone = getLeadsData.field_data[0].values[0];
