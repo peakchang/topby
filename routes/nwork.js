@@ -40,12 +40,13 @@ router.use('/axios_work', async (req, res, next) => {
 
 
 router.use('/getnid', async (req, res, next) => {
+    var getWork = ''
     try {
         const getNidSql = `SELECT * FROM nwork WHERE n_update IS NULL;`
         const getNid = await nsql_con.promise().query(getNidSql);
         const get_nid_list = getNid[0];
         const getRanVal = Math.floor((Math.random() * (get_nid_list.length)) + 1)
-        var getWork = get_nid_list[getRanVal];
+        getWork = get_nid_list[getRanVal];
     } catch (error) {
 
     }
