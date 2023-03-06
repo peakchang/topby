@@ -69,22 +69,22 @@ router.use('/getnid', async (req, res, next) => {
         // console.log('상태값이 없는 유저가 있다!');
     }
 
-    // try {
-    //     var now = moment(Date.now()).format('YYYY-MM-DD');
-    //     const updateUserWork = `UPDATE nwork SET n_update = ? WHERE n_idx = ?`;
-    //     await nsql_con.promise().query(updateUserWork, [now, getWork.n_idx]);
-    //     var get_work = {
-    //         n_ua: getWork.n_ua,
-    //         n_id: getWork.n_id,
-    //         n_pwd: getWork.n_pwd
-    //     }
-    // } catch (error) {
-    //     var get_work = {
-    //         n_ua: 'noMoreId',
-    //         n_id: '',
-    //         n_pwd: ''
-    //     }
-    // }
+    try {
+        // var now = moment(Date.now()).format('YYYY-MM-DD');
+        // const updateUserWork = `UPDATE nwork SET n_update = ? WHERE n_idx = ?`;
+        // await nsql_con.promise().query(updateUserWork, [now, getWork.n_idx]);
+        var get_work = {
+            n_ua: getWork.n_ua,
+            n_id: getWork.n_id,
+            n_pwd: getWork.n_pwd
+        }
+    } catch (error) {
+        var get_work = {
+            n_ua: 'noMoreId',
+            n_id: '',
+            n_pwd: ''
+        }
+    }
     res.json(get_work)
 })
 
