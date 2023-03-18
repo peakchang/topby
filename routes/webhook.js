@@ -67,18 +67,18 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     var getData = req.body
-    console.log(getData);
+    console.log(`The first data we got was?! ${getData}`);
 
     try {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
 
-        console.log(leadsId);
+        console.log(`get leads Id is~~~ : ${leadsId}`);
 
 
         let formId = getData.entry[0].changes[0].value.form_id
 
-        console.log(formId);
+        console.log(`get form Id is~~~ : ${formId}`);
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -92,13 +92,8 @@ router.post('/', async (req, res) => {
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        console.log('show LeadsData');
-        console.log(LeadsData);
-        console.log('----------------------');
-
-        console.log('show formData');
-        console.log(formData);
-        console.log('----------------------');
+        console.log(`show LeadsData : ${LeadsData}`);
+        console.log(`show formData : ${formData}`);
 
 
         // 이름
