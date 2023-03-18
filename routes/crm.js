@@ -19,17 +19,29 @@ const { IGComment } = require('facebook-nodejs-business-sdk');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-// router.use((req, res, next) => {
-//     console.log(req.user);
-//     res.locals.user = req.user;
-//     next();
-// });
 
 
 
-router.get('/site', async(req,res,next) => {
-    console.log('sdlkjflsjdflsjf');
-    res.render('crm/work_site')
+router.use('/site', async (req, res, next) => {
+    console.log(req.method);
+    if (req.method == "POST") {
+        console.log(typeof (req.body.site_id));
+        console.log(req.body.site_id);
+        if (typeof (req.body.site_id) == "string") {
+            const deleteSiteListSql = "DELETE FROM site_list WHERE sl_id = ?";
+            await sql_con.promise().query(deleteSiteListSql, [req.body.site_id]);
+        } else {
+            for await (const idx of req.body.site_id) {
+                const deleteSiteListSql = "DELETE FROM site_list WHERE sl_id = ?";
+                await sql_con.promise().query(deleteSiteListSql, [idx]);
+            }
+        }
+        return res.redirect('/crm/site')
+    }
+    const onSiteListSql = "SELECT * FROM site_list";
+    const onSiteList = await sql_con.promise().query(onSiteListSql);
+    const on_site_list = onSiteList[0]
+    res.render('crm/work_site', { on_site_list })
 })
 
 
