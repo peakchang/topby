@@ -6,9 +6,11 @@ module.exports = () => {
   passport.serializeUser((user, done) => {
     console.log(`순서체크 111111`);
     console.log(user);
+    console.log('serial gogogogogogo~~~~~');
     done(null, user.id); // 세션에 유저의 id만 저장
   });
   passport.deserializeUser((id, done) => {
+    console.log('deserial gogogogogogo~~~~~');
     let getUserSql = `SELECT * FROM users WHERE id = '?'`;
     sql_con.query(getUserSql, [id], (err, result) => {
       if (err) console.log('mysql 에러');
@@ -17,6 +19,8 @@ module.exports = () => {
       done(null, userinfo);
     })
   });
+
+  console.log('local 함수 실행?')
 
   local();
 };

@@ -127,8 +127,9 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         var movePath = '/crm/estate_manager'
     }
 
+    console.log('로그인 시작~~~~!!!');
     passport.authenticate('local', (authError, user, info) => {
-        console.log('순서체크 1111111111');
+        console.log('순서체크 1111111111 (auth router');
         if (authError) {
             console.error(authError);
             return next(authError);

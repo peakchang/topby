@@ -4,12 +4,14 @@ const bcrypt = require('bcrypt');
 const sql_con = require('../db_lib');
 
 module.exports = () => {
+  console.log('이 함수가 실행 되어야지?!?!?')
   passport.use(new LocalStrategy({
     usernameField: 'userid',
     passwordField: 'password',
   }, async (userid, password, done) => {
 
     try {
+      console.log('local 함수가 실행 되었다!!!');
       console.log('순서체크 22222222');
 
       let getUserSql = `SELECT * FROM users WHERE userid = '${userid}';`;
