@@ -138,10 +138,13 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
             return res.redirect(`/auth/login/?loginError=${info.message}&move=${movePath}`)
         }
         return req.login(user, (loginError) => {
+            console.log('여기는 어디에 나올까?!');
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
             }
+
+            console.log(user);
 
             if (movePath) {
                 res.redirect(movePath)
