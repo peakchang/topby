@@ -208,13 +208,14 @@ router.post('/', async (req, res) => {
         var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
 
         aligoKakaoNotification(req, customerInfo)
-
+        console.log(findUser);
         console.log(reFormName);
         console.log('**************************************');
+        console.log(findUser.user_phone);
         console.log(customerInfo.ciPhone);
         console.log(typeof(ciPhone));
         console.log('**************************************');
-        console.log(findUser);
+        
 
         // if(customerInfo.ciPhone.includes('010')){
         //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
