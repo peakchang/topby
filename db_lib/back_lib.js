@@ -60,7 +60,7 @@ exports.mailSender = {
     // 메일 발송    
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         console.log('Email sent: ' + info.response);
       }
@@ -251,7 +251,7 @@ ${customerInfo.ciSite} 관심고객으로 등록해 주셔서 감사드립니다
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
-          console.log('alligo', r);
+          // console.log('alligo', r);
           console.log('kakao send is success!!!!!!!!!!!!');
           resolve(true);
         }).catch((e) => {
@@ -322,7 +322,7 @@ exports.aligoKakaoNotification_formanager = async (req, customerInfo) => {
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
-          console.log('alligo', r);
+          // console.log('alligo', r);
           console.log('kakao send is success!!!!!!!!!!!!');
           resolve(true);
         }).catch((e) => {
