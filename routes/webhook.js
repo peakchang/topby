@@ -160,8 +160,8 @@ router.post('/', async (req, res) => {
 
 
 
-        console.log(reFormName);
-
+        
+        
         // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
         const findUserData = await mysql_conn.promise().query(userFindSql);
@@ -209,10 +209,12 @@ router.post('/', async (req, res) => {
 
         aligoKakaoNotification(req, customerInfo)
 
+        console.log(reFormName);
         console.log('**************************************');
         console.log(customerInfo.ciPhone);
         console.log(typeof(ciPhone));
         console.log('**************************************');
+        console.log(findUser);
 
         // if(customerInfo.ciPhone.includes('010')){
         //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
