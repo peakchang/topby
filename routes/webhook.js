@@ -8,7 +8,7 @@ const { sendSms } = require('../db_lib/back_lib');
 var token = process.env.TOKEN || 'token';
 var received_updates = [];
 
-const { aligoKakaoNotification } = require('../db_lib/back_lib')
+const { aligoKakaoNotification, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
 
 const moment = require('moment');
 const { log } = require('console');
@@ -205,8 +205,10 @@ router.post('/', async (req, res) => {
             var siteList = '정보없음'
         }
 
-        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
+        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone, ciManagerPhone : '010-2190-2197' }
+
         aligoKakaoNotification(req, customerInfo)
+        aligoKakaoNotification_formanager(req, customerInfo)
 
 
         res.sendStatus(200);
