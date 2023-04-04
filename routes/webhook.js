@@ -209,12 +209,17 @@ router.post('/', async (req, res) => {
 
         aligoKakaoNotification(req, customerInfo)
 
-        if(customerInfo.ciPhone.includes('010')){
-            console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-            console.log(customerInfo.ciPhone);
-            console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
-            aligoKakaoNotification_formanager(req, customerInfo)
-        }
+        console.log('**************************************');
+        console.log(customerInfo.ciPhone);
+        console.log(typeof(ciPhone));
+        console.log('**************************************');
+
+        // if(customerInfo.ciPhone.includes('010')){
+        //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+        //     console.log(customerInfo.ciPhone);
+        //     console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
+        //     aligoKakaoNotification_formanager(req, customerInfo)
+        // }
         
 
 
