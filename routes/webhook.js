@@ -160,8 +160,8 @@ router.post('/', async (req, res) => {
 
 
 
-
-
+        
+        
         // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
         const findUserData = await mysql_conn.promise().query(userFindSql);
@@ -171,36 +171,14 @@ router.post('/', async (req, res) => {
         // console.log(userFindSql);
         // console.log('***************** pass second');
 
-
-        // 고객한테 갈 알림톡
-        const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
-        const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
-        const getSiteInfo = getSiteInfoData[0][0];
-
-        if (getSiteInfo.sl_site_link) {
-            var siteList = getSiteInfo.sl_site_link
-        } else {
-            var siteList = '정보없음'
-        }
-
         for await (const [idx, goUser] of findUser) {
             console.log(goUser.user_email);
             const mailSubjectManager = `${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
             const mailContentManager = `현장 : ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
             console.log(idx);
-            if (idx == 0) {
-                console.log('첫번째 유저 입니다!!');
-                aligoKakaoNotification(req, customerInfo)
-            }
-
-            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: goUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
-
-            if (customerInfo.ciPhone.includes('010')) {
-                console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log(customerInfo.ciPhone);
-                console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
-                aligoKakaoNotification_formanager(req, customerInfo)
+            if(idx == 0){
+                console.log('첫번째 유저 입니다.');
             }
         }
 
@@ -213,24 +191,33 @@ router.post('/', async (req, res) => {
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
+        // 고객한테 갈 알림톡
 
+
+        const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
+        const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
+        const getSiteInfo = getSiteInfoData[0][0];
 
 
         // console.log(getSiteInfoSql);
         // console.log('***************** pass END!!!!');
         // console.log(getSiteInfo);
 
+        if (getSiteInfo.sl_site_link) {
+            var siteList = getSiteInfo.sl_site_link
+        } else {
+            var siteList = '정보없음'
+        }
 
+        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
 
-
-
-
+        aligoKakaoNotification(req, customerInfo)
         console.log(reFormName);
         console.log('**************************************');
         console.log(customerInfo.ciPhone);
-        console.log(typeof (ciPhone));
+        console.log(typeof(ciPhone));
         console.log('**************************************');
-
+        
 
         // if(customerInfo.ciPhone.includes('010')){
         //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -238,7 +225,7 @@ router.post('/', async (req, res) => {
         //     console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
         //     aligoKakaoNotification_formanager(req, customerInfo)
         // }
-
+        
 
 
         res.sendStatus(200);
