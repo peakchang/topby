@@ -171,15 +171,11 @@ router.post('/', async (req, res) => {
         // console.log(userFindSql);
         // console.log('***************** pass second');
 
-        for await (const [idx, goUser] of findUser) {
+        for await (const goUser of findUser) {
             console.log(goUser.user_email);
             const mailSubjectManager = `${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
             const mailContentManager = `현장 : ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
-            console.log(idx);
-            if(idx == 0){
-                console.log('첫번째 유저 입니다.');
-            }
         }
 
 
@@ -212,12 +208,12 @@ router.post('/', async (req, res) => {
         var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
 
         aligoKakaoNotification(req, customerInfo)
+
         console.log(reFormName);
         console.log('**************************************');
         console.log(customerInfo.ciPhone);
         console.log(typeof(ciPhone));
         console.log('**************************************');
-        
 
         // if(customerInfo.ciPhone.includes('010')){
         //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
