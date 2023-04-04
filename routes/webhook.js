@@ -208,7 +208,7 @@ router.post('/', async (req, res) => {
         var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
 
         aligoKakaoNotification(req, customerInfo)
-        console.log(findUser);
+        console.log(findUser[0]);
         console.log(reFormName);
         console.log('**************************************');
         console.log(findUser.user_phone);
