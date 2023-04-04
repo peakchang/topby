@@ -205,10 +205,14 @@ router.post('/', async (req, res) => {
             var siteList = '정보없음'
         }
 
-        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone, ciManagerPhone : '010-2190-2197' }
+        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
 
         aligoKakaoNotification(req, customerInfo)
-        aligoKakaoNotification_formanager(req, customerInfo)
+
+        if(customerInfo.ciPhone.includes('010')){
+            aligoKakaoNotification_formanager(req, customerInfo)
+        }
+        
 
 
         res.sendStatus(200);
