@@ -210,6 +210,7 @@ router.post('/', async (req, res) => {
         aligoKakaoNotification(req, customerInfo)
 
         if(customerInfo.ciPhone.includes('010')){
+            console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
             aligoKakaoNotification_formanager(req, customerInfo)
         }
         
