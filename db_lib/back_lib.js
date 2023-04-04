@@ -313,8 +313,8 @@ exports.aligoKakaoNotification_formanager = async (req, customerInfo) => {
       receiver_1: customerInfo.ciPhone,
       subject_1: '분양정보 신청고객 알림톡',
       message_1: `고객 인입 안내!
-      ${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
-      고객 번호 : ${customerInfo.ciReceiver}`,
+${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
+고객 번호 : ${customerInfo.ciReceiver}`,
     }
 
     // console.log(req.body);
