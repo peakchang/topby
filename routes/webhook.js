@@ -160,8 +160,8 @@ router.post('/', async (req, res) => {
 
 
 
-        
-        
+
+
         // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
         const findUserData = await mysql_conn.promise().query(userFindSql);
@@ -205,25 +205,21 @@ router.post('/', async (req, res) => {
             var siteList = '정보없음'
         }
 
-        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
+        for (let oo = 0; oo < findUser.length; oo++) {
+            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[i].user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
+            if (oo == 0) {
+                aligoKakaoNotification(req, customerInfo)
+            }
 
-        aligoKakaoNotification(req, customerInfo)
+            if (customerInfo.ciPhone.includes('010')) {
+                console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+                console.log(customerInfo.ciPhone);
+                console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
+                aligoKakaoNotification_formanager(req, customerInfo)
+            }
+        }
 
-        console.log(reFormName);
-        console.log('**************************************');
-        console.log(customerInfo.ciPhone);
-        console.log(typeof(ciPhone));
-        console.log('**************************************');
-
-        // if(customerInfo.ciPhone.includes('010')){
-        //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-        //     console.log(customerInfo.ciPhone);
-        //     console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
-        //     aligoKakaoNotification_formanager(req, customerInfo)
-        // }
         
-
-
         res.sendStatus(200);
         console.log('success!!!!!');
     } catch (error) {
