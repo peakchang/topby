@@ -206,7 +206,7 @@ router.post('/', async (req, res) => {
         }
 
         for (let oo = 0; oo < findUser.length; oo++) {
-            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[i].user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
+            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
             if (oo == 0) {
                 aligoKakaoNotification(req, customerInfo)
             }
@@ -219,7 +219,7 @@ router.post('/', async (req, res) => {
             }
         }
 
-        
+
         res.sendStatus(200);
         console.log('success!!!!!');
     } catch (error) {
