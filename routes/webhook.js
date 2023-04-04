@@ -171,25 +171,11 @@ router.post('/', async (req, res) => {
         // console.log(userFindSql);
         // console.log('***************** pass second');
 
-        for await (const [index, goUser] of findUser) {
+        for await (const goUser of findUser) {
             console.log(goUser.user_email);
             const mailSubjectManager = `${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
             const mailContentManager = `현장 : ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
-
-            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: goUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
-            if(index == 0){
-                aligoKakaoNotification(req, customerInfo)
-            }
-
-            if(customerInfo.ciPhone.includes('010')){
-                console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log(customerInfo.ciPhone);
-                console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
-                aligoKakaoNotification_formanager(req, customerInfo)
-            }
-
-            
         }
 
 
@@ -208,14 +194,33 @@ router.post('/', async (req, res) => {
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
 
+
+        // console.log(getSiteInfoSql);
+        // console.log('***************** pass END!!!!');
+        // console.log(getSiteInfo);
+
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
         } else {
             var siteList = '정보없음'
         }
+
+        var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser.user_phone, ciSiteLink: siteList, ciReceiver: get_phone}
+
+        aligoKakaoNotification(req, customerInfo)
+        console.log(reFormName);
+        console.log('**************************************');
+        console.log(customerInfo.ciPhone);
+        console.log(typeof(ciPhone));
+        console.log('**************************************');
         
 
-        
+        // if(customerInfo.ciPhone.includes('010')){
+        //     console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+        //     console.log(customerInfo.ciPhone);
+        //     console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
+        //     aligoKakaoNotification_formanager(req, customerInfo)
+        // }
         
 
 
