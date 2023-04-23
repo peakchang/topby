@@ -176,8 +176,8 @@ router.use('/blog_ab_axios', async (req, res) => {
 
 
 
-// chkRateMaster
-router.use('/', async (req, res, next) => {
+// chkRateMaster,
+router.use('/', chkRateMaster, async (req, res, next) => {
 
     console.log(req._parsedOriginalUrl.pathname);
     const pathname = req._parsedOriginalUrl.pathname
