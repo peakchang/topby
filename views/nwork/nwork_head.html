@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+
+    <!-- 폰트어썸  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- main.css -->
+    <link rel="stylesheet" href="/tailwind.css" />
+    <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css" rel="stylesheet">
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- XLSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        .suit_font {
+            font-family: 'SUIT Variable', sans-serif;
+        }
+
+        .form_modal {
+            background-color: rgba(189, 189, 189, .50);
+        }
+
+        .menu-active {
+            color: crimson
+        }
+
+        .hide_btn {
+            display: none;
+        }
+    </style>
+</head>
+
+<nav class="fixed top-0 left-0 w-full py-4 suit_font bg-white z-10 border-b border-gray-300">
+    <div class="container max-w-5xl px-4 mx-auto flex justify-between">
+        <ul class="nav-list flex ">
+            <a href="/nwork">
+                <li class="font-semibold mr-6 hover:text-pink-500">N 아이디 관리</li>
+            </a>
+
+            <a href="/nwork/blog_ab">
+                <li class="font-semibold mr-6 hover:text-pink-500">블로그 어뷰징</li>
+            </a>
+
+            <a href="/nwork/jisho">
+                <li class="font-semibold mr-6 hover:text-pink-500">지식쇼핑</li>
+            </a>
+        </ul>
+
+
+        <ul class="flex main-btn-list">
+            <li class="mr-4">
+                <button type="button" class="bg-green-600 py-1 text-white px-5 rounded-lg add_id_toggle text-sm">아이디 추가</button>
+            </li>
+
+            <li class="mr-4">
+                <button type="button" name="ax_btn" value="delete"
+                    class="ax_btn bg-red-600 py-1 text-white px-5 rounded-lg text-sm">삭제</button>
+            </li>
+            <li>
+                <button type="button" name="ax_btn" value="update"
+                    class="ax_btn bg-blue-600 text-white px-5 py-1 rounded-lg id_modify cursor-pointer text-sm">수정</button>
+            </li>
+        </ul>
+
+        <ul class="flex abusing-btn-list items-center">
+            <li class="mr-4">
+                <input
+                    class="block text-sm text-gray-900 border border-gray-300 cursor-pointer bg-gray-50 w-48 blog_link_ex"
+                    name="blog_link_ex" accept="xlsx"
+                    type="file">
+            </li>
+            <li class="mr-4">
+                <button type="button" name="ab_btn" value="ex_upload"
+                    class="ab_btn bg-blue-600 text-white px-5 py-1 rounded-lg cursor-pointer text-sm">엑셀 업로드</button>
+            </li>
+
+            <li class="mr-4">
+                <button type="button" name="ab_btn" value="blog_delete"
+                    class="ab_btn bg-red-600 text-white px-5 py-1 rounded-lg cursor-pointer text-sm">삭제</button>
+            </li>
+
+            <li>
+                <button type="button" name="ab_btn" value="blog_update"
+                    class="ab_btn bg-green-600 text-white px-5 py-1 rounded-lg cursor-pointer text-sm">수정</button>
+            </li>
+        </ul>
+
+        <ul class="flex jisho-btn-list">
+            <li>OH!!! JISHO</li>
+        </ul>
+    </div>
+</nav>
+
+<div class="h-16"></div>
+
+
+<script>
+    // 현재 선택 메뉴에 색칠
+    const navList = document.querySelector('.nav-list').children
+    for (const nav of navList) {
+        console.log(nav.href);
+        let url = new URL(nav.href)
+        console.log(url.pathname);
+        if (url.pathname == "{{pathname}}") {
+            console.log("같은게 잇어!");
+            nav.classList.add('menu-active')
+        }
+    }
+
+    // 경로에 따라 버튼 리스트 다르게
+    if ("{{pathname}}" == "/nwork") {
+        document.querySelector(".abusing-btn-list").classList.add('hide_btn')
+        document.querySelector(".jisho-btn-list").classList.add('hide_btn')
+
+    } else if ("{{pathname}}" == "/nwork/blog_ab") {
+        document.querySelector(".main-btn-list").classList.add('hide_btn')
+        document.querySelector(".jisho-btn-list").classList.add('hide_btn')
+    } else if ("{{pathname}}" == "/nwork/jisho") {
+        document.querySelector(".main-btn-list").classList.add('hide_btn')
+        document.querySelector(".abusing-btn-list").classList.add('hide_btn')
+    }
+
+</script>

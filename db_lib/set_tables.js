@@ -6,6 +6,20 @@ const nsql_con = require('./sub_db');
 exports.tableSetting = async () => {
     console.log('테이블 셋팅 안하는거니~~~~~~~~~~~~~~');
 
+    let makeNblogTable = `CREATE TABLE IF NOT EXISTS nblog_ab(
+        b_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        keyword VARCHAR(100),
+        subject VARCHAR(255),
+        link VARCHAR(255),
+        target_num INT(10),
+        work_num INT(10)
+    );`;
+    try {
+        nsql_con.query(makeNblogTable, async (err, result) => { });
+    } catch (err) {
+        console.error(err);
+    }
+
     let makeNworkTable = `CREATE TABLE IF NOT EXISTS nwork(
         n_idx INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
         n_ua varchar(10),
@@ -35,7 +49,7 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
-    
+
     // ALTER TABLE nwork MODIFY COLUMN n_update DATE NULL;
     // ALTER TABLE nwork MODIFY COLUMN n_id varchar(100) NOT NULL UNIQUE;
 

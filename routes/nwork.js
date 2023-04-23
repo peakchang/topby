@@ -6,6 +6,8 @@ const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
+const { isLoggedIn, isNotLoggedIn, chkRateManager, chkRateMaster } = require('./middlewares');
+
 // router.use('/ajax_work', async (req, res, next) => {
 //     if (req.body.checkedAllList) {
 //         console.log(req.body.checkedAllList);
@@ -123,7 +125,62 @@ router.use('/gethook', async (req, res, next) => {
 })
 
 
+router.use('/blog_ab', async (req, res) => {
+    const pathname = req._parsedOriginalUrl.pathname
+    const blogAbusingListSql = `SELECT * FROM nblog_ab`
+    const blogAbusingList = await nsql_con.promise().query(blogAbusingListSql);
+    const blog_abusing_list = blogAbusingList[0]
+    res.render('nwork/blog_abusing', { blog_abusing_list, pathname })
+})
+
+router.use('/blog_ab_axios', async (req, res) => {
+
+    console.log(req.body);
+    if (req.body.btnStatus == 'ex_upload') {
+        const blogAbusingList = req.body.excelVal
+        for await (const blog of blogAbusingList) {
+            const blogAbusingInsertSql = `INSERT INTO nblog_ab (keyword,subject,link) VALUES (?,?,?)`;
+            await nsql_con.promise().query(blogAbusingInsertSql, [blog.keyword, blog.subject, blog.link]);
+        }
+    } else if (req.body.btnStatus == 'blog_delete') {
+        const idxList = req.body.idx_list;
+        for await(const idx of idxList) {
+            console.log(idx);
+            const deleteSql = 'DELETE FROM nblog_ab WHERE b_idx = ?';
+            await nsql_con.promise().query(deleteSql, [idx]);
+        }
+    } else if (req.body.btnStatus == 'blog_update') {
+        console.log(req.body.upload_data);
+        for await(const upload_data of req.body.upload_data) {
+            let uploadDataStr;
+            let uploadDataArr = [];
+            for (const key in upload_data) {
+                if(key == 'b_idx'){
+                    continue
+                }
+                uploadDataStr = `${uploadDataStr ? uploadDataStr : ''} ${key} = ?,`
+                uploadDataArr.push(upload_data[key])
+            }
+            // console.log(uploadDataStr.replace(/,\s*$/, ""));
+            uploadDataStr = uploadDataStr.replace(/,\s*$/, "")
+            uploadDataArr.push(upload_data.b_idx)
+            // console.log(uploadDataArr);
+
+            const uploadDataUpdateSql = `UPDATE nblog_ab SET ${uploadDataStr} WHERE b_idx = ?`
+            await nsql_con.promise().query(uploadDataUpdateSql, uploadDataArr);
+        }
+    }
+
+    res.json({message: 'success!!!'})
+})
+
+
+
+// chkRateMaster
 router.use('/', async (req, res, next) => {
+
+    console.log(req._parsedOriginalUrl.pathname);
+    const pathname = req._parsedOriginalUrl.pathname
 
 
 
@@ -154,11 +211,17 @@ router.use('/', async (req, res, next) => {
         }
 
     }
-    const getAllIdSql = 'SELECT * FROM nwork';
+
+    console.log(req.query);
+    let orderSql = '';
+    if (req.query.order_status) {
+        orderSql = 'ORDER BY n_status DESC'
+    }
+    const getAllIdSql = `SELECT * FROM nwork ${orderSql}`;
     const getAllIdList = await nsql_con.promise().query(getAllIdSql);
     const get_all_id_list = getAllIdList[0]
 
-    res.render('nwork', { get_all_id_list, errCount })
+    res.render('nwork/nwork', { get_all_id_list, errCount, pathname })
 })
 
 

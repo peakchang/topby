@@ -1,0 +1,190 @@
+{% extends "nwork/nwork_main.html" %}
+
+{% block nwork_content %}
+
+<body>
+
+
+
+    <div class="container max-w-5xl mx-auto mt-8 hidden upload_id_area suit_font">
+        <form action="/nwork" method="post"></form>
+        <div class="w-full grid grid-cols-2">
+
+            <div class="pt-3  h-full">
+                <div class="px-2">
+                    <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
+                </div>
+
+            </div>
+
+
+            <div class="flex items-center justify-center">
+                <button name="btn_val" value="add_id"
+                    class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold">등록하기</button>
+
+                <div>
+                    {% if errCount %}
+                    <span>중복된 아이디 갯수 : {{ errCount }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        </form>
+
+    </div>
+    <div class="max-w-5xl mx-auto mt-6 mb-24 suit_font ">
+        <div class="text-right pb-2">
+            <span>전체 : 385</span> / <span>문제 : 32</span>
+        </div>
+        <div class="text-center">
+            <table class="w-full">
+
+                <form>
+                    <tr>
+                        <th class="border border-slate-300">
+                            <input type="checkbox" name="" id="">
+                        </th>
+                        <th class="border border-slate-300">UA</th>
+                        <th class="border border-slate-300">아이디</th>
+                        <th class="border border-slate-300">비밀번호</th>
+                        <th class="border border-slate-300">업데이트</th>
+                        <th class="border border-slate-300">상태 <button type="submit" name="order_status" value="ok"><i class="fa fa-caret-down"
+                                    aria-hidden="true"></i></button></th>
+                        <th class="border border-slate-300">부가1</th>
+                        <th class="border border-slate-300">부가2</th>
+                        <th class="border border-slate-300">아이디정보</th>
+                        <th class="border border-slate-300">프로필</th>
+                    </tr>
+                </form>
+
+                <tr>
+                    <td class="border border-slate-300"><input type="checkbox" name="" id=""></td>
+                    <td class="border border-slate-300">1</td>
+                    <td class="border border-slate-300">changyong112</td>
+                    <td class="border border-slate-300">rkwkrh1e@e</td>
+                    <td class="border border-slate-300"></td>
+                    <td class="border border-slate-300"></td>
+                    <td class="border border-slate-300"></td>
+                    <td class="border border-slate-300"></td>
+                    <td class="border border-slate-300"></td>
+                    <td class="border border-slate-300">프로필</td>
+                </tr>
+
+                {% for id_list in get_all_id_list %}
+                <tr class="text-sm">
+                    <td class="border border-slate-300"><input type="checkbox" name="chk_list" class="idchk" id=""
+                            value="{{ id_list.n_idx }}"></td>
+
+                    <td class="border border-slate-300">{{ id_list.n_ua }}</td>
+                    <td class="border border-slate-300">{{ id_list.n_id }}</td>
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_pwd"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_pwd }}"></td>
+                    <td class="border border-slate-300 w-28">
+                        {% if id_list.n_update %}
+                        <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-full"
+                            value="{{ id_list.n_update | date(" YY-MM-DD") }}">
+                        {% else %}
+                        <input type="text" name="n_update" class="border border-gray-400 rounded-sm w-full">
+                        {% endif %}
+
+                    </td>
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_status"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_status }}"></td>
+
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_temp1"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_temp1 }}"></td>
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_temp2"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_temp2 }}"></td>
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_info"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_info }}"></td>
+                    <td class="border border-slate-300 w-28"><input type="text" name="n_profile"
+                            class="border border-gray-400 rounded-sm w-full" value="{{ id_list.n_profile }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <script>
+
+        const addIdToggleBtn = document.querySelector('.add_id_toggle')
+        addIdToggleBtn.addEventListener('click', () => {
+            console.log('lasdjflajsldfjliasjdf');
+            const uploadIdArea = document.querySelector('.upload_id_area').classList
+            if (uploadIdArea.contains('hidden')) {
+                document.querySelector('.upload_id_area').classList.remove('hidden');
+            } else {
+                document.querySelector('.upload_id_area').classList.add('hidden');
+            }
+        })
+
+
+        $('.ax_btn').click(function (e) {
+            if (this.value == 'update') {
+                console.log('salfjalsjdf');
+                const idChkList = document.querySelectorAll('.idchk');
+                for (const chkId of idChkList) {
+                    if (chkId.checked) {
+                        const updateDataObj = {
+                            n_idx: chkId.value,
+                            n_pwd: chkId.parentNode.parentNode.children[3].firstElementChild.value,
+                            n_update: chkId.parentNode.parentNode.children[4].firstElementChild.value,
+                            n_status: chkId.parentNode.parentNode.children[5].firstElementChild.value,
+                            n_temp1: chkId.parentNode.parentNode.children[6].firstElementChild.value,
+                            n_temp2: chkId.parentNode.parentNode.children[7].firstElementChild.value,
+                            n_info: chkId.parentNode.parentNode.children[8].firstElementChild.value,
+                            n_profile: chkId.parentNode.parentNode.children[9].firstElementChild.value,
+                        }
+                        console.log(updateDataObj);
+
+                        axios.post('/nwork/axios_work', { updateDataObj }).then((res) => {
+                            console.log(res);
+                        }).catch((err) => {
+                            console.error(err);
+                        })
+
+                    }
+                }
+                location.reload()
+
+            } else {
+                const idChkList = document.querySelectorAll('.idchk');
+                let delIdArr = [];
+                for (const chkId of idChkList) {
+                    if (chkId.checked) {
+                        delIdArr.push(chkId.value)
+                    }
+                }
+
+
+                if (delIdArr.length == 0) {
+                    alert('선택된 아이디가 없습니다.')
+                    return
+                }
+
+
+                const chkDel = confirm('삭제를 진행하시겠습니까?')
+                if (!chkDel) {
+                    return
+                }
+
+
+                axios.post('/nwork/axios_work', { delIdArr }).then((res) => {
+                    console.log(res);
+                }).catch((err) => {
+                    console.error(err);
+                })
+            }
+        })
+    </script>
+</body>
+
+{% endblock %}

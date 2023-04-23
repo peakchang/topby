@@ -1,0 +1,154 @@
+{% extends "nwork/nwork_main.html" %}
+
+{% block nwork_content %}
+
+<body>
+    <div class="max-w-5xl mx-auto mt-6 mb-24 suit_font">
+        <table class="w-full text-center">
+            <tr>
+                <th class="border border-slate-300"><input type="checkbox" class="allchk"></th>
+                <th class="border border-slate-300">키워드</th>
+                <th class="border border-slate-300">제목</th>
+                <th class="border border-slate-300">링크</th>
+                <th class="border border-slate-300 w-20">목표 갯수</th>
+                <th class="border border-slate-300 w-20">작업 갯수</th>
+            </tr>
+
+            {% for blog in blog_abusing_list %}
+            <tr>
+                <td class="border border-slate-300">
+                    <input type="hidden" name="blog_idx" value="{{blog.b_idx}}">
+                    <input type="checkbox" name="chk_num" id="" value="{{loop.index0}}">
+                </td>
+                <td class="border border-slate-300">
+                    <input type="text" name="blog_keyword" class="border border-gray-400 rounded-sm w-full"
+                        value="{{blog.keyword}}">
+                </td>
+                <td class="border border-slate-300">
+                    <input type="text" name="blog_subject" class="border border-gray-400 rounded-sm w-full"
+                        value="{{blog.subject}}">
+                </td>
+                <td class="border border-slate-300">
+                    <input type="text" name="blog_link" class="border border-gray-400 rounded-sm w-full"
+                        value="{{blog.link}}">
+                </td>
+
+                <td class="border border-slate-300">
+                    <input type="text" name="blog_target_num" class="border border-gray-400 rounded-sm w-full"
+                        value="{{blog.target_num}}">
+                </td>
+
+                <td class="border border-slate-300">
+                    {{blog.work_num}}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+<script>
+
+    // 전체 체크
+    const allchk = document.querySelector('.allchk')
+    allchk.addEventListener('change', async (e) => {
+        const chkNumEleList = document.querySelectorAll('input[name=chk_num]')
+        for await (const chkNumEle of chkNumEleList) {
+            chkNumEle.checked = e.target.checked
+        }
+    })
+
+    // 엑셀 불러오기
+    let excelVal;
+    const blogLinkEx = document.querySelector('.blog_link_ex');
+    blogLinkEx.addEventListener('change', (e) => {
+        let input = e.target;
+        let reader = new FileReader();
+        reader.onload = function () {
+            let data = reader.result;
+            let workBook = XLSX.read(data, { type: "binary" });
+            workBook.SheetNames.forEach(function (sheetName) {
+                console.log("SheetName: " + sheetName);
+                let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+                console.log(rows);
+                excelVal = rows;
+                console.log(excelVal);
+            });
+        };
+        reader.readAsBinaryString(input.files[0]);
+    })
+
+    // 버튼별 액션
+    const abBtn = document.querySelectorAll('.ab_btn')
+    abBtn.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            console.log(e.target.value);
+            let btnStatus = e.target.value;
+            if (btnStatus == 'ex_upload') {
+                console.log(excelVal);
+                if (!excelVal) {
+                    alert('엑셀 파일을 업로드 해주세요')
+                    return false;
+                }
+                await axios.post('/nwork/blog_ab_axios', { excelVal, btnStatus }).then(() => {
+                    console.log('success!!!!');
+                    location.reload();
+                })
+            } else if (btnStatus == 'blog_delete') {
+                if(!confirm('삭제합니당')){
+                    return false;
+                }
+                
+                const blogChkNumList = document.querySelectorAll('input[name=chk_num]:checked')
+                let blogChkArr = []
+                for (const blogChkNum of blogChkNumList) {
+                    blogChkArr.push(Number(blogChkNum.value))
+                }
+                console.log(blogChkArr);
+                const idxEleList = document.querySelectorAll('input[name=blog_idx]');
+                let idx_list = [];
+                for (let i = 0; i < blogChkArr.length; i++) {
+                    idx_list.push(idxEleList[blogChkArr[i]].value)
+                }
+                await axios.post('/nwork/blog_ab_axios', { idx_list, btnStatus }).then((res) => {
+                    console.log('success!!');
+                    location.reload();
+                })
+            } else if (btnStatus == 'blog_update') {
+                const blogChkNumList = document.querySelectorAll('input[name=chk_num]:checked')
+                let blogChkArr = []
+                for (const blogChkNum of blogChkNumList) {
+                    blogChkArr.push(Number(blogChkNum.value))
+                }
+                console.log(blogChkArr);
+
+                const keywordEleList = document.querySelectorAll('input[name=blog_keyword]')
+                const subjectEleList = document.querySelectorAll('input[name=blog_subject]')
+                const linkEleList = document.querySelectorAll('input[name=blog_link]')
+                const targetNumEleList = document.querySelectorAll('input[name=blog_target_num]')
+                const idxEleList = document.querySelectorAll('input[name=blog_idx]');
+                
+
+                let upload_data = []
+                for (let i = 0; i < blogChkArr.length; i++) {
+                    // keywordEleList[blogChkArr[i]]
+                    upload_data.push({
+                        b_idx: idxEleList[blogChkArr[i]].value,
+                        keyword: keywordEleList[blogChkArr[i]].value,
+                        subject: subjectEleList[blogChkArr[i]].value,
+                        link: linkEleList[blogChkArr[i]].value,
+                        target_num: Number(targetNumEleList[blogChkArr[i]].value),
+                    })
+                }
+
+                console.log(upload_data);
+                await axios.post('/nwork/blog_ab_axios', { upload_data, btnStatus }).then(() => {
+                    console.log('success!!');
+                    location.reload();
+                })
+            }
+        })
+    });
+</script>
+
+{% endblock %}
