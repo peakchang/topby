@@ -175,6 +175,15 @@ router.use('/blog_ab_axios', async (req, res) => {
 })
 
 
+router.use('/getbloglink', async (req, res) => {
+    const getBlogListSql = "SELECT * FROM nblog_ab"
+    const getBlogList = await nsql_con.promise().query(getBlogListSql);
+    const get_blog_list = getBlogList[0]
+
+    res.json({ get_blog_list })
+})
+
+
 
 // chkRateMaster,
 router.use('/', chkRateMaster, async (req, res, next) => {
