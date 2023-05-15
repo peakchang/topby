@@ -192,14 +192,16 @@ router.get('/down_db', chkRateMaster, async (req, res, next) => {
         var addQuery = `WHERE af_mb_status = '${req.query.status}'`;
     }
 
-    const downDbSql = `SELECT * FROM application_form ${addQuery} GROUP BY af_mb_phone ORDER BY af_id DESC`;
+    const downDbSql = `SELECT af_mb_name,af_mb_phone,af_form_name FROM application_form ${addQuery} GROUP BY af_mb_phone ORDER BY af_id DESC`;
     const downDbList = await sql_con.promise().query(downDbSql)
 
 
     for (const downDb of downDbList[0]) {
         const db_name = downDb.af_mb_name
         const db_phone = downDb.af_mb_phone
-        fs.appendFileSync(pathBasic, `${db_name},${db_phone}\n`, (err) => { })
+        const db_form = downDb.af_form_name
+        
+        fs.appendFileSync(pathBasic, `${db_name},${db_phone},${db_form}\n`, (err) => { })
     }
 
     var now = moment(Date.now()).format('YYYY-MM-DD');
@@ -426,7 +428,8 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
         res.render('crm/work_estate', { all_data, add_query });
     } catch (error) {
-        res.send('일단 에러')
+        console.log(error);
+        res.render('crm/work_estate', {});
     }
 
 })
