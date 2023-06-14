@@ -392,6 +392,7 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
         var sdSearchQ = `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
 
+        // 0614 검색 방식 변경
         // var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
         var getEst = req.query.est ? `AND af_form_name = '${req.query.est}'` : '';
         var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
@@ -498,9 +499,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
         if (req.user.rate == 5) {
             if (req.query.est && !startDay) {
+                // 0614 검색 방식 변경
                 // var getEst = `WHERE af_form_name LIKE '%${req.query.est}%'`;
                 var getEst = `WHERE af_form_name = '${req.query.est}'`;
             } else if (req.query.est && startDay) {
+                // 0614 검색 방식 변경
                 // var getEst = `AND af_form_name LIKE '%${req.query.est}%'`;
                 var getEst = `AND af_form_name = '${req.query.est}'`;
             } else {
@@ -512,10 +515,12 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                 for (let i = 0; i < getUserEstateList.length; i++) {
                     if (i == 0) {
                         var setJull = 'WHERE'
+                        // 0614 검색 방식 변경
                         // getEst = `${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
                         getEst = `${setJull} af_form_name = '${getUserEstateList[i]}'`;
                     } else {
                         var setJull = 'OR'
+                        // 0614 검색 방식 변경
                         // getEst = `${getEst} ${setJull} af_form_name LIKE '%${getUserEstateList[i]}%'`;
                         getEst = `${getEst} ${setJull} af_form_name = '${getUserEstateList[i]}'`;
                     }
@@ -540,9 +545,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
         if (req.query.nm) {
             if (getEst || startDay || getStatus) {
+                // 0614 검색 방식 변경
                 // var getName = `AND af_mb_name LIKE '%${req.query.nm}%'`;
                 var getName = `AND af_mb_name = '${req.query.nm}'`;
             } else {
+                // 0614 검색 방식 변경
                 // var getName = `WHERE af_mb_name LIKE '%${req.query.nm}%'`;
                 var getName = `WHERE af_mb_name = '${req.query.nm}'`;
             }
@@ -552,9 +559,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
         if (req.query.ph) {
             if (getEst || startDay || getStatus || getName) {
+                // 0614 검색 방식 변경
                 // var getPhone = `AND af_mb_phone LIKE '%${req.query.ph}%'`;
                 var getPhone = `AND af_mb_phone = '${req.query.ph}'`;
             } else {
+                // 0614 검색 방식 변경
                 // var getPhone = `WHERE af_mb_phone LIKE '%${req.query.ph}%'`;
                 var getPhone = `WHERE af_mb_phone = '${req.query.ph}'`;
             }
