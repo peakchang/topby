@@ -1,0 +1,673 @@
+{% include "crm/db_head.html" %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.9/browser-image-compression.min.js"></script>
+<style>
+    .dropBox {
+        height: 7rem;
+        margin-bottom: 0.75rem;
+        border-radius: 0.75rem;
+        border: 2px dashed;
+        border-color: #4374D9;
+    }
+
+    .dropactive {
+        opacity: 0.7;
+        border: 2px solid;
+        border-color: #6799FF;
+    }
+
+    .dropdown {
+        height: auto;
+        border: 2px solid;
+        border-color: #6799FF;
+    }
+
+    /* .imge_list{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    } */
+    /* .imge_list img{
+        width: 25%;
+        max-width: 150px;
+        border: 1px solid #BDBDBD;
+        border-radius: 0.75rem;
+    } */
+</style>
+
+<body>
+    <div class="container w-11/12 mt-2 rounded-md text-sm suit-font text-center">
+        <form method="post" enctype="multipart/form-data">
+            <table class="border-collapse border border-slate-400 w-full  rounded">
+                <input type="hidden" name="hy_id" value="{{ get_hy_info.hy_id }}">
+                <input type="hidden" name="hy_num" value="{{ get_hy_info.hy_num }}">
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장명</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_title" placeholder="" value="{{get_hy_info.hy_title}}">
+                    </td>
+                </tr>
+
+
+
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">간략설명</th>
+                    <td class="border border-slate-300 py-1 text-center">
+
+                        {% if get_hy_info.hy_description %}
+                        <textarea name="hy_description" id="" rows="3"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_description | trim }}</textarea>
+                        {% else %}
+                        <textarea name="hy_description" id="" rows="3"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">키워드</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_keywords" placeholder="" value="{{get_hy_info.hy_keywords}}">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">타겟현장</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <select name="hy_set_site" id=""
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto">
+                            <option value="">현장을 선택하세요</option>
+                            {% for site in get_site_list %}
+                            <option value="{{site.sl_site_name}}" {% if get_hy_info.hy_set_site==site.sl_site_name %}
+                                SELECTED {% endif %}>{{site.sl_site_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">사이트명</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_site_name" placeholder="" value="{{get_hy_info.hy_site_name}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">사업명</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_businessname" placeholder="" value="{{get_hy_info.hy_businessname}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">분류</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_type" placeholder="" value="{{get_hy_info.hy_type}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">규모</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_scale" placeholder="" value="{{get_hy_info.hy_scale}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">전용면적</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_areasize" placeholder="" value="{{get_hy_info.hy_areasize}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">세대수</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_house_number" placeholder="" value="{{get_hy_info.hy_house_number}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">공급위치</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_location" placeholder="" value="{{get_hy_info.hy_location}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">입주예정</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_scheduled" placeholder="" value="{{get_hy_info.hy_scheduled}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">시공사11</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_builder" placeholder="" value="{{get_hy_info.hy_builder}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">시행사</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_conduct" placeholder="" value="{{get_hy_info.hy_conduct}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">특장점</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        {% if get_hy_info.hy_features %}
+                        <textarea name="hy_features" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_features | trim}}</textarea>
+                        {% else %}
+                        <textarea name="hy_features" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">전화번호</th>
+                    <td class="border border-slate-300 py-1 text-center">
+
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_callnumber" placeholder="" value="{{get_hy_info.hy_callnumber}}">
+                        <span>※ 미입력시 기본 대표번호로 등록됩니다!!!.</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">메인이미지</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="hidden" name="main_img_file_name" value="{{get_hy_info.hy_main_image}}">
+                        <input name="main_img"
+                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            type="file" id="formFile">
+
+                        <div class="text-center max-w-xs mx-auto mt-4">
+                            {% if get_hy_info.hy_main_image %}
+                            <img src="/img/{{get_hy_info.hy_num}}/{{get_hy_info.hy_main_image}}" alt=""
+                                class="mx-auto show_main_image">
+                            {% endif %}
+                            <img src="" alt="" class="mx-auto preview_main_image">
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+            <div class="mt-3 text-center">
+
+
+                <input type="hidden" name="hy_image_list" value="{{get_hy_info.hy_image_list}}">
+
+
+                {% if get_hy_info.hy_image_arr[0] %}
+                <div class="text-xl">이미지 리스트</div>
+                <div class="grid grid-cols-4 gap-1 p-1 imge_list">
+                    {% for hy_image in get_hy_info.hy_image_arr %}
+                    <div class="border border-gray-500 rounded-lg overflow-hidden relative drag_items">
+                        <span class="absolute top-1 right-1 text-2xl text-red-500 cursor-pointer del_img"><i
+                                class="fa fa-times-circle"></i></span>
+
+                        <span class="absolute bottom-1 left-1 text-2xl text-red-500 cursor-pointer move_left">
+                            <i class="fa fa-arrow-circle-left"></i>
+                        </span>
+
+                        <span class="absolute bottom-1 right-1 text-2xl text-red-500 cursor-pointer move_right">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+
+
+                        <div class="h-full flex items-center">
+                            <img src="/img/{{get_hy_info.hy_num}}/{{hy_image}}" alt="">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+
+
+
+                <div class="dropBox cursor-pointer">
+                    <div class="flex flex-col justify-center items-center h-full">
+                        <span class="text-xl">이미지 드래그 또는 클릭해주세요</span>
+                        <span>이미지는 여러개 선택 가능합니다.</span>
+                        <span class="text-4xl text-neutral-500"><i class="fa fa-plus-circle"
+                                aria-hidden="true"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <ul id="items">
+                <li>item 1</li>
+                <li>item 2</li>
+                <li>item 3</li>
+            </ul>
+            <button class="border rounded-lg py-2 text-white bg-cyan-700 text-xl w-3/5 mb-7">등록하기</button>
+
+        </form>
+    </div>
+
+    <input type="file" name="" id="fake_file" class="hidden fake_file" multiple>
+
+</body>
+
+<script>
+
+    var el = document.getElementById('items');
+    var sortable = Sortable.create(el);
+
+    // $('.move_left,.move_right').click(function (e) {
+    //     if (this.classList.contains('move_left')) {
+    //         if (!this.parentNode.previousElementSibling) {
+    //             alert('변경할수 없습니다.')
+    //             return false
+    //         }
+    //         var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
+    //         var changeTargetSrc = this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src
+
+    //         this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
+    //         this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src = thisSrc
+
+    //         const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
+    //         const thisIndex = $(this.parentNode).index();
+    //         var changeImgList = changeArrayOrder(imgList, thisIndex, -1).join(',');
+    //         document.querySelector('input[name=hy_image_list]').value = changeImgList
+
+    //         console.log(document.querySelector('input[name=hy_image_list]').value);
+    //     } else {
+    //         if (!this.parentNode.nextElementSibling) {
+    //             alert('변경할수 없습니다.')
+    //             return false
+    //         }
+    //         var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
+    //         var changeTargetSrc = this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src
+
+    //         this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
+    //         this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src = thisSrc
+
+    //         const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
+    //         const thisIndex = $(this.parentNode).index();
+    //         var changeImgList = changeArrayOrder(imgList, thisIndex, 1).join(',');
+    //         document.querySelector('input[name=hy_image_list]').value = changeImgList
+    //         console.log(document.querySelector('input[name=hy_image_list]').value);
+    //     }
+    // })
+
+
+    // $(document).on('click', '.del_img', function (e) {
+    //     const hy_num = document.querySelector('input[name=hy_num]').value
+    //     var imgList = document.querySelector('input[name=hy_image_list]').value.split(',');
+    //     const getDelIndex = $(this.parentNode).index();
+    //     const getDelTargetImg = imgList[getDelIndex]
+    //     imgList.splice(getDelIndex, 1)
+    //     const getUpdateImgList = imgList.join(',');
+    //     document.querySelector('input[name=hy_image_list]').value = getUpdateImgList;
+    //     $(this.parentNode).remove()
+    //     $.ajax({
+    //         url: '/crm/del_image',
+    //         // dataType: 'json',
+    //         // async: false,
+    //         method: 'POST',
+    //         data: { hy_num, getDelTargetImg, getUpdateImgList },
+    //         success: function (data) {
+    //             console.log('succedd!!!');
+    //             // location.reload()
+    //         }, error: function () {
+    //             console.log('failed!!!');
+    //         }
+    //     });
+    // })
+
+
+    // 여기서부터 시작!!
+    const $drop = document.querySelector(".dropBox");
+    const dragItems = $('.drag_items')
+    let fileListArr = [];
+    // 드래그한 파일 객체가 해당 영역에 놓였을 때
+
+    $($drop).click(function (e) {
+        $('#fake_file').trigger('click')
+    })
+
+    // 클릭해서 넣었을때 이벤트
+    $('#fake_file').change(async function (e) {
+        console.log('aslidjfailsdjfilajsdlifja');
+
+        console.log(e.target.files);
+
+        const getFiles = e.target.files;
+
+        console.log(this);
+
+
+
+
+
+
+
+
+
+
+
+
+        // const input = document.createElement("input");
+        // input.setAttribute("type", "file");
+        // input.setAttribute("accept", ".png,.jpg,.jpeg");
+        // input.click();
+
+        // input change
+
+        console.log('들어옴?');
+        const maxWidth = 1200;
+        const img_file = getFiles[0];
+        const options = {
+            maxSizeMB: 0.7,
+            // maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        };
+        const compressedFile = await imageCompression(img_file, options);
+
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedFile);
+        reader.onload = function (r) {
+            const img = new Image();
+            img.src = r.target.result;
+            img.onload = async function (e) {
+                if (img.width >= maxWidth) {
+                    var share = img.width / maxWidth;
+                    var setHeight = Math.floor(img.height / share);
+                    var setWidth = maxWidth;
+                } else {
+                    var setWidth = img.width;
+                    var setHeight = img.height;
+                }
+
+                var canvas = document.createElement("canvas");
+                canvas.width = setWidth;
+                canvas.height = setHeight;
+                canvas.display = "inline-block";
+                canvas
+                    .getContext("2d")
+                    .drawImage(img, 0, 0, setWidth, setHeight);
+
+                var getReImgUrl = canvas.toDataURL("image/webp");
+
+                // const resultImage = dataURItoBlob(getReImgUrl);
+
+                // let imgForm = new FormData();
+
+                const timestamp = new Date().getTime();
+                const fileName = `${timestamp}${Math.random()
+                    .toString(36)
+                    .substring(2, 11)}.webp`;
+                // imgForm.append("onimg", resultImage, fileName);
+
+                // FormData의 key 값과 value값 찾기
+                // let keys = imgForm.keys();
+                // for (const pair of keys) {
+                //     console.log(`name : ${pair}`);
+                // }
+
+                // let values = imgForm.values();
+                // for (const pair of values) {
+                //     console.log(`value : ${pair}`);
+                // }
+
+                console.log(getReImgUrl);
+                console.log(fileName);
+
+
+                // axios
+                //     .post(
+                //         "/api/image_upload",
+                //     )
+                //     .then((res) => {
+                //         imgUrlArr.push(res.data.baseUrl);
+                //         imgUrlArr = [...new Set(imgUrlArr)];
+                //         getImgList = imgUrlArr;
+                //     })
+                //     .catch((err) => {
+                //         console.log(err);
+                //     });
+            };
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // if(document.querySelector('input[name=hy_image_list]').value){
+        //     var preFileList = document.querySelector('input[name=hy_image_list]').value.split(',');
+        // }else{
+        //     var preFileList = [];
+        // }
+
+        // const files = this.files;
+        // const formData = new FormData();
+
+        // var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        // for (let i = 0; i < files.length; i++) {
+        //     if (check.test(files[i].name)) {
+        //         alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
+        //         return false
+        //     } else if (preFileList.includes(files[i].name)) {
+        //         alert('중복되는 파일이 있습니다! 확인해주세요!')
+        //         return false
+        //     } else {
+        //         preFileList.push(files[i].name)
+        //     }
+        // }
+
+        // if(preFileList){
+        //     var fileListStr = preFileList.join(',');
+        // }
+        // formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
+        // formData.append('fileListStr', fileListStr);
+
+
+
+        // for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
+
+        // $.ajax({
+        //     url: '/crm/arr_image',
+        //     dataType: 'json',
+        //     // async: false,
+        //     method: 'POST',
+        //     data: formData,
+        //     processData: false,
+        //     contentType: false,
+        //     beforeSend: function () {
+        //         console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
+        //     }, success: function (data) {
+        //         $('.imge_list').empty()
+        //         for (let i = 0; i < data.SetHyImgList.length; i++) {
+        //             const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
+        //                     <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
+        //                             class="fa fa-times-circle"></i></span>
+        //                     <div class="h-full flex items-center">
+        //                     <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
+        //                     </div>
+        //                 </div>`
+        //             $('.imge_list').append(template)
+        //         }
+        //         location.reload()
+
+        //         // const SetImgListStr = data.SetHyImgList.join(',');
+        //         // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
+        //     }, error: function () {
+        //         console.log('failed!!!');
+        //     }
+        // });
+
+    })
+
+
+
+    $('.dragItems').on({
+        'dragstart': function (e) {
+        }
+    })
+
+    // 드롭해서 넣었을때 이벤트
+    $drop.ondrop = (e) => {
+        e.preventDefault();
+        var $file = document.getElementById("file")
+        var dropZone = document.querySelector(".drop-zone")
+
+        // // 파일 리스트
+        const getFiles = [...e.dataTransfer?.files];
+        console.log(getFiles);
+
+
+        // const formData = new FormData();
+
+        // var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        // for (let i = 0; i < files.length; i++) {
+        //     if (check.test(files[i].name)) {
+        //         alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
+        //         return false
+        //     } else if (preFileList.includes(files[i].name)) {
+        //         alert('중복되는 파일이 있습니다! 확인해주세요!')
+        //         return false
+        //     } else {
+        //         preFileList.push(files[i].name)
+        //     }
+        // }
+
+        // if(preFileList){
+        //     var fileListStr = preFileList.join(',');
+        // }
+
+        // formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
+        // formData.append('fileListStr', fileListStr);
+
+
+
+        // for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
+
+        // $.ajax({
+        //     url: '/crm/arr_image',
+        //     dataType: 'json',
+        //     // async: false,
+        //     method: 'POST',
+        //     data: formData,
+        //     processData: false,
+        //     contentType: false,
+        //     beforeSend: function () {
+        //         console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
+        //     }, success: function (data) {
+        //         $('.imge_list').empty()
+        //         for (let i = 0; i < data.SetHyImgList.length; i++) {
+        //             const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
+        //                     <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
+        //                             class="fa fa-times-circle"></i></span>
+        //                     <div class="h-full flex items-center">
+        //                     <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
+        //                     </div>
+        //                 </div>`
+        //             $('.imge_list').append(template)
+        //         }
+        //         location.reload()
+
+        //         // const SetImgListStr = data.SetHyImgList.join(',');
+        //         // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
+        //     }, error: function () {
+        //         console.log('failed!!!');
+        //     }
+        // });
+        // // $drop.classList.add("dropdown");
+    }
+
+    // ondragover 이벤트가 없으면 onDrop 이벤트가 실핻되지 않습니다.
+    $drop.ondragover = (e) => {
+        e.preventDefault();
+
+        $drop.classList.add("dropactive");
+    }
+
+    // 드래그한 파일이 최초로 진입했을 때
+
+    $drop.ondragenter = (e) => {
+        e.preventDefault();
+
+        // $drop.classList.add("active");
+    }
+
+    // 드래그한 파일이 영역을 벗어났을 때
+    $drop.ondragleave = (e) => {
+        e.preventDefault();
+        $drop.classList.remove("dropactive");
+    }
+
+    $('#formFile').change(function (e) {
+        $('.show_main_image').hide()
+        const previewImage = document.querySelector('.preview_main_image')
+        readImage(e.target, previewImage)
+    })
+
+    function readImage(input, previewImage) {
+        // 인풋 태그에 파일이 있는 경우
+        if (input.files && input.files[0]) {
+            // 이미지 파일인지 검사 (생략)
+            // FileReader 인스턴스 생성
+            const reader = new FileReader()
+            // 이미지가 로드가 된 경우
+            reader.onload = e => {
+                previewImage.src = e.target.result
+            }
+            // reader가 이미지 읽도록 하기
+            reader.readAsDataURL(input.files[0])
+        }
+    }
+</script>

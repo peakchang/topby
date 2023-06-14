@@ -91,6 +91,12 @@ router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
 })
 
 
+
+
+
+
+
+
 router.get('/side_detail/:id', chkRateMaster, async (req, res, next) => {
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
@@ -114,7 +120,7 @@ router.get('/side_detail/:id', chkRateMaster, async (req, res, next) => {
     // get_hy_info.hy_features = get_hy_info.hy_features.trim()
 
 
-    res.render('crm/work_side_detail', { get_hy_info, get_site_list })
+    res.render('crm/work_side_detail_test', { get_hy_info, get_site_list })
 })
 
 
@@ -138,6 +144,10 @@ router.post('/side_detail/:id', chkRateMaster, upload.single('main_img'), async 
 
     res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
 })
+
+
+
+
 
 
 
