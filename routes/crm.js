@@ -392,11 +392,12 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         var sdCountQ = `WHERE af_created_at > '${startDay}' AND af_created_at < '${endDayRe}'`;
         var sdSearchQ = `AND a.af_created_at > '${startDay}' AND a.af_created_at < '${endDayRe}'`;
 
-        var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
+        // var getEst = req.query.est ? `AND af_form_name LIKE '%${req.query.est}%'` : '';
+        var getEst = req.query.est ? `AND af_form_name = '${req.query.est}'` : '';
         var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
 
         const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form  ${sdCountQ} ${getEst} ${getStatus};`;
-
+        console.log(allCountSql);
         // WHERE af_form_type_in='분양'
 
         const allCountQuery = await sql_con.promise().query(allCountSql)
