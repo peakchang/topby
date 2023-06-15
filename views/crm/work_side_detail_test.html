@@ -3,6 +3,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.9/browser-image-compression.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
     .dropBox {
         height: 7rem;
@@ -217,6 +218,14 @@
             </table>
 
 
+            <!-- <input type="file" name="" id="test_file" class="test_file" multiple> -->
+
+            <input type="text" class="test_name" name="test_name" placeholder="Name" />
+            <input type="file" class="test_my_File" name="test_my_File" />
+
+            <button type="button" class="testUpload">click!</button>
+
+
 
 
             <div class="mt-3 text-center">
@@ -269,6 +278,10 @@
                 <li>item 2</li>
                 <li>item 3</li>
             </ul>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/fYb2DkFo01U"></iframe>
+            <img src="https://img.youtube.com/vi/fr_JBD8moRA/mqdefault.jpg" alt="">
+
+
             <button class="border rounded-lg py-2 text-white bg-cyan-700 text-xl w-3/5 mb-7">등록하기</button>
 
         </form>
@@ -276,12 +289,49 @@
 
     <input type="file" name="" id="fake_file" class="hidden fake_file" multiple>
 
+
+
 </body>
 
 <script>
 
+    // $('.testUpload').click(function (e) {
+
+    //     const test_my_File = document.querySelector('.test_my_File');
+    //     const test_name = document.querySelector('.test_name');
+
+    //     // console.log(test_my_File.files[0]);
+
+
+    //     let testImgForm = new FormData();
+    //     testImgForm.append('testimg', test_my_File.files[0], 'gogogogogogossss.png');
+    //     testImgForm.append('testval', test_name.value);
+
+    //     const config = {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data'
+    //         }
+    //     };
+
+    //     const response = fetch('/crm/testupload', {
+    //         method: 'POST',
+    //         body: testImgForm
+    //     });
+
+    //     // axios.post('/crm/testupload', testImgForm, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res) => {
+    //     //     console.log(res);
+    //     //     console.log('okokokokokokok');
+    //     // })
+    // })
+
+
+
+
+
     var el = document.getElementById('items');
     var sortable = Sortable.create(el);
+
+
 
     // $('.move_left,.move_right').click(function (e) {
     //     if (this.classList.contains('move_left')) {
@@ -346,6 +396,8 @@
     // })
 
 
+
+
     // 여기서부터 시작!!
     const $drop = document.querySelector(".dropBox");
     const dragItems = $('.drag_items')
@@ -367,97 +419,14 @@
         console.log(this);
 
 
-
-
-
-
-
-
-
-
-
-
-        // const input = document.createElement("input");
-        // input.setAttribute("type", "file");
-        // input.setAttribute("accept", ".png,.jpg,.jpeg");
-        // input.click();
-
-        // input change
-
         console.log('들어옴?');
-        const maxWidth = 1200;
-        const img_file = getFiles[0];
-        const options = {
-            maxSizeMB: 0.7,
-            // maxWidthOrHeight: 1920,
-            useWebWorker: true,
-        };
-        const compressedFile = await imageCompression(img_file, options);
 
-        const reader = new FileReader();
-        reader.readAsDataURL(compressedFile);
-        reader.onload = function (r) {
-            const img = new Image();
-            img.src = r.target.result;
-            img.onload = async function (e) {
-                if (img.width >= maxWidth) {
-                    var share = img.width / maxWidth;
-                    var setHeight = Math.floor(img.height / share);
-                    var setWidth = maxWidth;
-                } else {
-                    var setWidth = img.width;
-                    var setHeight = img.height;
-                }
-
-                var canvas = document.createElement("canvas");
-                canvas.width = setWidth;
-                canvas.height = setHeight;
-                canvas.display = "inline-block";
-                canvas
-                    .getContext("2d")
-                    .drawImage(img, 0, 0, setWidth, setHeight);
-
-                var getReImgUrl = canvas.toDataURL("image/webp");
-
-                // const resultImage = dataURItoBlob(getReImgUrl);
-
-                // let imgForm = new FormData();
-
-                const timestamp = new Date().getTime();
-                const fileName = `${timestamp}${Math.random()
-                    .toString(36)
-                    .substring(2, 11)}.webp`;
-                // imgForm.append("onimg", resultImage, fileName);
-
-                // FormData의 key 값과 value값 찾기
-                // let keys = imgForm.keys();
-                // for (const pair of keys) {
-                //     console.log(`name : ${pair}`);
-                // }
-
-                // let values = imgForm.values();
-                // for (const pair of values) {
-                //     console.log(`value : ${pair}`);
-                // }
-
-                console.log(getReImgUrl);
-                console.log(fileName);
+        const hyNum = '{{get_hy_info.hy_num}}';
+        imageResizing(getFiles, hyNum);
 
 
-                // axios
-                //     .post(
-                //         "/api/image_upload",
-                //     )
-                //     .then((res) => {
-                //         imgUrlArr.push(res.data.baseUrl);
-                //         imgUrlArr = [...new Set(imgUrlArr)];
-                //         getImgList = imgUrlArr;
-                //     })
-                //     .catch((err) => {
-                //         console.log(err);
-                //     });
-            };
-        }
+
+
 
 
 
@@ -670,4 +639,123 @@
             reader.readAsDataURL(input.files[0])
         }
     }
+
+
+    const imageResizing = async (getFiles, hyNum) => {
+
+        console.log('함수 진입 완료?!?!?');
+
+        for await (const file of getFiles) {
+            const maxWidth = 1200;
+            const img_file = file;
+            const options = {
+                maxSizeMB: 0.7,
+                // maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            };
+            // const compressedFile = await imageCompression(img_file, options);
+
+            const reader = new FileReader();
+            reader.readAsDataURL(compressedFile);
+            reader.onload = function (r) {
+                const img = new Image();
+                img.src = r.target.result;
+                img.onload = async function (e) {
+                    if (img.width >= maxWidth) {
+                        var share = img.width / maxWidth;
+                        var setHeight = Math.floor(img.height / share);
+                        var setWidth = maxWidth;
+                    } else {
+                        var setWidth = img.width;
+                        var setHeight = img.height;
+                    }
+
+                    var canvas = document.createElement("canvas");
+                    canvas.width = setWidth;
+                    canvas.height = setHeight;
+                    canvas.display = "inline-block";
+                    canvas
+                        .getContext("2d")
+                        .drawImage(img, 0, 0, setWidth, setHeight);
+
+                    var getReImgUrl = canvas.toDataURL("image/webp");
+
+                    const resultImage = dataURItoBlob(getReImgUrl);
+
+                    let imgForm = new FormData();
+
+                    const timestamp = new Date().getTime();
+                    const fileName = `${timestamp}${Math.random()
+                        .toString(36)
+                        .substring(2, 11)}.webp`;
+
+                    console.log(hyNum);
+                    imgForm.append("onimg", resultImage, fileName);
+                    imgForm.append("hy_num", hyNum);
+
+                    // FormData의 key 값과 value값 찾기
+                    let keys = imgForm.keys();
+                    for (const pair of keys) {
+                        console.log(`name : ${pair}`);
+                    }
+
+                    let values = imgForm.values();
+                    for (const pair of values) {
+                        console.log(`value : ${pair}`);
+                    }
+
+                    console.log(getReImgUrl);
+                    console.log(fileName);
+
+                    const config = {
+                        // onUploadProgress: e => {
+                        //     let percentage = (e.loaded * 100) / e.total;
+                        //     let currentPercentage = Math.round(percentage);
+                        //     console.log(currentPercentage + "%");
+                        //     setProgress(currentPercentage);
+                        // },
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    };
+
+                    const getVal = axios.post('/crm/upload_img', imgForm, config);
+                    console.log(getVal);
+
+
+
+                    // axios
+                    //     .post(
+                    //         "/api/image_upload",
+                    //     )
+                    //     .then((res) => {
+                    //         imgUrlArr.push(res.data.baseUrl);
+                    //         imgUrlArr = [...new Set(imgUrlArr)];
+                    //         getImgList = imgUrlArr;
+                    //     })
+                    //     .catch((err) => {
+                    //         console.log(err);
+                    //     });
+                };
+            }
+        }
+
+
+
+
+
+    }
+
+
+    const dataURItoBlob = (dataURI) => {
+        const bytes =
+            dataURI.split(",")[0].indexOf("base64") >= 0
+                ? atob(dataURI.split(",")[1])
+                : unescape(dataURI.split(",")[1]);
+        const mime = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const max = bytes.length;
+        const ia = new Uint8Array(max);
+        for (let i = 0; i < max; i++) ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], { type: mime });
+    };
 </script>

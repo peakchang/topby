@@ -50,6 +50,9 @@ const upload = multer({
     storage: multer.diskStorage({
         // 경로를 설정
         destination(req, file, cb) {
+
+            console.log('멀터야 멀터야 씨부랄 멀터야~~~~~~~~~~~~~~~~');
+            console.log(req.body);
             try {
                 fs.readdirSync(`uploads/${req.body.hy_num}`);
             } catch (error) {
@@ -65,6 +68,63 @@ const upload = multer({
     }),
     // limits: { fileSize: 10 * 1024 * 1024 },
 });
+
+
+const uploadSimple = multer();
+
+
+// router.post('/testupload', uploadSimple.single('testimg'), async(req, res, next) => {
+//     console.log(req.body);
+//     const file = req.file;
+//     console.log(file);
+
+//     try {
+//         fs.readdirSync(`uploads/${req.body.testval}`); 
+//     } catch (error) {
+
+//         fs.mkdirSync(`uploads/${req.body.testval}`);
+//     }
+
+//     fs.writeFile(`uploads/${req.body.testval}/${req.file.originalname}`, req.file.buffer, function (err){
+//         console.log('error!!!!');
+//     });
+
+
+
+//     res.json({testval : 'asldfjasiljdffpfpfpfpfpfpfpfpfp'})
+// });
+
+
+router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) => {
+    // const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    // await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
+    // var SetHyImgList = req.body.fileListStr.split(',')
+    // res.send({ SetHyImgList })
+
+    console.log('여기 들어옴!!!!');
+
+    console.log(req.body);
+    console.log(req.file);
+
+    try {
+        fs.readdirSync(`uploads/${req.body.hy_num}`);
+    } catch (error) {
+
+        fs.mkdirSync(`uploads/${req.body.hy_num}`);
+    }
+
+    console.log(`uploads/${req.body.hy_num}/${req.file.originalname}`);
+
+    fs.writeFile(`uploads/${req.body.hy_num}/${req.file.originalname}`, req.file.buffer, function (err) {
+        console.log('error!!!!');
+    });
+
+
+
+
+    const testVal = '가가가잦나나나다다라아아아아';
+    res.json({ testVal })
+})
 
 
 router.post('/del_image', async (req, res, next) => {
@@ -83,11 +143,16 @@ router.post('/del_image', async (req, res, next) => {
     res.send(200)
 })
 
-router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
-    const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
-    await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
-    var SetHyImgList = req.body.fileListStr.split(',')
-    res.send({ SetHyImgList })
+// 
+router.post('/arr_image', upload.array('onimg'), async (req, res, next) => {
+    // const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+    // await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
+    // var SetHyImgList = req.body.fileListStr.split(',')
+    // res.send({ SetHyImgList })
+
+    console.log('여기 들어옴!!!!');
+    const testVal = '가가가잦나나나다다라아아아아';
+    res.json({ testVal })
 })
 
 
@@ -96,8 +161,8 @@ router.post('/arr_image', upload.array('testimg'), async (req, res, next) => {
 
 
 
-
-router.get('/side_detail/:id', chkRateMaster, async (req, res, next) => {
+// chkRateMaster
+router.get('/side_detail/:id', async (req, res, next) => {
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
@@ -210,7 +275,7 @@ router.get('/down_db', chkRateMaster, async (req, res, next) => {
         const db_name = downDb.af_mb_name
         const db_phone = downDb.af_mb_phone
         const db_form = downDb.af_form_name
-        
+
         fs.appendFileSync(pathBasic, `${db_name},${db_phone},${db_form}\n`, (err) => { })
     }
 
