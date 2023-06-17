@@ -66,14 +66,30 @@
         body {
             font-family: 'SUIT', sans-serif;
         }
+
+        .movie-wrap {
+            height: 520px;
+        }
+
+        @media (max-width: 900px) {
+            .movie-wrap {
+                height: 320px;
+            }
+        }
+
+        @media (max-width: 780px) {
+            .movie-wrap {
+                height: 260px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="bg-gray-300 text-center py-7 mt-6 text-xl md:text-3xl font-semibold">
+    <!-- <div class="bg-gray-300 text-center py-7 mt-6 text-xl md:text-3xl font-semibold">
         {{ setData.hy_title }}
-    </div>
+    </div> -->
 
 
 
@@ -99,7 +115,7 @@
                         <th class="py-1">규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모</th>
                         <td>{{ setData.hy_scale }}</td>
                     </tr>
-                    
+
                 </table>
                 <table>
                     <tr>
@@ -144,11 +160,25 @@
                 </div>
             </div>
 
-
+            <!-- {{setData.hy_image_list_arr}} -->
             {% if setData.hy_image_list_arr %}
+
             {% for set_image in setData.hy_image_list_arr %}
-            <img src="/img/{{ setData.hy_num }}/{{ set_image }}" alt="" class="mx-auto">
+
+            {% if 'img' in set_image %}
+            <img src="{{ set_image }}" alt="" class="mx-auto">
+            {% else %}
+
+            <div class="relative w-full movie-wrap">
+                <iframe class="absolute top-0 left-0 w-full h-full" width="560" height="315"
+                    src="https://www.youtube.com/embed/tnIhUZr2H0c" title="YouTube video player" frameborder="0"
+                    allowfullscreen></iframe>
+            </div>
+
+            {% endif %}
+
             {% endfor %}
+
             {% endif %}
 
 
@@ -218,8 +248,7 @@
         </div>
     </form>
 
-    <button
-        class="border border-blue-500 p-3 md:p-4 rounded-full fixed bottom-28 right-3 md:right-7 z-10 bg-blue-500">
+    <button class="border border-blue-500 p-3 md:p-4 rounded-full fixed bottom-28 right-3 md:right-7 z-10 bg-blue-500">
 
 
         {% if setData.hy_callnumber %}
@@ -235,7 +264,7 @@
             </span>
         </a>
         {% endif %}
-        
+
     </button>
 
     <button
@@ -262,11 +291,11 @@
                 <a href="/" target="_blank">
                     <span class="inline-block mr-4 text-sm text-cyan-600 font-bold">분양 광고 및 사이트 문의 클릭!</span>
                 </a>
-                
+
             </div>
         </div>
     </div>
-    
+
 
 
     <script>

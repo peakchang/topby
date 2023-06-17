@@ -14,7 +14,7 @@ var url = require('url');
 const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
-const { Logform } = require('winston');
+const { Logform, log } = require('winston');
 const { IGComment } = require('facebook-nodejs-business-sdk');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
@@ -73,28 +73,6 @@ const upload = multer({
 const uploadSimple = multer();
 
 
-// router.post('/testupload', uploadSimple.single('testimg'), async(req, res, next) => {
-//     console.log(req.body);
-//     const file = req.file;
-//     console.log(file);
-
-//     try {
-//         fs.readdirSync(`uploads/${req.body.testval}`); 
-//     } catch (error) {
-
-//         fs.mkdirSync(`uploads/${req.body.testval}`);
-//     }
-
-//     fs.writeFile(`uploads/${req.body.testval}/${req.file.originalname}`, req.file.buffer, function (err){
-//         console.log('error!!!!');
-//     });
-
-
-
-//     res.json({testval : 'asldfjasiljdffpfpfpfpfpfpfpfpfp'})
-// });
-
-
 router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) => {
     // const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
     // await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
@@ -103,27 +81,25 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 
     console.log('여기 들어옴!!!!');
 
-    console.log(req.body);
-    console.log(req.file);
-
     try {
         fs.readdirSync(`uploads/${req.body.hy_num}`);
     } catch (error) {
-
         fs.mkdirSync(`uploads/${req.body.hy_num}`);
     }
 
     console.log(`uploads/${req.body.hy_num}/${req.file.originalname}`);
 
     fs.writeFile(`uploads/${req.body.hy_num}/${req.file.originalname}`, req.file.buffer, function (err) {
-        console.log('error!!!!');
+        if(err){
+            console.log('error incoming!!!!');
+            console.log(err);
+        }else{
+            console.log('normal~~~~');
+        }
     });
 
-
-
-
-    const testVal = '가가가잦나나나다다라아아아아';
-    res.json({ testVal })
+    const getUploadImgUrl = `/img/${req.body.hy_num}/${req.file.originalname}`;
+    res.json({ getUploadImgUrl })
 })
 
 
@@ -136,28 +112,17 @@ router.post('/del_image', async (req, res, next) => {
     fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function (ex) {
         if (ex) {
             fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log('normal~~~~~');
+                }
             })
         } else {
         }
     })
     res.send(200)
 })
-
-// 
-router.post('/arr_image', upload.array('onimg'), async (req, res, next) => {
-    // const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
-    // await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
-    // var SetHyImgList = req.body.fileListStr.split(',')
-    // res.send({ SetHyImgList })
-
-    console.log('여기 들어옴!!!!');
-    const testVal = '가가가잦나나나다다라아아아아';
-    res.json({ testVal })
-})
-
-
-
-
 
 
 
@@ -170,8 +135,6 @@ router.get('/side_detail/:id', async (req, res, next) => {
     const getSiteListSql = `SELECT sl_id,sl_site_name FROM site_list`;
     const getSiteList = await sql_con.promise().query(getSiteListSql);
     var get_site_list = getSiteList[0];
-    console.log(get_site_list);
-
 
     try {
         get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
@@ -188,8 +151,8 @@ router.get('/side_detail/:id', async (req, res, next) => {
     res.render('crm/work_side_detail_test', { get_hy_info, get_site_list })
 })
 
-
-router.post('/side_detail/:id', chkRateMaster, upload.single('main_img'), async (req, res, next) => {
+// chkRateMaster
+router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next) => {
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
     try {
@@ -216,9 +179,11 @@ router.post('/side_detail/:id', chkRateMaster, upload.single('main_img'), async 
 
 
 
-
-router.use('/side', chkRateMaster, async (req, res, next) => {
+// chkRateMaster
+router.use('/side', async (req, res, next) => {
     if (req.method == 'POST') {
+
+        console.log(req.body);
 
         if (req.body.submit_val == 'site_update') {
             if (typeof (req.body.site_id) == 'string') {
@@ -236,10 +201,35 @@ router.use('/side', chkRateMaster, async (req, res, next) => {
         }
     }
 
-    const getSiteListSql = `SELECT * FROM hy_site`;
+    // 현재 페이지 쿼리값 구해서 LIMIT 설정
+    const getPage = req.query.page;
+    let pageQuery = '';
+    if(getPage){
+        pageQuery = `LIMIT ${(Number(getPage) - 1) * 10}, ${Number(getPage) * 10}`;
+    }else{
+        pageQuery = 'LIMIT 0, 10';
+    }
+
+    // 검색어 쿼리값 구해서 LIKE 설정
+    const getSearch = req.query.search;
+    console.log(getSearch);
+    let searchQuery = '';
+    if(getSearch){
+        searchQuery = `WHERE hy_title LIKE '%${getSearch}%'`;
+    }
+
+    // 리스트 구하기
+    const getSiteListSql = `SELECT * FROM hy_site ${searchQuery} ORDER BY hy_id DESC ${pageQuery} `;
     const getSiteListAll = await sql_con.promise().query(getSiteListSql)
     const get_site_list = getSiteListAll[0];
-    res.render('crm/work_side', { get_site_list })
+
+    // 
+    const getSiteListCountSql = `SELECT COUNT(*) FROM hy_site ${searchQuery};`;
+    const getSiteListCount = await sql_con.promise().query(getSiteListCountSql)
+    const getCount = getSiteListCount[0][0]['COUNT(*)'];
+
+    // console.log(get_site_list);
+    res.render('crm/work_side', { get_site_list, getCount })
 })
 
 
@@ -473,7 +463,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         var getStatus = req.query.status ? `AND af_mb_status = '${req.query.status}'` : '';
 
         const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form  ${sdCountQ} ${getEst} ${getStatus};`;
-        console.log(allCountSql);
         // WHERE af_form_type_in='분양'
 
         const allCountQuery = await sql_con.promise().query(allCountSql)
@@ -519,8 +508,6 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
-
-    console.log('check now page!!!!! on load page ok~~~~~~~~~~~~~~~~~~~~!!!!!');
 
     try {
         console.log(req.user.rate);

@@ -1,8 +1,6 @@
 {% include "crm/db_head.html" %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.9/browser-image-compression.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
     .dropBox {
@@ -218,46 +216,37 @@
             </table>
 
 
-            <!-- <input type="file" name="" id="test_file" class="test_file" multiple> -->
-
-            <input type="text" class="test_name" name="test_name" placeholder="Name" />
-            <input type="file" class="test_my_File" name="test_my_File" />
-
-            <button type="button" class="testUpload">click!</button>
-
-
-
-
             <div class="mt-3 text-center">
-
-
                 <input type="hidden" name="hy_image_list" value="{{get_hy_info.hy_image_list}}">
 
 
-                {% if get_hy_info.hy_image_arr[0] %}
-                <div class="text-xl">이미지 리스트</div>
-                <div class="grid grid-cols-4 gap-1 p-1 imge_list">
+
+
+                <div id="items" class="flex flex-wrap sort-wrap">
                     {% for hy_image in get_hy_info.hy_image_arr %}
-                    <div class="border border-gray-500 rounded-lg overflow-hidden relative drag_items">
-                        <span class="absolute top-1 right-1 text-2xl text-red-500 cursor-pointer del_img"><i
-                                class="fa fa-times-circle"></i></span>
-
-                        <span class="absolute bottom-1 left-1 text-2xl text-red-500 cursor-pointer move_left">
-                            <i class="fa fa-arrow-circle-left"></i>
+                    {% if 'img' in hy_image %}
+                    <div
+                        class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                        <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                         </span>
-
-                        <span class="absolute bottom-1 right-1 text-2xl text-red-500 cursor-pointer move_right">
-                            <i class="fa fa-arrow-circle-right"></i>
-                        </span>
-
-
-                        <div class="h-full flex items-center">
-                            <img src="/img/{{get_hy_info.hy_num}}/{{hy_image}}" alt="">
-                        </div>
+                        <img src="{{hy_image}}" alt="">
                     </div>
+
+                    {% else %}
+                    <div
+                        class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                        <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                        </span>
+                        <span class="absolute top-1 right-5 text-red-600 cursor-pointer">
+                            <i class="fa fa-file-video-o" aria-hidden="true"></i>
+                        </span>
+                        <img src="https://img.youtube.com/vi/{{hy_image}}/mqdefault.jpg" alt="">
+                    </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
-                {% endif %}
 
 
 
@@ -271,16 +260,13 @@
                                 aria-hidden="true"></i></span>
                     </div>
                 </div>
+
+                <div>동영상 아이디 넣기</div>
+                <div class="flex my-2">
+                    <input class="youtube_id border w-full p-2 rounded-sm" type="text"><button
+                        class="youtube_upload w-32 bg-orange-200" type="button">업로드</button>
+                </div>
             </div>
-
-            <ul id="items">
-                <li>item 1</li>
-                <li>item 2</li>
-                <li>item 3</li>
-            </ul>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/fYb2DkFo01U"></iframe>
-            <img src="https://img.youtube.com/vi/fr_JBD8moRA/mqdefault.jpg" alt="">
-
 
             <button class="border rounded-lg py-2 text-white bg-cyan-700 text-xl w-3/5 mb-7">등록하기</button>
 
@@ -291,109 +277,104 @@
 
 
 
+
+
 </body>
 
 <script>
 
-    // $('.testUpload').click(function (e) {
-
-    //     const test_my_File = document.querySelector('.test_my_File');
-    //     const test_name = document.querySelector('.test_name');
-
-    //     // console.log(test_my_File.files[0]);
-
-
-    //     let testImgForm = new FormData();
-    //     testImgForm.append('testimg', test_my_File.files[0], 'gogogogogogossss.png');
-    //     testImgForm.append('testval', test_name.value);
-
-    //     const config = {
-    //         headers: {
-    //             'Content-Type': 'multipart/form-data'
-    //         }
-    //     };
-
-    //     const response = fetch('/crm/testupload', {
-    //         method: 'POST',
-    //         body: testImgForm
-    //     });
-
-    //     // axios.post('/crm/testupload', testImgForm, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res) => {
-    //     //     console.log(res);
-    //     //     console.log('okokokokokokok');
-    //     // })
-    // })
-
-
-
-
-
     var el = document.getElementById('items');
-    var sortable = Sortable.create(el);
+    var sortable = Sortable.create(el, {
+        delay: 0, // 클릭이 밀리는 것을 방지하기 위해 약간의 지연 시간을 추가합니다.
+        animation: 500, // 정렬할 때 애니메이션 속도(ms)를 지정합니다.
+        forceFallback: true, // 다양한 환경의 일관된 Drag&Drop(DnD)을 위해 HTML5 기본 DnD 동작을 무시하고 내장 기능을 사용합니다.
+        animation: 150,
+        onSort: function (e) {
 
+            var items = e.to.children;
+            let tempArr = [];
+            for (let i = 0; i < items.length; i++) {
+                const tempSrc = items[i].querySelector("img").src.split('/');
+                let tempSrc2 = '';
+                if (tempSrc[3] == 'img') {
+                    tempSrc2 = `/${tempSrc[3]}/${tempSrc[4]}/${tempSrc[5]}`;
+                } else {
+                    tempSrc2 = tempSrc[4];
+                }
+                tempArr.push(tempSrc2);
+            }
+            document.querySelector('input[name=hy_image_list]').value = tempArr.join(',');
+        },
+    });
 
-
-    // $('.move_left,.move_right').click(function (e) {
-    //     if (this.classList.contains('move_left')) {
-    //         if (!this.parentNode.previousElementSibling) {
-    //             alert('변경할수 없습니다.')
-    //             return false
-    //         }
-    //         var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
-    //         var changeTargetSrc = this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src
-
-    //         this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
-    //         this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src = thisSrc
-
-    //         const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
-    //         const thisIndex = $(this.parentNode).index();
-    //         var changeImgList = changeArrayOrder(imgList, thisIndex, -1).join(',');
-    //         document.querySelector('input[name=hy_image_list]').value = changeImgList
-
-    //         console.log(document.querySelector('input[name=hy_image_list]').value);
-    //     } else {
-    //         if (!this.parentNode.nextElementSibling) {
-    //             alert('변경할수 없습니다.')
-    //             return false
-    //         }
-    //         var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
-    //         var changeTargetSrc = this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src
-
-    //         this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
-    //         this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src = thisSrc
-
-    //         const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
-    //         const thisIndex = $(this.parentNode).index();
-    //         var changeImgList = changeArrayOrder(imgList, thisIndex, 1).join(',');
-    //         document.querySelector('input[name=hy_image_list]').value = changeImgList
-    //         console.log(document.querySelector('input[name=hy_image_list]').value);
-    //     }
+    // document.addEventListener('click', function(e){
+    //     console.log('sdlfjsdlifjslidfj');
+    //     console.log(e.target.classList);
     // })
 
+    $(document).on('click', '.del_img', function (e) {
 
-    // $(document).on('click', '.del_img', function (e) {
-    //     const hy_num = document.querySelector('input[name=hy_num]').value
-    //     var imgList = document.querySelector('input[name=hy_image_list]').value.split(',');
-    //     const getDelIndex = $(this.parentNode).index();
-    //     const getDelTargetImg = imgList[getDelIndex]
-    //     imgList.splice(getDelIndex, 1)
-    //     const getUpdateImgList = imgList.join(',');
-    //     document.querySelector('input[name=hy_image_list]').value = getUpdateImgList;
-    //     $(this.parentNode).remove()
-    //     $.ajax({
-    //         url: '/crm/del_image',
-    //         // dataType: 'json',
-    //         // async: false,
-    //         method: 'POST',
-    //         data: { hy_num, getDelTargetImg, getUpdateImgList },
-    //         success: function (data) {
-    //             console.log('succedd!!!');
-    //             // location.reload()
-    //         }, error: function () {
-    //             console.log('failed!!!');
-    //         }
-    //     });
-    // })
+        const getIdx = $(this.parentNode).index();
+        console.log(getIdx);
+
+        console.log(this.parentNode);
+        const getUrl = this.parentNode.querySelector('img').src;
+        const getUrlArr = getUrl.split('/');
+
+        
+
+        const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+        let nowImageList = nowImageListVal.value.split(',');
+        nowImageList.splice(getIdx, 1);
+
+        const nowImageListStr = nowImageList.join(',');
+        if (getUrlArr[3] == 'img') {
+            const getDelTargetImg = getUrlArr[getUrlArr.length - 1];
+            const getUpdateImgList = nowImageListStr;
+            const hy_num = document.querySelector('input[name=hy_num]').value;
+            console.log(getDelTargetImg);
+            console.log(getUpdateImgList);
+            console.log(hy_num);
+
+            axios.post('/crm/del_image', {getDelTargetImg, getUpdateImgList, hy_num}).then((res) => {
+                console.log('success!!!!');
+            }).catch((err) => {
+                console.log(err);
+            })
+
+        }
+
+        nowImageListVal.value = nowImageListStr
+        sortWrapLoop(nowImageList);
+    })
+
+    $('.youtube_upload').click(() => {
+        const youtubeId = document.querySelector('.youtube_id').value;
+        if (youtubeId.includes('youtube') || youtubeId.includes('http') || youtubeId.includes('/') || !youtubeId) {
+            alert('유튜브 링크의 아이디 값만 입력 해주세요.')
+            return false;
+        }
+
+        const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+        let nowImageList = nowImageListVal.value.split(',');
+
+
+
+
+        if (nowImageList[0]) {
+            nowImageList.push(youtubeId)
+        } else {
+            nowImageList = [youtubeId]
+        }
+
+        const nowImageStr = nowImageList.join(',');
+        nowImageListVal.value = nowImageStr;
+
+        sortWrapLoop(nowImageList);
+
+
+    })
+
 
 
 
@@ -410,114 +391,9 @@
 
     // 클릭해서 넣었을때 이벤트
     $('#fake_file').change(async function (e) {
-        console.log('aslidjfailsdjfilajsdlifja');
-
-        console.log(e.target.files);
-
         const getFiles = e.target.files;
-
-        console.log(this);
-
-
-        console.log('들어옴?');
-
         const hyNum = '{{get_hy_info.hy_num}}';
         imageResizing(getFiles, hyNum);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // if(document.querySelector('input[name=hy_image_list]').value){
-        //     var preFileList = document.querySelector('input[name=hy_image_list]').value.split(',');
-        // }else{
-        //     var preFileList = [];
-        // }
-
-        // const files = this.files;
-        // const formData = new FormData();
-
-        // var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
-        // for (let i = 0; i < files.length; i++) {
-        //     if (check.test(files[i].name)) {
-        //         alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
-        //         return false
-        //     } else if (preFileList.includes(files[i].name)) {
-        //         alert('중복되는 파일이 있습니다! 확인해주세요!')
-        //         return false
-        //     } else {
-        //         preFileList.push(files[i].name)
-        //     }
-        // }
-
-        // if(preFileList){
-        //     var fileListStr = preFileList.join(',');
-        // }
-        // formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
-        // formData.append('fileListStr', fileListStr);
-
-
-
-        // for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
-
-        // $.ajax({
-        //     url: '/crm/arr_image',
-        //     dataType: 'json',
-        //     // async: false,
-        //     method: 'POST',
-        //     data: formData,
-        //     processData: false,
-        //     contentType: false,
-        //     beforeSend: function () {
-        //         console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
-        //     }, success: function (data) {
-        //         $('.imge_list').empty()
-        //         for (let i = 0; i < data.SetHyImgList.length; i++) {
-        //             const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
-        //                     <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
-        //                             class="fa fa-times-circle"></i></span>
-        //                     <div class="h-full flex items-center">
-        //                     <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
-        //                     </div>
-        //                 </div>`
-        //             $('.imge_list').append(template)
-        //         }
-        //         location.reload()
-
-        //         // const SetImgListStr = data.SetHyImgList.join(',');
-        //         // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
-        //     }, error: function () {
-        //         console.log('failed!!!');
-        //     }
-        // });
 
     })
 
@@ -536,66 +412,9 @@
 
         // // 파일 리스트
         const getFiles = [...e.dataTransfer?.files];
-        console.log(getFiles);
+        const hyNum = '{{get_hy_info.hy_num}}';
+        imageResizing(getFiles, hyNum);
 
-
-        // const formData = new FormData();
-
-        // var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
-        // for (let i = 0; i < files.length; i++) {
-        //     if (check.test(files[i].name)) {
-        //         alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
-        //         return false
-        //     } else if (preFileList.includes(files[i].name)) {
-        //         alert('중복되는 파일이 있습니다! 확인해주세요!')
-        //         return false
-        //     } else {
-        //         preFileList.push(files[i].name)
-        //     }
-        // }
-
-        // if(preFileList){
-        //     var fileListStr = preFileList.join(',');
-        // }
-
-        // formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
-        // formData.append('fileListStr', fileListStr);
-
-
-
-        // for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
-
-        // $.ajax({
-        //     url: '/crm/arr_image',
-        //     dataType: 'json',
-        //     // async: false,
-        //     method: 'POST',
-        //     data: formData,
-        //     processData: false,
-        //     contentType: false,
-        //     beforeSend: function () {
-        //         console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
-        //     }, success: function (data) {
-        //         $('.imge_list').empty()
-        //         for (let i = 0; i < data.SetHyImgList.length; i++) {
-        //             const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
-        //                     <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
-        //                             class="fa fa-times-circle"></i></span>
-        //                     <div class="h-full flex items-center">
-        //                     <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
-        //                     </div>
-        //                 </div>`
-        //             $('.imge_list').append(template)
-        //         }
-        //         location.reload()
-
-        //         // const SetImgListStr = data.SetHyImgList.join(',');
-        //         // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
-        //     }, error: function () {
-        //         console.log('failed!!!');
-        //     }
-        // });
-        // // $drop.classList.add("dropdown");
     }
 
     // ondragover 이벤트가 없으면 onDrop 이벤트가 실핻되지 않습니다.
@@ -643,20 +462,13 @@
 
     const imageResizing = async (getFiles, hyNum) => {
 
-        console.log('함수 진입 완료?!?!?');
 
         for await (const file of getFiles) {
             const maxWidth = 1200;
             const img_file = file;
-            const options = {
-                maxSizeMB: 0.7,
-                // maxWidthOrHeight: 1920,
-                useWebWorker: true,
-            };
-            // const compressedFile = await imageCompression(img_file, options);
 
             const reader = new FileReader();
-            reader.readAsDataURL(compressedFile);
+            reader.readAsDataURL(img_file);
             reader.onload = function (r) {
                 const img = new Image();
                 img.src = r.target.result;
@@ -689,61 +501,50 @@
                         .toString(36)
                         .substring(2, 11)}.webp`;
 
-                    console.log(hyNum);
                     imgForm.append("onimg", resultImage, fileName);
                     imgForm.append("hy_num", hyNum);
 
                     // FormData의 key 값과 value값 찾기
-                    let keys = imgForm.keys();
-                    for (const pair of keys) {
-                        console.log(`name : ${pair}`);
-                    }
+                    // let keys = imgForm.keys();
+                    // for (const pair of keys) {
+                    //     console.log(`name : ${pair}`);
+                    // }
 
-                    let values = imgForm.values();
-                    for (const pair of values) {
-                        console.log(`value : ${pair}`);
-                    }
+                    // let values = imgForm.values();
+                    // for (const pair of values) {
+                    //     console.log(`value : ${pair}`);
+                    // }
 
-                    console.log(getReImgUrl);
-                    console.log(fileName);
 
                     const config = {
-                        // onUploadProgress: e => {
-                        //     let percentage = (e.loaded * 100) / e.total;
-                        //     let currentPercentage = Math.round(percentage);
-                        //     console.log(currentPercentage + "%");
-                        //     setProgress(currentPercentage);
-                        // },
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     };
 
-                    const getVal = axios.post('/crm/upload_img', imgForm, config);
-                    console.log(getVal);
+                    const getVal = await axios.post('/crm/upload_img', imgForm, config);
+
+                    const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                    let nowImageList = nowImageListVal.value.split(',');
+
+                    if (nowImageList[0]) {
+                        nowImageList.push(getVal.data.getUploadImgUrl)
+                    } else {
+                        nowImageList = [getVal.data.getUploadImgUrl]
+                    }
+
+                    const nowImageStr = nowImageList.join(',');
+                    nowImageListVal.value = nowImageStr;
+
+
+                    sortWrapLoop(nowImageList);
 
 
 
-                    // axios
-                    //     .post(
-                    //         "/api/image_upload",
-                    //     )
-                    //     .then((res) => {
-                    //         imgUrlArr.push(res.data.baseUrl);
-                    //         imgUrlArr = [...new Set(imgUrlArr)];
-                    //         getImgList = imgUrlArr;
-                    //     })
-                    //     .catch((err) => {
-                    //         console.log(err);
-                    //     });
+
                 };
             }
         }
-
-
-
-
-
     }
 
 
@@ -758,4 +559,41 @@
         for (let i = 0; i < max; i++) ia[i] = bytes.charCodeAt(i);
         return new Blob([ia], { type: mime });
     };
+
+    function switchValues(arr, index1, index2) {
+        const tmp = arr[index1];
+        arr[index1] = arr[index2];
+        arr[index2] = tmp;
+    }
+
+
+    const sortWrapLoop = (nowImageList) => {
+        $('.sort-wrap').empty();
+
+        for (let i = 0; i < nowImageList.length; i++) {
+            let sortTemplate = '';
+            if (nowImageList[i].includes('img')) {
+                sortTemplate = `
+                <div class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                    <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </span>
+                    <img src="${nowImageList[i]}" alt="">
+                </div>`;
+            } else {
+                sortTemplate = `
+                <div class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                    <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </span>
+                    <span class="absolute top-1 right-5 text-red-600 cursor-pointer">
+                        <i class="fa fa-file-video-o" aria-hidden="true"></i>
+                    </span>
+                        <img src="https://img.youtube.com/vi/${nowImageList[i]}/mqdefault.jpg" alt="">
+                </div>`;
+            }
+
+            $('.sort-wrap').append(sortTemplate);
+        }
+    }
 </script>
