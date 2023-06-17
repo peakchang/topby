@@ -90,10 +90,10 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
     console.log(`uploads/${req.body.hy_num}/${req.file.originalname}`);
 
     fs.writeFile(`uploads/${req.body.hy_num}/${req.file.originalname}`, req.file.buffer, function (err) {
-        if(err){
+        if (err) {
             console.log('error incoming!!!!');
             console.log(err);
-        }else{
+        } else {
             console.log('normal~~~~');
         }
     });
@@ -112,9 +112,9 @@ router.post('/del_image', async (req, res, next) => {
     fs.existsSync(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, function (ex) {
         if (ex) {
             fs.unlink(`uploads/${req.body.hy_num}/${req.body.getDelTargetImg}`, err => {
-                if(err){
+                if (err) {
                     console.log(err);
-                }else{
+                } else {
                     console.log('normal~~~~~');
                 }
             })
@@ -181,32 +181,100 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
 
 // chkRateMaster
 router.use('/side', async (req, res, next) => {
+
+    let errorMessage = '';
     if (req.method == 'POST') {
 
         console.log(req.body);
 
-        if (req.body.submit_val == 'site_update') {
-            if (typeof (req.body.site_id) == 'string') {
-                const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
-                await sql_con.promise().query(updateHySql, [req.body.site_num, parseInt(req.body.site_id)])
+        try {
+            if (req.body.submit_val == 'site_update') {
+                for await (const getIdx of req.body.table_num) {
+                    const updateHySql = `UPDATE hy_site SET hy_num = ? WHERE hy_id = ?`;
+                    await sql_con.promise().query(updateHySql, [req.body.site_num[getIdx], req.body.site_id[getIdx]]);
+                }
+            } else if (req.body.submit_val == 'site_delete') {
+                console.log('딜리트 내가 했어?!?!');
+
+                let delArr = req.body.table_num
+
+                if(typeof(delArr) == 'string'){
+                    delArr = [Number(delArr)];
+                }
+
+                console.log(delArr);
+
+                for await (const getIdx of req.body.table_num) {
+                    // 삭제할 이미지 리스트 구하기
+                    const getImageLinkSql = `SELECT hy_num, hy_image_list, hy_main_image FROM hy_site WHERE hy_id = ?`;
+                    const getImageLinkData = await sql_con.promise().query(getImageLinkSql, [req.body.site_id[getIdx]]);
+                    const get_image_link_data = getImageLinkData[0][0];
+                    console.log(get_image_link_data);
+
+                    const delImageTempArr = get_image_link_data.hy_image_list.split(',');
+                    const delImageArr = [get_image_link_data.hy_main_image];
+                    for (let i = 0; i < delImageTempArr.length; i++) {
+                        delImageArr.push(delImageTempArr[i].split('/')[delImageTempArr[i].split('/').length - 1]);
+                    }
+
+                    for (let l = 0; l < delImageArr.length; l++) {
+
+                        console.log(delImageArr[l]);
+
+
+                        const dirBool = fs.existsSync(`uploads/${get_image_link_data.hy_num}/${delImageArr[l]}`);
+                        console.log(dirBool);
+
+                        if (dirBool) {
+                            fs.unlink(`uploads/${get_image_link_data.hy_num}/${delImageArr[l]}`, function (err) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    console.log('normal~~~~~');
+                                }
+                            })
+                        }
+
+                        try {
+                            fs.rmdirSync(`uploads/${get_image_link_data.hy_num}`, { recursive: true });
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        
+                    }
+
+                    const deleteHySql = `DELETE FROM hy_site WHERE hy_id = ?`;
+                    await sql_con.promise().query(deleteHySql, [req.body.site_id[getIdx]]);
+                }
+
+            } else {
+                try {
+                    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+                    const newHySql = `INSERT INTO hy_site (hy_num,hy_title,hy_creted_at) VALUES (?,?,?)`
+                    await sql_con.promise().query(newHySql, [req.body.new_site_num, req.body.new_site_title, now])
+                } catch (error) {
+
+                }
             }
-        } else {
-            try {
-                var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-                const newHySql = `INSERT INTO hy_site (hy_num,hy_title,hy_creted_at) VALUES (?,?,?)`
-                await sql_con.promise().query(newHySql, [req.body.new_site_num, req.body.new_site_title, now])
-            } catch (error) {
+        } catch (error) {
+            console.log(error.message);
+            if (error.message.includes('Duplicate')) {
+                errorMessage = '아이디가 중복됩니다. 다시 시도해주세요.'
 
             }
         }
+
+
     }
+
+
 
     // 현재 페이지 쿼리값 구해서 LIMIT 설정
     const getPage = req.query.page;
     let pageQuery = '';
-    if(getPage){
+    if (getPage) {
         pageQuery = `LIMIT ${(Number(getPage) - 1) * 10}, ${Number(getPage) * 10}`;
-    }else{
+    } else {
         pageQuery = 'LIMIT 0, 10';
     }
 
@@ -214,7 +282,7 @@ router.use('/side', async (req, res, next) => {
     const getSearch = req.query.search;
     console.log(getSearch);
     let searchQuery = '';
-    if(getSearch){
+    if (getSearch) {
         searchQuery = `WHERE hy_title LIKE '%${getSearch}%'`;
     }
 
@@ -229,7 +297,7 @@ router.use('/side', async (req, res, next) => {
     const getCount = getSiteListCount[0][0]['COUNT(*)'];
 
     // console.log(get_site_list);
-    res.render('crm/work_side', { get_site_list, getCount })
+    res.render('crm/work_side', { get_site_list, getCount, errorMessage })
 })
 
 
