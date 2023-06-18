@@ -14,7 +14,7 @@
             <button class="bg-amber-600 text-white text-sm px-3 rounded">검색</button>
     </form>
 
-    <form method="post">
+    <form method="post" name="hy_form">
 
         <div class="ml-4">
             <button type="button"
@@ -34,9 +34,8 @@
                 삭제
             </button>
 
-            <button
-                class="text-white bg-blue-700 hover:bg-blue-500 font-medium rounded-lg text-sm px-3 py-1 text-center update_site"
-                value="site_duplicate" name="submit_val">
+            <button type="button"
+                class="text-white bg-blue-700 hover:bg-blue-500 font-medium rounded-lg text-sm px-3 py-1 text-center duplicate_site_open">
                 복사
             </button>
         </div>
@@ -65,6 +64,24 @@
         </div>
     </div>
 
+    <div class="mb-3 text-center duplicate_site_area" style="display:none;">
+
+
+        <table class="du_table w-full">
+
+        </table>
+
+        <button
+            class="text-white bg-yellow-600 hover:bg-yellow-500 font-medium rounded-lg text-sm px-3 py-1 text-center "
+            value="site_duplicate" name="submit_val">
+            적용하기
+        </button>
+
+
+
+
+    </div>
+
 
     <table class="w-full text-sm">
         <tr>
@@ -81,7 +98,7 @@
         <tr>
             <td class="border border-slate-300 py-2 text-center">
                 <input type="hidden" class="site_id" name="site_id" value="{{ site.hy_id }}">
-                <input type="checkbox"  name="table_num" value="{{ loop.index0 }}">
+                <input type="checkbox" name="table_num" value="{{ loop.index0 }}">
             </td>
             <td class="border border-slate-300 py-2 text-center">
                 <input type="text"
@@ -122,7 +139,7 @@
 <script>
 
     const errorMessage = '{{errorMessage}}';
-    if(errorMessage){
+    if (errorMessage) {
         alert(errorMessage);
     }
     console.log(errorMessage);
@@ -156,12 +173,12 @@
     }
 
     // 페이징 처리 함수
-    function hrefPage(e){
+    function hrefPage(e) {
         console.log(e.value);
         console.log(urlParams.get('search'));
-        if(urlParams.get('search')){
+        if (urlParams.get('search')) {
             location.href = `/crm/side?search=${urlParams.get('search')}&page=${e.value}`;
-        }else{
+        } else {
             location.href = `/crm/side?page=${e.value}`;
         }
     }
@@ -170,6 +187,32 @@
     // 현장 추가 항목 열기
     $('.add_site_open').click(function (e) {
         $('.create_site_area').toggle()
+    })
+
+    $('.duplicate_site_open').click(function (e) {
+        const tableNum = document.querySelectorAll('input[name=table_num]');
+        const siteNumList = document.querySelectorAll('input[name=site_num]');
+
+        // Element를 찾으면 Array가 아닌 Object가 반환 됨, Object.values를 통해 values 모음인 배열로 반환하고 checked 가 되어있으면 새로운 배열(checkedArr) 생성
+        let checkedArr = Object.values(tableNum).filter(e => e.checked)
+
+        // Array.from 은 조건에 맞는 새로운 배열을 만든다. (filter / map도 공부하자)
+        let idArr = Array.from(checkedArr, e => e.value);
+        console.log(idArr);
+
+        for (let i = 0; i < idArr.length; i++) {
+            const template = `
+            <tr>
+                <td class="text-center">
+                    <input type="text" name="duplicate_site_id" class="border px-2 py-1 text-sm" placeholder="${siteNumList[Number(idArr[i])].value}의 변경할 값">
+                </td>
+            </tr>
+            `
+            $('.du_table').append(template);
+        }
+
+
+        $('.duplicate_site_area').toggle()
     })
 
     // 상세(수정) 항목 열기
@@ -184,31 +227,46 @@
 
     $('.update_site').click(function (e) {
 
-        // console.log(e.target.value);
 
-        // if(e.target.value == 'site_delete'){
+        alert(this.value);
 
-        // }else if(e.target.value == 'site_duplicate'){
+        return false;
 
-        // }
 
-        // return false;
+        if (this.value == 'site_update' || this.value == 'site_delete' || this.value == 'site_duplicate') {
+            const tableNum = document.querySelectorAll('input[name=table_num]');
+            let chkboxChk = false;
+            for (let i = 0; i < tableNum.length; i++) {
+                if (tableNum[i].checked) {
+                    chkboxChk = true;
+                    break;
+                }
+            }
+            if (!chkboxChk) {
+                alert('선택된 항목이 없습니다. 항목 선택 후 다시 실행해주세요!')
+                return false;
+            }
+        }
 
-        // const siteId = document.querySelectorAll('.site_id');
-        // for (let i = 0; i < siteId.length; i++) {
-        //     if (siteId[i].checked) {
-        //         var chkChk = 'ON'
-        //     }
-        // }
-        // if (!chkChk) {
-        //     alert('체크된 값이 없습니다.')
-        //     return false
-        // }
+        if (this.value == 'site_update') {
+            const chkConfirm = confirm('업데이트 되면 아이디 값이 변겨됩니다. 진행 하시겠습니까?')
+            if (!chkConfirm) {
+                return false;
+            }
+        } else if (this.value == 'site_delete') {
+            const chkConfirm = confirm('해당 현장에 대한 이미지와 데이터가 사라집니다. 사라진 데이터는 복구가 불가능합니다. 내가 70까지 뺀다 봐라!! Yes? or No?')
+            if (!chkConfirm) {
+                return false;
+            }
+        }else if(this.value == 'site_duplicate') {
 
-        // var chkChange = confirm('정말 변경하시겠습니까? 변경하게 되면 주소값이 변경되므로, 검색 반영에 영향을 끼칠수 있습니다.')
-        // if (!chkChange) {
-        //     return false
-        // }
+            var theForm = document.forms['hy_form'];
+            console.log(theForm);
+            // $('form[name="hy_form"]').serialize();
+            // $('form[name="hy_form"]').attr('method', 'POST');
+            // $('form[name="hy_form"]').submit();
+            alert('대기~~')
+        }
     })
 
 

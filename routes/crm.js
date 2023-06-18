@@ -198,55 +198,29 @@ router.use('/side', async (req, res, next) => {
 
                 let delArr = req.body.table_num
 
-                if(typeof(delArr) == 'string'){
+                if (typeof (delArr) == 'string') {
                     delArr = [Number(delArr)];
                 }
 
                 console.log(delArr);
+                console.log(req.body.site_num);
 
-                for await (const getIdx of req.body.table_num) {
-                    // 삭제할 이미지 리스트 구하기
-                    const getImageLinkSql = `SELECT hy_num, hy_image_list, hy_main_image FROM hy_site WHERE hy_id = ?`;
-                    const getImageLinkData = await sql_con.promise().query(getImageLinkSql, [req.body.site_id[getIdx]]);
-                    const get_image_link_data = getImageLinkData[0][0];
-                    console.log(get_image_link_data);
+                for await (const getIdx of delArr) {
+                    console.log(getIdx);
 
-                    const delImageTempArr = get_image_link_data.hy_image_list.split(',');
-                    const delImageArr = [get_image_link_data.hy_main_image];
-                    for (let i = 0; i < delImageTempArr.length; i++) {
-                        delImageArr.push(delImageTempArr[i].split('/')[delImageTempArr[i].split('/').length - 1]);
-                    }
-
-                    for (let l = 0; l < delImageArr.length; l++) {
-
-                        console.log(delImageArr[l]);
-
-
-                        const dirBool = fs.existsSync(`uploads/${get_image_link_data.hy_num}/${delImageArr[l]}`);
-                        console.log(dirBool);
-
-                        if (dirBool) {
-                            fs.unlink(`uploads/${get_image_link_data.hy_num}/${delImageArr[l]}`, function (err) {
-                                if (err) {
-                                    console.log(err);
-                                } else {
-                                    console.log('normal~~~~~');
-                                }
-                            })
-                        }
-
-                        try {
-                            fs.rmdirSync(`uploads/${get_image_link_data.hy_num}`, { recursive: true });
-                        } catch (error) {
-                            console.log(error);
-                        }
-                        
+                    try {
+                        fs.rmdirSync(`uploads/${req.body.site_num[Number(getIdx)]}`, { recursive: true });
+                    } catch (error) {
+                        console.log(error.message);
                     }
 
                     const deleteHySql = `DELETE FROM hy_site WHERE hy_id = ?`;
                     await sql_con.promise().query(deleteHySql, [req.body.site_id[getIdx]]);
                 }
 
+            } else if (req.body.submit_val == 'site_duplicate') {
+                console.log('복사복사복사~~~');
+                
             } else {
                 try {
                     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
@@ -260,11 +234,8 @@ router.use('/side', async (req, res, next) => {
             console.log(error.message);
             if (error.message.includes('Duplicate')) {
                 errorMessage = '아이디가 중복됩니다. 다시 시도해주세요.'
-
             }
         }
-
-
     }
 
 
@@ -280,7 +251,7 @@ router.use('/side', async (req, res, next) => {
 
     // 검색어 쿼리값 구해서 LIKE 설정
     const getSearch = req.query.search;
-    console.log(getSearch);
+
     let searchQuery = '';
     if (getSearch) {
         searchQuery = `WHERE hy_title LIKE '%${getSearch}%'`;
