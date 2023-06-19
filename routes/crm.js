@@ -8,6 +8,7 @@ const xlsx = require("xlsx");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs')
+
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
@@ -16,11 +17,12 @@ const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib
 const moment = require('moment');
 const { Logform, log } = require('winston');
 const { IGComment } = require('facebook-nodejs-business-sdk');
+const { type } = require('os');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-
-
+const ncp = require('ncp').ncp;
+ncp.limit = 16;
 
 router.use('/site', async (req, res, next) => {
     console.log(req.method);
@@ -174,7 +176,30 @@ router.post('/side_detail/:id', upload.single('main_img'), async (req, res, next
 })
 
 
+router.post('/side/duplicate_mini', async (req, res, next) => {
 
+    const chkArr = req.body['chkIdListVal[]'];
+    for (let i = 0; i < chkArr.length; i++) {
+        const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
+
+        if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
+            copyHyNum = req.body['duplicateSiteIdValList[]'];
+        } else {
+            copyHyNum = req.body['duplicateSiteIdValList[]'][i];
+        }
+
+        const source = "원본";
+        const destination = "복사할곳";
+        
+
+
+        const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
+
+        await sql_con.promise().query(duplicateSql,[copyHyNum, req.body['hyIdList[]'][Number(chkArr[i])]]);
+    }
+
+    res.json({ status: 'success!' })
+})
 
 
 
@@ -220,7 +245,7 @@ router.use('/side', async (req, res, next) => {
 
             } else if (req.body.submit_val == 'site_duplicate') {
                 console.log('복사복사복사~~~');
-                
+
             } else {
                 try {
                     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
