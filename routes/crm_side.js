@@ -192,11 +192,13 @@ router.get('/detail/:id', async (req, res, next) => {
         if (!get_hy_info.hy_image_arr[0]) {
             get_hy_info.hy_image_arr.splice(0, 1)
         }
+
+        get_hy_info.hy_description = get_hy_info.hy_description.trim()
+        get_hy_info.hy_features = get_hy_info.hy_features.trim()
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
-    get_hy_info.hy_description = get_hy_info.hy_description.trim()
-    get_hy_info.hy_features = get_hy_info.hy_features.trim()
+    
 
 
     res.render('crm/work_side_detail_test', { get_hy_info })
