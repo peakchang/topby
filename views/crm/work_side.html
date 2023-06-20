@@ -142,17 +142,15 @@
 
     $('.change_new').click(async function () {
         const hyNum = this.parentNode.parentNode.children[1].firstElementChild.value;
-        console.log(hyNum);
         const result = await axios.post('/crm/side/new_change_ready', { hyNum });
-        console.log(result.data.imgList);
         const imageList = result.data.imgList
 
 
         for await (const imageOn of imageList) {
 
             const img = new Image();
-            // img.src = `/img/${hyNum}/${imageList[i]}`;
-            img.src = imageOn;
+            img.src = `/img/${hyNum}/${imageOn}`;
+            // img.src = imageOn;
             console.log(img);
 
             try {

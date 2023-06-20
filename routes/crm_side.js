@@ -256,13 +256,10 @@ router.post('/del_image', async (req, res, next) => {
 
 
 router.use('/new_change_ready', async (req, res, next) => {
-    console.log(req.body.hyNum);
     const newChangeSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
-    console.log(newChangeSql);
     const newChangeResult = await sql_con.promise().query(newChangeSql, [req.body.hyNum]);
     const new_change_result = newChangeResult[0][0];
-
-    console.log(new_change_result);
+    
     // const imgList = new_change_result.hy_image_list.split(',').filter(e => e.includes('img'));
     const imgList = new_change_result.hy_image_list.split(',');
     imgList.push(new_change_result.hy_main_image);
