@@ -280,8 +280,9 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
     console.log(search_img_site);
     if(req.body.original_name == search_img_site.hy_main_image){
         console.log('여기가 메인 이미지!!!');
+        const updateMainImeUrl = `/img/${req.body.hy_num}/${req.file.originalname}`;
         const updateImgListSql = `UPDATE hy_site SET hy_main_image = ? WHERE hy_num = ?`;
-        await sql_con.promise().query(updateImgListSql, [req.file.originalname, req.body.hy_num]);
+        await sql_con.promise().query(updateImgListSql, [updateMainImeUrl, req.body.hy_num]);
     }else{
         console.log('여기가 이미지 리스트!!!!');
         console.log(search_img_site.hy_image_list);
@@ -305,7 +306,8 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
         
         
     }
-    const delFile = req.body.original_name;
+    const tempFileArr = req.body.original_name.split('/');
+    const delFile = `uploads/${req.body.hy_num}/${tempFileArr[tempFileArr.length - 1]}`;
     fs.unlink(delFile, function(err){
         if(err) {
           console.log("Error : ", err)
@@ -315,14 +317,14 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
     
 
     try {
-        fs.readdirSync(`uploads/${req.body.hy_num}_temp`);
+        fs.readdirSync(`uploads/${req.body.hy_num}`);
     } catch (error) {
-        fs.mkdirSync(`uploads/${req.body.hy_num}_temp`);
+        fs.mkdirSync(`uploads/${req.body.hy_num}`);
     }
 
-    console.log(`uploads/${req.body.hy_num}_temp/${req.file.originalname}`);
+    console.log(`uploads/${req.body.hy_num}/${req.file.originalname}`);
 
-    fs.writeFile(`uploads/${req.body.hy_num}_temp/${req.file.originalname}`, req.file.buffer, function (err) {
+    fs.writeFile(`uploads/${req.body.hy_num}/${req.file.originalname}`, req.file.buffer, function (err) {
         if (err) {
             console.log('error incoming!!!!');
             console.log(err);
@@ -455,6 +457,7 @@ router.use('/', async (req, res, next) => {
     const getSiteListSql = `SELECT * FROM hy_site ${searchQuery} ORDER BY hy_id DESC ${pageQuery} `;
     const getSiteListAll = await sql_con.promise().query(getSiteListSql)
     const get_site_list = getSiteListAll[0];
+    console.log(get_site_list);
 
     // 
     const getSiteListCountSql = `SELECT COUNT(*) FROM hy_site ${searchQuery};`;
