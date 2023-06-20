@@ -38,7 +38,7 @@
 
 <body>
     <div class="container w-11/12 mt-2 rounded-md text-sm suit-font text-center">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post">
             <table class="border-collapse border border-slate-400 w-full  rounded">
                 <input type="hidden" name="hy_id" value="{{ get_hy_info.hy_id }}">
                 <input type="hidden" name="hy_num" value="{{ get_hy_info.hy_num }}">
@@ -67,14 +67,7 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">키워드</th>
-                    <td class="border border-slate-300 py-1 text-center">
-                        <input type="text"
-                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
-                            name="hy_keywords" placeholder="" value="{{get_hy_info.hy_keywords}}">
-                    </td>
-                </tr>
+
 
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">타겟현장</th>
@@ -205,7 +198,7 @@
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_main_image %}
-                            <img src="/img/{{get_hy_info.hy_num}}/{{get_hy_info.hy_main_image}}" alt=""
+                            <img src="{{get_hy_info.hy_main_image}}" alt=""
                                 class="mx-auto show_main_image">
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_main_image">
@@ -321,7 +314,7 @@
         const getUrl = this.parentNode.querySelector('img').src;
         const getUrlArr = getUrl.split('/');
 
-        
+
 
         const nowImageListVal = document.querySelector('input[name=hy_image_list]');
         let nowImageList = nowImageListVal.value.split(',');
@@ -336,7 +329,7 @@
             console.log(getUpdateImgList);
             console.log(hy_num);
 
-            axios.post('/crm/del_image', {getDelTargetImg, getUpdateImgList, hy_num}).then((res) => {
+            axios.post('/crm/side/del_image', { getDelTargetImg, getUpdateImgList, hy_num }).then((res) => {
                 console.log('success!!!!');
             }).catch((err) => {
                 console.log(err);
@@ -393,6 +386,7 @@
     $('#fake_file').change(async function (e) {
         const getFiles = e.target.files;
         const hyNum = '{{get_hy_info.hy_num}}';
+
         imageResizing(getFiles, hyNum);
 
     })
@@ -438,10 +432,15 @@
         $drop.classList.remove("dropactive");
     }
 
-    $('#formFile').change(function (e) {
+    $('#formFile').change(async function (e) {
         $('.show_main_image').hide()
         const previewImage = document.querySelector('.preview_main_image')
         readImage(e.target, previewImage)
+
+        const getFiles = e.target.files;
+        const hyNum = '{{get_hy_info.hy_num}}';
+        const getImageSrc = await imageResizing(getFiles, hyNum, 'single');
+        console.log(getImageSrc);
     })
 
     function readImage(input, previewImage) {
@@ -460,7 +459,7 @@
     }
 
 
-    const imageResizing = async (getFiles, hyNum) => {
+    const imageResizing = async (getFiles, hyNum, work = 'list') => {
 
 
         for await (const file of getFiles) {
@@ -522,25 +521,29 @@
                         }
                     };
 
-                    const getVal = await axios.post('/crm/upload_img', imgForm, config);
+                    const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
 
-                    const nowImageListVal = document.querySelector('input[name=hy_image_list]');
-                    let nowImageList = nowImageListVal.value.split(',');
+                    if (work == 'list') {
+                        const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                        let nowImageList = nowImageListVal.value.split(',');
 
-                    if (nowImageList[0]) {
-                        nowImageList.push(getVal.data.getUploadImgUrl)
-                    } else {
-                        nowImageList = [getVal.data.getUploadImgUrl]
+                        if (nowImageList[0]) {
+                            nowImageList.push(getVal.data.getUploadImgUrl)
+                        } else {
+                            nowImageList = [getVal.data.getUploadImgUrl]
+                        }
+
+                        const nowImageStr = nowImageList.join(',');
+                        nowImageListVal.value = nowImageStr;
+
+
+                        sortWrapLoop(nowImageList);
+                    }else{
+                        console.log('여기서 이미지를 리턴 받을거야!!');
+                        console.log(getVal.data.getUploadImgUrl);
+                        const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
+                        mainImgFileName.value = getVal.data.getUploadImgUrl
                     }
-
-                    const nowImageStr = nowImageList.join(',');
-                    nowImageListVal.value = nowImageStr;
-
-
-                    sortWrapLoop(nowImageList);
-
-
-
 
                 };
             }

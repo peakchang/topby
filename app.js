@@ -18,6 +18,7 @@ const { tableSetting } = require('./db_lib/set_tables.js');
 tableSetting()
 
 const crmRouter = require('./routes/crm');
+const crmSideRouter = require('./routes/crm_side');
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
@@ -95,14 +96,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
 app.use('/', mainRouter);
+
+
+app.use('/crm/side', crmSideRouter);
 app.use('/crm', crmRouter);
+
 app.use('/auth', authRouter);
 app.use('/webhook', webhookRouter);
 app.use('/side', sideRouter);
 app.use('/site', siteRouter);
 app.use('/nwork', nworkRouter);
 app.use('/telework', teleRouter);
+
+app.use('/favicon.ico', (req, res) => res.status(204));
 
 app.use((req, res, next) => {
     const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

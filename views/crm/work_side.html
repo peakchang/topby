@@ -2,7 +2,7 @@
 
 {% block dbmanage_content %}
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
 
 
 
@@ -111,6 +111,9 @@
                 <a href="/side/{{ site.hy_num }}" target="_blank">
                     <button type="button" class="p-2 rounded-lg bg-green-200">바로가기</button>
                 </a>
+
+                <button type="button" class="change_new">이미지 변경</button>
+                <button type="button" class="change_new_end">확인!</button>
             </td>
 
         </tr>
@@ -128,18 +131,99 @@
     </nav>
 </div>
 
-
-
+<div class="test_wrap">
+    asldifjalsdf
 </div>
 
 
 <script>
 
-    const errorMessage = '{{errorMessage}}';
-    if (errorMessage) {
-        alert(errorMessage);
-    }
-    console.log(errorMessage);
+    $('.change_new').click(async function () {
+        const hyNum = this.parentNode.parentNode.children[1].firstElementChild.value;
+        console.log(hyNum);
+        const result = await axios.post('/crm/side/new_change_ready', { hyNum });
+        console.log(result.data.imgList);
+        const imageList = result.data.imgList
+
+
+        for await (const imageOn of imageList) {
+
+            const img = new Image();
+            // img.src = `/img/${hyNum}/${imageList[i]}`;
+            img.src = imageOn;
+            console.log(img);
+
+            try {
+                img.addEventListener('load', async function () {
+                    console.log('높이 : ', this.naturalHeight, '너비 : ', this.naturalWidth, "이미지 : ", this.src);
+
+                    const maxWidth = 1200;
+                    if (this.width >= maxWidth) {
+                        var share = this.width / maxWidth;
+                        var setHeight = Math.floor(this.height / share);
+                        var setWidth = maxWidth;
+                    } else {
+                        var setWidth = this.width;
+                        var setHeight = this.height;
+                    }
+
+                    var canvas = document.createElement('CANVAS');
+                    canvas.width = setWidth;
+                    canvas.height = setHeight;
+                    canvas.display = "inline-block";
+                    canvas
+                        .getContext("2d")
+                        .drawImage(img, 0, 0, setWidth, setHeight);
+
+                    var getReImgUrl = canvas.toDataURL("image/webp");
+
+                    const resultImage = dataURItoBlob(getReImgUrl);
+                    console.log(resultImage);
+
+                    let imgForm = new FormData();
+
+                    const timestamp = new Date().getTime();
+                    const fileName = `${timestamp}${Math.random()
+                        .toString(36)
+                        .substring(2, 11)}.webp`;
+
+                    imgForm.append("change_img", resultImage, fileName);
+                    imgForm.append("hy_num", hyNum);
+                    imgForm.append("original_name", imageOn);
+
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    };
+                    const getVal = axios.post('/crm/side/new_change', imgForm, config);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+
+            
+        }
+
+        
+
+
+
+
+        // $('.test_wrap').append(img)
+
+
+    })
+
+    $('.change_new_end').click(async function() {
+        console.log('asldjflajsdlifjasfd');
+        console.log('마지막으로 와야지?!?!?!?!?!??!');
+        const hyNum = this.parentNode.parentNode.children[1].firstElementChild.value;
+        console.log(hyNum);
+        await axios.post('/crm/side/new_change_end', { hyNum });
+    })
+
+
 
     // 전체 페이지 값 가져와서 숫자 순서대로 배열 만들기
     const getSiteListCount = '{{getCount}}';
@@ -200,6 +284,7 @@
         // Array.from 은 조건에 맞는 새로운 배열을 만든다. (filter / map도 공부하자)
         let idArr = Array.from(checkedArr, e => e.value);
 
+        $('.du_table').empty();
         for (let i = 0; i < idArr.length; i++) {
             const template = `
             <tr>
@@ -220,7 +305,7 @@
         const thisId = this.parentNode.parentNode.firstElementChild.firstElementChild.value
         console.log(thisId)
         var options = 'top=10, left=10, width=700, height=900, status=no, menubar=no, toolbar=no, resizable=no'
-        window.open(`side_detail/${thisId}`, '디테일', options)
+        window.open(`side/detail/${thisId}`, '디테일', options)
     })
 
 
@@ -269,20 +354,6 @@
         const hyIdEleList = document.querySelectorAll('input[name="site_num"]');
         const hyIdList = Array.from(Object.values(hyIdEleList), e => e.value);
 
-
-
-
-
-        console.log(duplicateSiteIdValList);
-        console.log(chkIdListVal);
-        console.log(hyIdList);
-        
-
-
-        // const duplicateSiteIdValList = Object.values(duplicateSiteId).filter(e => e.value);
-        // console.log(duplicateSiteIdValList);
-        // console.log(duplicateSiteId);
-
         const params = {
             duplicateSiteIdValList,
             chkIdListVal,
@@ -290,14 +361,12 @@
         }
 
         console.log(params);
-        // console.log(params);
-
         $.ajax({
             type: "POST",
             url: "/crm/side/duplicate_mini",
             data: params,
             success: function (res) {
-                console.log('res');
+                location.reload();
             },
             error: function (XMLHttpRequest, textStatus, err) {
                 console.log(err);
@@ -306,6 +375,22 @@
 
 
     })
+
+
+    const dataURItoBlob = (dataURI) => {
+        const bytes =
+            dataURI.split(",")[0].indexOf("base64") >= 0
+                ? atob(dataURI.split(",")[1])
+                : unescape(dataURI.split(",")[1]);
+        const mime = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const max = bytes.length;
+        const ia = new Uint8Array(max);
+        for (let i = 0; i < max; i++) ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], { type: mime });
+    };
+
+
+
 
 
 
