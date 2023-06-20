@@ -24,53 +24,6 @@ moment.tz.setDefault("Asia/Seoul");
 const ncp = require('ncp').ncp;
 ncp.limit = 16;
 
-
-
-// chkRateMaster
-router.get('/detail/:id', async (req, res, next) => {
-    const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
-    const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
-    console.log('111111111111111111111111111111');
-    var get_hy_info = getHyInfo[0][0];
-    console.log(get_hy_info);
-    res.render('crm/work_side_detail_test', { get_hy_info })
-})
-// router.get('/detail/:id', async (req, res, next) => {
-//     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
-//     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
-//     var get_hy_info = getHyInfo[0][0];
-//     console.log(get_hy_info);
-//     // console.log(get_hy_info.hy_title);
-
-
-//     // get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
-//     // console.log(get_hy_info.hy_image_arr);
-
-//     // const getSiteListSql = `SELECT sl_id,sl_site_name FROM site_list`;
-//     // const getSiteList = await sql_con.promise().query(getSiteListSql);
-//     // var get_site_list = getSiteList[0];
-
-//     // try {
-//         // get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
-//     //     if (!get_hy_info.hy_image_arr.length === 0) {
-//     //         get_hy_info.hy_image_arr.splice(0, 1)
-//     //     }
-//     // } catch (error) {
-//     //     get_hy_info.hy_image_arr = []
-//     // }
-
-
-//     // get_hy_info.hy_description = get_hy_info.hy_description.trim()
-//     // get_hy_info.hy_features = get_hy_info.hy_features.trim()
-
-//     console.log('수정 메인!!!!');
-//     // var get_hy_info = ''
-
-
-//     console.log('아니 씨발 왜 두번이 된느거지??!?!?!?!');
-//     res.render('crm/work_side_detail_test', { get_hy_info })
-// })
-
 const upload = multer({
     storage: multer.diskStorage({
         // 경로를 설정
@@ -222,27 +175,52 @@ router.post('/duplicate_mini', async (req, res, next) => {
 
 
 
+// chkRateMaster
+router.get('/detail/:id', async (req, res, next) => {
+    console.log('여기로는 왜 안오지?!?!?!?');
+    const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
+    const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
+    var get_hy_info = getHyInfo[0][0];
+    console.log(get_hy_info);
 
+    if(!get_hy_info){
+        return false;
+    }
+
+    try {
+        get_hy_info.hy_image_arr = get_hy_info.hy_image_list.split(',')
+        if (!get_hy_info.hy_image_arr[0]) {
+            get_hy_info.hy_image_arr.splice(0, 1)
+        }
+    } catch (error) {
+        get_hy_info.hy_image_arr = []
+    }
+    get_hy_info.hy_description = get_hy_info.hy_description.trim()
+    get_hy_info.hy_features = get_hy_info.hy_features.trim()
+
+
+    res.render('crm/work_side_detail_test', { get_hy_info })
+})
 
 // chkRateMaster
-// router.post('/detail/:id', async (req, res, next) => {
+router.post('/detail/:id', async (req, res, next) => {
 
-//     console.log('sd9fj0134jf09j32409fj0394jf11111111111111111111111111111');
-//     console.log(req.body);
+    console.log('sd9fj0134jf09j32409fj0394jf11111111111111111111111111111');
+    console.log(req.body);
 
-//     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-
-
-
-//     const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
-
-//     const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, now, req.body.hy_id]
-//     await sql_con.promise().query(allUpdateSql, allUpdateArr);
+    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
 
 
-//     res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
-// })
+    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+
+    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, now, req.body.hy_id]
+    await sql_con.promise().query(allUpdateSql, allUpdateArr);
+
+
+
+    res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
+})
 
 
 
@@ -292,25 +270,49 @@ router.use('/new_change_ready', async (req, res, next) => {
 
 
 router.use('/new_change', uploadSimple.single('change_img'), async (req, res, next) => {
-    // console.log(req.file);
+    console.log('new change 시작!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(req.file);
+    console.log(req.body);
 
     const searchImgSiteSql = 'SELECT hy_main_image, hy_image_list FROM hy_site WHERE hy_num = ?';
-    // console.log(searchImgSiteSql);
-    // console.log(req.body.hy_num);
-    // console.log(req.body.hy_main_image);
-    // console.log('000000000000000000000000------------------0000000000000000000000');
     const searchImgSite = await sql_con.promise().query(searchImgSiteSql, [req.body.hy_num]);
     const search_img_site = searchImgSite[0][0];
-    // console.log(search_img_site);
-    // console.log(search_img_site.hy_main_image);
-    // console.log(req.body.original_name);
-    if (search_img_site.hy_main_image == req.body.original_name) {
-        console.log('메인이미지 중복이 들어왔다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(search_img_site);
+    if(req.body.original_name == search_img_site.hy_main_image){
+        console.log('여기가 메인 이미지!!!');
+        const updateImgListSql = `UPDATE hy_site SET hy_main_image = ? WHERE hy_num = ?`;
+        await sql_con.promise().query(updateImgListSql, [req.file.originalname, req.body.hy_num]);
+    }else{
+        console.log('여기가 이미지 리스트!!!!');
+        console.log(search_img_site.hy_image_list);
+        let resultImgStr = '';
+        if(!search_img_site.hy_image_list.includes('img')){
+            // 'img' 가 없으면 싹 지우고 새 내용
+            resultImgStr = req.file.originalname;
+        }else{
+            // 배열로 변경해서 해당 내용 있으면 교체, 없으면 추가 해서 새내용
+            const getImgListPreArr = search_img_site.hy_image_list.split(',');
+            getImgListPreArr.push(`/img/${req.body.hy_num}/${req.file.originalname}`);
+            console.log(getImgListPreArr);
+            resultImgStr = getImgListPreArr.join(',');
+        }
 
-        const mainImgUpdateSql = `UPDATE hy_site SET hy_main_image = ? WHERE hy_num = ?`;
-        await sql_con.promise().query(mainImgUpdateSql, [req.file.originalname, req.body.hy_num]);
+        console.log(resultImgStr);
+        const updateImgListSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
+        await sql_con.promise().query(updateImgListSql, [resultImgStr, req.body.hy_num]);
+
+
+        
+        
     }
-
+    const delFile = req.body.original_name;
+    fs.unlink(delFile, function(err){
+        if(err) {
+          console.log("Error : ", err)
+        }
+      })
+    console.log('=======================================================================================================================================================================================================================');
+    
 
     try {
         fs.readdirSync(`uploads/${req.body.hy_num}_temp`);
@@ -318,7 +320,7 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
         fs.mkdirSync(`uploads/${req.body.hy_num}_temp`);
     }
 
-    // console.log(`uploads/${req.body.hy_num}_temp/${req.file.originalname}`);
+    console.log(`uploads/${req.body.hy_num}_temp/${req.file.originalname}`);
 
     fs.writeFile(`uploads/${req.body.hy_num}_temp/${req.file.originalname}`, req.file.buffer, function (err) {
         if (err) {
