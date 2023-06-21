@@ -102,6 +102,11 @@ router.post('/', async (req, res) => {
             let baseData = {};
             let etcCount = 0;
             for (let i = 0; i < leadsData.length; i++) {
+                try {
+                    console.log(leadsData[i]['values'][0]);
+                } catch (error) {
+                    console.log(error.message);
+                }
                 if (leadsData[i]['name'] == 'full_name') {
                     baseData['db_name'] = leadsData[i]['values'];
                 } else if (leadsData[i]['name'] == 'phone_number') {
