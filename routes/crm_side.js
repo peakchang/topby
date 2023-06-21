@@ -84,13 +84,12 @@ router.use('/testiii', async (req, res, next) => {
 
 
 router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) => {
-    console.log('히리히리히리힐히리');
+
     // const hyImgListUpdateSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
     // await sql_con.promise().query(hyImgListUpdateSql, [req.body.fileListStr, req.body.hy_num]);
     // var SetHyImgList = req.body.fileListStr.split(',')
     // res.send({ SetHyImgList })
 
-    console.log('여기 들어옴!!!!');
 
     try {
         fs.readdirSync(`uploads/${req.body.hy_num}`);
@@ -133,9 +132,6 @@ router.post('/duplicate_mini', async (req, res, next) => {
             copyHyNum = req.body['duplicateSiteIdValList[]'][i];
         }
 
-        console.log('첫번째 여긴 어디? ' + copyFromHyNum);
-        console.log('두번째 여긴 어디? ' + copyHyNum);
-
         const getFolder = `uploads/${copyFromHyNum}`;
         const setFolder = `uploads/${copyHyNum}`;
 
@@ -177,11 +173,9 @@ router.post('/duplicate_mini', async (req, res, next) => {
 
 // chkRateMaster
 router.get('/detail/:id', async (req, res, next) => {
-    console.log('여기로는 왜 안오지?!?!?!?');
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
-    console.log(get_hy_info);
 
     if(!get_hy_info){
         return false;
@@ -206,10 +200,6 @@ router.get('/detail/:id', async (req, res, next) => {
 
 // chkRateMaster
 router.post('/detail/:id', async (req, res, next) => {
-
-    console.log('sd9fj0134jf09j32409fj0394jf11111111111111111111111111111');
-    console.log(req.body);
-
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
 
@@ -259,7 +249,7 @@ router.use('/new_change_ready', async (req, res, next) => {
     const newChangeSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
     const newChangeResult = await sql_con.promise().query(newChangeSql, [req.body.hyNum]);
     const new_change_result = newChangeResult[0][0];
-    
+
     // const imgList = new_change_result.hy_image_list.split(',').filter(e => e.includes('img'));
     const imgList = new_change_result.hy_image_list.split(',');
     imgList.push(new_change_result.hy_main_image);
@@ -288,16 +278,14 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
         let resultImgStr = '';
         if(!search_img_site.hy_image_list.includes('img')){
             // 'img' 가 없으면 싹 지우고 새 내용
-            resultImgStr = req.file.originalname;
+            resultImgStr = `/img/${req.body.hy_num}/${req.file.originalname}`;
         }else{
             // 배열로 변경해서 해당 내용 있으면 교체, 없으면 추가 해서 새내용
             const getImgListPreArr = search_img_site.hy_image_list.split(',');
             getImgListPreArr.push(`/img/${req.body.hy_num}/${req.file.originalname}`);
-            console.log(getImgListPreArr);
             resultImgStr = getImgListPreArr.join(',');
+            console.log(resultImgStr);
         }
-
-        console.log(resultImgStr);
         const updateImgListSql = `UPDATE hy_site SET hy_image_list = ? WHERE hy_num = ?`;
         await sql_con.promise().query(updateImgListSql, [resultImgStr, req.body.hy_num]);
 
@@ -320,8 +308,6 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
     } catch (error) {
         fs.mkdirSync(`uploads/${req.body.hy_num}`);
     }
-
-    console.log(`uploads/${req.body.hy_num}/${req.file.originalname}`);
 
     fs.writeFile(`uploads/${req.body.hy_num}/${req.file.originalname}`, req.file.buffer, function (err) {
         if (err) {
