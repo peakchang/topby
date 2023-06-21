@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
 
                     var get_temp_phone = leadsData[i]['values'][0];
 
-                    const get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
+                    let get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
                     if (get_phone.charAt(0) != '0') {
                         get_phone = `0${get_phone}`
                     }
