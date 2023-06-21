@@ -106,14 +106,12 @@ router.post('/', async (req, res) => {
                     baseData['db_name'] = leadsData[i]['values'][0];
                 } else if (leadsData[i]['name'] == 'phone_number') {
 
-                    var get_phone = leadsData[i]['values'][0];
-                    console.log(typeof(get_phone));
-                    // console.log();
-                    
-                    // .replace('+82', '').replace(/[^0-9]/g, "");
-                    // if (get_phone.charAt(0) != '0') {
-                    //     get_phone = `0${get_phone}`
-                    // }
+                    var get_temp_phone = leadsData[i]['values'][0];
+
+                    const get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
+                    if (get_phone.charAt(0) != '0') {
+                        get_phone = `0${get_phone}`
+                    }
                     baseData['db_phone'] = get_phone;
                 } else {
                     etcCount += 1;
