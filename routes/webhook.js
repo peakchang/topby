@@ -105,10 +105,14 @@ router.post('/', async (req, res) => {
                 if (leadsData[i]['name'] == 'full_name') {
                     baseData['db_name'] = leadsData[i]['values'];
                 } else if (leadsData[i]['name'] == 'phone_number') {
-                    var get_phone = leadsData[i]['values'].replace('+82', '').replace(/[^0-9]/g, "");
-                    if (get_phone.charAt(0) != '0') {
-                        get_phone = `0${get_phone}`
-                    }
+
+                    var get_phone = leadsData[i]['values'];
+                    console.log(get_phone);
+                    
+                    // .replace('+82', '').replace(/[^0-9]/g, "");
+                    // if (get_phone.charAt(0) != '0') {
+                    //     get_phone = `0${get_phone}`
+                    // }
                     baseData['db_phone'] = get_phone;
                 } else {
                     etcCount += 1;
