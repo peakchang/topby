@@ -103,19 +103,20 @@ router.post('/', async (req, res) => {
             let etcCount = 0;
             for (let i = 0; i < leadsData.length; i++) {
                 if (leadsData[i]['name'] == 'full_name') {
-                    baseData['db_name'] = leadsData[i]['values'][0];
+                    baseData['db_name'] = leadsData[i]['values'];
                 } else if (leadsData[i]['name'] == 'phone_number') {
 
-                    var temp_phone = leadsData[i]['values'];
-                    const get_phone = temp_phone[0].replace('+82', '').replace(/[^0-9]/g, "");
-                    console.log(get_phone);
-                    if (get_phone.charAt(0) != '0') {
-                        get_phone = `0${get_phone}`
-                    }
+                    var get_phone = leadsData[i]['values'];
+                    // console.log();
+                    
+                    // .replace('+82', '').replace(/[^0-9]/g, "");
+                    // if (get_phone.charAt(0) != '0') {
+                    //     get_phone = `0${get_phone}`
+                    // }
                     baseData['db_phone'] = get_phone;
                 } else {
                     etcCount += 1;
-                    baseData[`etc${etcCount}`] = leadsData[i]['values'][0];
+                    baseData[`etc${etcCount}`] = leadsData[i]['values'];
                 }
             }
 
