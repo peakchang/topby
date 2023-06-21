@@ -96,6 +96,33 @@ router.post('/', async (req, res) => {
         console.log(`show formData : ${formData}`);
 
 
+        // 테스트로 새로 만들자!!
+        const leadsData = getLeadsData.field_data;
+        let baseData = {};
+        let etcCount = 0;
+        for (let i = 0; i < leadsData.length; i++) {
+            if (leadsData[i]['name'] == 'full_name') {
+                baseData['db_name'] = leadsData[i]['values'];
+            } else if (leadsData[i]['name'] == 'phone_number') {
+                var get_phone = leadsData[i]['values'].replace('+82', '').replace(/[^0-9]/g, "");
+                if (get_phone.charAt(0) != '0') {
+                    get_phone = `0${get_phone}`
+                }
+                baseData['db_phone'] = get_phone;
+            } else {
+                etcCount += 1;
+                baseData[`etc${etcCount}`] = leadsData[i]['values'];
+            }
+        }
+
+        console.log('//////////////////////////////////////////');
+        console.log(baseData);
+        console.log('//////////////////////////////////////////');
+
+
+
+
+
         // 이름
         var get_name = getLeadsData.field_data[0].values[0];
         // var temp_phone = getLeadsData.field_data[1].values[0];
