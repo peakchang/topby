@@ -151,7 +151,7 @@ router.post('/', async (req, res) => {
             const forVal = baseData[`etc${eidx}`];
             if (forVal) {
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
-                etcValuesStr = etcValuesStr + `, ${forVal}`;
+                etcValuesStr = etcValuesStr + `, '${forVal}'`;
             }
         }
         let getArr;
@@ -162,7 +162,7 @@ router.post('/', async (req, res) => {
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
 
             console.log(formInertSql);
-            
+
             await mysql_conn.promise().query(formInertSql, getArr)
 
             console.log('modify success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
