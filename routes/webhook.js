@@ -153,7 +153,7 @@ router.post('/', async (req, res) => {
             if (forVal) {
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
                 etcValuesStr = etcValuesStr + `, '${forVal}'`;
-                addEtcMessage = addEtcMessage + `/ etc${eidx} : ${forVal}`
+                addEtcMessage = addEtcMessage + `// 기타 정보 ${eidx} : ${forVal}`
             }
         }
         let getArr;
