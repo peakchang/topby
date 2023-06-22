@@ -147,11 +147,13 @@ router.post('/', async (req, res) => {
         // etc 리스트 찾기
         let etcInsertStr = '';
         let etcValuesStr = '';
+        let addEtcMessage = '';
         for (let eidx = 1; eidx < 5; eidx++) {
             const forVal = baseData[`etc${eidx}`];
             if (forVal) {
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
                 etcValuesStr = etcValuesStr + `, '${forVal}'`;
+                addEtcMessage = addEtcMessage + `/ etc${eidx} : ${forVal}`
             }
         }
         let getArr;
@@ -216,8 +218,9 @@ router.post('/', async (req, res) => {
             var siteList = '정보없음'
         }
 
+        const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
         for (let oo = 0; oo < findUser.length; oo++) {
-            var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: baseData.db_phone }
+            var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
             if (oo == 0) {
                 // aligoKakaoNotification(req, customerInfo)
             }
