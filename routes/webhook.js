@@ -38,22 +38,6 @@ doRequest = (url) => {
 }
 
 router.get('/', async (req, res) => {
-
-    // let leadsUrl = `https://graph.facebook.com/v15.0/474249967950779?access_token=${process.env.ACCESS_TOKEN}`
-    // let LeadsData = await doRequest({ uri: leadsUrl });
-
-    // let formUrl = `https://graph.facebook.com/v15.0/1184770822376703?access_token=${process.env.ACCESS_TOKEN}`
-    // let formData = await doRequest({ uri: formUrl });
-
-
-    // let getLeadsData = JSON.parse(LeadsData)
-    // let getFormData = JSON.parse(formData)
-    // // 이름
-    // let get_name = getLeadsData.field_data[0].values[0];
-    // let temp_phone = getLeadsData.field_data[1].values[0]
-    // let get_phone = temp_phone.replace('+82', '0')
-    // let get_created_ime = getLeadsData.created_time
-    // let get_form_name = getFormData.name
     if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == token) {
         console.log('여기 안들어옴??');
         res.send(req.query['hub.challenge']);
@@ -96,68 +80,47 @@ router.post('/', async (req, res) => {
         console.log(`show formData : ${formData}`);
 
 
-        try {
-            // 테스트로 새로 만들자!!
-            const leadsData = getLeadsData.field_data;
-            let baseData = {};
-            let etcCount = 0;
-            for (let i = 0; i < leadsData.length; i++) {
-                if (leadsData[i]['name'] == 'full_name') {
-                    baseData['db_name'] = leadsData[i]['values'][0];
-                } else if (leadsData[i]['name'] == 'phone_number') {
+        // 테스트로 새로 만들자!!
+        const leadsData = getLeadsData.field_data;
+        let baseData = {};
+        let etcCount = 0;
+        for (let i = 0; i < leadsData.length; i++) {
+            if (leadsData[i]['name'] == 'full_name') {
+                baseData['db_name'] = leadsData[i]['values'][0];
+            } else if (leadsData[i]['name'] == 'phone_number') {
 
-                    var get_temp_phone = leadsData[i]['values'][0];
+                var get_temp_phone = leadsData[i]['values'][0];
 
-                    let get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
-                    if (get_phone.charAt(0) != '0') {
-                        get_phone = `0${get_phone}`
-                    }
-                    baseData['db_phone'] = get_phone;
-                } else {
-                    etcCount += 1;
-                    baseData[`etc${etcCount}`] = leadsData[i]['values'][0];
+                let get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
+                if (get_phone.charAt(0) != '0') {
+                    get_phone = `0${get_phone}`
                 }
+                baseData['db_phone'] = get_phone;
+            } else {
+                etcCount += 1;
+                baseData[`etc${etcCount}`] = leadsData[i]['values'][0];
             }
-
-            console.log('//////////////////////////////////////////');
-            console.log(baseData);
-            console.log('//////////////////////////////////////////');
-        } catch (error) {
-            console.log(error.message);
         }
 
+        console.log('//////////////////////////////////////////');
+        console.log(baseData);
+        console.log('//////////////////////////////////////////');
 
 
 
 
 
-        // 이름
-        var get_name = getLeadsData.field_data[0].values[0];
-        // var temp_phone = getLeadsData.field_data[1].values[0];
-        if (get_name.includes('+82')) {
-            var get_name = getLeadsData.field_data[1].values[0];
-            var temp_phone = getLeadsData.field_data[0].values[0];
-        } else {
-            var get_name = getLeadsData.field_data[0].values[0];
-            var temp_phone = getLeadsData.field_data[1].values[0];
-        }
-        console.log(get_name);
-        console.log(typeof (get_name));
-        var get_phone = String(temp_phone).replace('+82', '').replace(/[^0-9]/g, "");
-        if (get_phone.charAt(0) != '0') {
-            get_phone = `0${get_phone}`
-        }
+
+
+
+
+
+
 
         let get_created_time = getLeadsData.created_time
         console.log(getFormData);
 
         var get_form_name = getFormData.name
-        // if (get_form_name.includes('인터넷')) {
-        //     var form_type_in = '인터넷'
-        //     await sendSms(get_phone, sendMsg)
-        // } else {
-        //     var form_type_in = '분양'
-        // }
         var form_type_in = '분양'
 
         var get_form_name = get_form_name.replace('분양', '')
@@ -165,12 +128,7 @@ router.post('/', async (req, res) => {
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
 
-        let getAllData = `${get_name} / ${get_phone} / ${get_created_time} / ${get_form_name}/ ${leadsId} / ${reFormName}`;
-
-        let allDataSql = 'INSERT INTO webhookdatas (webhookdata) VALUES (?)';
-        await mysql_conn.promise().query(allDataSql, [getAllData]);
-
-
+        // 해당 폼 리스트의
         const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
         const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
         const chkFormInSiteList = chkFormInSiteListData[0][0]
@@ -183,12 +141,12 @@ router.post('/', async (req, res) => {
         const getStatusText = await mysql_conn.promise().query(getStatusSql)
         const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
-        // let getArr = [get_form_name, form_type_in, 'FB', get_name, get_phone, estate_status_list[0], leadsId, nowDateTime];
-        let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+
+        // 폼 저장하기
+        // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+        let getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
         let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
 
-        // console.log(formInertSql);
-        // console.log('***************** pass first');
 
         await mysql_conn.promise().query(formInertSql, getArr)
 
@@ -197,42 +155,32 @@ router.post('/', async (req, res) => {
 
 
 
-        // const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
+        // 해당 폼네임에 저장된 담당자 리스트 찾기
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
         const findUserData = await mysql_conn.promise().query(userFindSql);
         const findUser = findUserData[0];
 
-
-        // console.log(userFindSql);
-        // console.log('***************** pass second');
-
+        // 담당자들 에게 이메일 발송
         for await (const goUser of findUser) {
             console.log(goUser.user_email);
-            const mailSubjectManager = `${reFormName} / ${get_name} 고객 DB 접수되었습니다.`;
-            const mailContentManager = `현장 : ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+            const mailSubjectManager = `${reFormName} / ${baseData.db_name} 고객 DB 접수되었습니다.`;
+            const mailContentManager = `현장 : ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
         }
 
 
-
-
-        const mailSubject = `${reFormName} 고객명 ${get_name} 접수되었습니다.`;
-        const mailContent = `현장: ${reFormName} / 이름 : ${get_name} / 전화번호 : ${get_phone}`;
+        // 최고관리자에게 이메일 발송
+        const mailSubject = `${reFormName} 고객명 ${baseData.db_name} 접수되었습니다.`;
+        const mailContent = `현장: ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone}`;
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
         // 고객한테 갈 알림톡
-
-
         const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
 
-
-        // console.log(getSiteInfoSql);
-        // console.log('***************** pass END!!!!');
-        // console.log(getSiteInfo);
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
@@ -241,7 +189,7 @@ router.post('/', async (req, res) => {
         }
 
         for (let oo = 0; oo < findUser.length; oo++) {
-            var customerInfo = { ciName: get_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: get_phone }
+            var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: baseData.db_phone }
             if (oo == 0) {
                 // aligoKakaoNotification(req, customerInfo)
             }
