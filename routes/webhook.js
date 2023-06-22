@@ -157,17 +157,23 @@ router.post('/', async (req, res) => {
         let getArr;
         let formInertSql = '';
         try {
+            
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
+            await mysql_conn.promise().query(formInertSql, getArr)
+
+            console.log('modify success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         } catch (error) {
             // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+            await mysql_conn.promise().query(formInertSql, getArr)
+            console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
         }
 
 
 
-        await mysql_conn.promise().query(formInertSql, getArr)
+        
 
 
 
