@@ -143,9 +143,28 @@ router.post('/', async (req, res) => {
 
 
         // 폼 저장하기
-        // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
-        let getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
-        let formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+
+        // etc 리스트 찾기
+        let etcInsertStr = '';
+        let etcValuesStr = '';
+        for (let eidx = 1; eidx < 5; eidx++) {
+            const forVal = baseData[`etc${eidx}`];
+            if (forVal) {
+                etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
+                etcValuesStr = etcValuesStr + `, ${forVal}`;
+            }
+        }
+        let getArr;
+        let formInertSql = '';
+        try {
+            getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
+            formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
+        } catch (error) {
+            // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+            getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
+            formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+        }
+
 
 
         await mysql_conn.promise().query(formInertSql, getArr)
