@@ -624,11 +624,17 @@ video {
 .z-20 {
   z-index: 20;
 }
+.z-30 {
+  z-index: 30;
+}
 .col-span-2 {
   grid-column: span 2 / span 2;
 }
 .col-span-4 {
   grid-column: span 4 / span 4;
+}
+.col-span-3 {
+  grid-column: span 3 / span 3;
 }
 .m-0 {
   margin: 0px;
@@ -1673,8 +1679,16 @@ video {
     grid-column: span 4 / span 4;
   }
 
+  .md\:block {
+    display: block;
+  }
+
   .md\:grid {
     display: grid;
+  }
+
+  .md\:hidden {
+    display: none;
   }
 
   .md\:h-48 {
@@ -1687,6 +1701,10 @@ video {
 
   .md\:w-3\/4 {
     width: 75%;
+  }
+
+  .md\:w-1\/2 {
+    width: 50%;
   }
 
   .md\:max-w-full {

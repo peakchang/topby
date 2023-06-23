@@ -173,9 +173,18 @@ router.post('/duplicate_mini', async (req, res, next) => {
 
 // chkRateMaster
 router.get('/detail/:id', async (req, res, next) => {
+    
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
+
+    const getSiteListSql = `SELECT * FROM site_list`;
+    const getSiteList = await sql_con.promise().query(getSiteListSql);
+    const get_site_list = getSiteList[0];
+
+
+
+    // get_site_list
 
     if(!get_hy_info){
         return false;
@@ -195,7 +204,7 @@ router.get('/detail/:id', async (req, res, next) => {
     
 
 
-    res.render('crm/work_side_detail_test', { get_hy_info })
+    res.render('crm/work_side_detail_test', { get_hy_info, get_site_list })
 })
 
 // chkRateMaster
@@ -443,6 +452,7 @@ router.use('/', async (req, res, next) => {
     const getSiteListAll = await sql_con.promise().query(getSiteListSql)
     const get_site_list = getSiteListAll[0];
     console.log(get_site_list);
+
 
     // 
     const getSiteListCountSql = `SELECT COUNT(*) FROM hy_site ${searchQuery};`;

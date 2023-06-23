@@ -194,14 +194,14 @@ router.post('/', async (req, res) => {
         for await (const goUser of findUser) {
             console.log(goUser.user_email);
             const mailSubjectManager = `${reFormName} / ${baseData.db_name} 고객 DB 접수되었습니다.`;
-            const mailContentManager = `현장 : ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone}`;
+            const mailContentManager = `현장 : ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone} ${addEtcMessage}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
         }
 
 
         // 최고관리자에게 이메일 발송
         const mailSubject = `${reFormName} 고객명 ${baseData.db_name} 접수되었습니다.`;
-        const mailContent = `현장: ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone}`;
+        const mailContent = `현장: ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone} ${addEtcMessage}`;
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 

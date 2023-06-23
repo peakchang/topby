@@ -35,16 +35,16 @@ router.use('/:name', async (req, res, next) => {
         const findUserData = await sql_con.promise().query(userFindSql, [req.body.hy_set_site]);
         const findUser = findUserData[0][0];
 
-        const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
-        const mailContentManager = `이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
-        mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
+        // const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
+        // const mailContentManager = `이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
+        // mailSender.sendEmail(findUser.user_email, mailSubjectManager, mailContentManager);
 
 
 
-        const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
-        const mailContent = `현장: ${req.body.hy_set_site} / 이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
-        mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
-        mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
+        // const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
+        // const mailContent = `현장: ${req.body.hy_set_site} / 이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
+        // mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
+        // mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
         res.send(`<script type="text/javascript">alert("등록이 완료 되었습니다. 전문 상담원이 빠른 시간 내에 연락 드리도록 하겠습니다."); window.location = document.referrer; </script>`);
