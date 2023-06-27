@@ -7,29 +7,29 @@
 
 
     <div class="container max-w-5xl mx-auto mt-8 hidden upload_id_area suit_font">
-        <form action="/nwork" method="post"></form>
-        <div class="w-full grid grid-cols-2">
+        <form action="/nwork" method="post">
+            <div class="w-full grid grid-cols-2">
 
-            <div class="pt-3  h-full">
-                <div class="px-2">
-                    <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
+                <div class="pt-3  h-full">
+                    <div class="px-2">
+                        <textarea name="id_list" id="" rows="10" class="border border-gray-400 w-full"></textarea>
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center justify-center">
+                    <button name="btn_val" value="add_id"
+                        class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold">등록하기</button>
+
+                    <div>
+                        {% if errCount %}
+                        <span>중복된 아이디 갯수 : {{ errCount }}</span>
+                        {% endif %}
+                    </div>
                 </div>
 
             </div>
-
-
-            <div class="flex items-center justify-center">
-                <button name="btn_val" value="add_id"
-                    class="bg-yellow-600 w-4/5 py-2 text-lg rounded-lg text-white font-bold">등록하기</button>
-
-                <div>
-                    {% if errCount %}
-                    <span>중복된 아이디 갯수 : {{ errCount }}</span>
-                    {% endif %}
-                </div>
-            </div>
-
-        </div>
         </form>
 
     </div>
@@ -49,8 +49,8 @@
                         <th class="border border-slate-300">아이디</th>
                         <th class="border border-slate-300">비밀번호</th>
                         <th class="border border-slate-300">업데이트</th>
-                        <th class="border border-slate-300">상태 <button type="submit" name="order_status" value="ok"><i class="fa fa-caret-down"
-                                    aria-hidden="true"></i></button></th>
+                        <th class="border border-slate-300">상태 <button type="submit" name="order_status" value="ok"><i
+                                    class="fa fa-caret-down" aria-hidden="true"></i></button></th>
                         <th class="border border-slate-300">부가1</th>
                         <th class="border border-slate-300">부가2</th>
                         <th class="border border-slate-300">아이디정보</th>
