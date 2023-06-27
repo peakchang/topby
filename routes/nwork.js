@@ -228,9 +228,15 @@ router.use('/', chkRateMaster, async (req, res, next) => {
     }
     const getAllIdSql = `SELECT * FROM nwork ${orderSql}`;
     const getAllIdList = await nsql_con.promise().query(getAllIdSql);
-    const get_all_id_list = getAllIdList[0]
+    const get_all_id_list = getAllIdList[0];
+    
+    const get_all_count = get_all_id_list.length;
+    const get_error_count = get_all_id_list.filter(e => e.n_status).length;
+    console.log(get_all_count);
+    console.log(get_error_count);
 
-    res.render('nwork/nwork', { get_all_id_list, errCount, pathname })
+
+    res.render('nwork/nwork', { get_all_id_list, errCount, pathname, get_all_count, get_error_count })
 })
 
 
