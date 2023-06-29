@@ -66,6 +66,8 @@ app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use('/lib', express.static(path.join(__dirname, 'db_lib')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/file',express.static(__dirname + '/file'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));

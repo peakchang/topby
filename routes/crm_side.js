@@ -120,50 +120,56 @@ router.post('/duplicate_mini', async (req, res, next) => {
 
     console.log('여기로는 오는거니?');
 
-    const chkArr = req.body['chkIdListVal[]'];
-    for (let i = 0; i < chkArr.length; i++) {
-        const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
+    try {
+        const chkArr = req.body['chkIdListVal[]'];
+        for (let i = 0; i < chkArr.length; i++) {
+            const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
 
-        const copyFromHyNum = req.body['hyIdList[]'][Number(chkArr[i])]
+            const copyFromHyNum = req.body['hyIdList[]'][Number(chkArr[i])]
 
-        if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
-            copyHyNum = req.body['duplicateSiteIdValList[]'];
-        } else {
-            copyHyNum = req.body['duplicateSiteIdValList[]'][i];
-        }
-
-        const getFolder = `uploads/${copyFromHyNum}`;
-        const setFolder = `uploads/${copyHyNum}`;
-
-        try {
-            fs.mkdirSync(setFolder)
-        } catch (error) {
-            console.log('folder is already!!');
-        }
-
-        fs.readdir(getFolder, function (error, filelist) {
-
-            for (let i = 0; i < filelist.length; i++) {
-                const source = `${getFolder}/${filelist[i]}`;
-                const destination = `${setFolder}/${filelist[i]}`;
-                const options = {
-                    clobber: true
-                };
-
-                ncp(source, destination, options, function (err) {
-                    if (err) {
-                        return console.error(err);
-                    }
-                    console.log('done!');
-                });
+            if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
+                copyHyNum = req.body['duplicateSiteIdValList[]'];
+            } else {
+                copyHyNum = req.body['duplicateSiteIdValList[]'][i];
             }
-        });
+
+            const getFolder = `uploads/${copyFromHyNum}`;
+            const setFolder = `uploads/${copyHyNum}`;
+
+            try {
+                fs.mkdirSync(setFolder)
+            } catch (error) {
+                console.log('folder is already!!');
+            }
+
+            fs.readdir(getFolder, function (error, filelist) {
+
+                for (let i = 0; i < filelist.length; i++) {
+                    const source = `${getFolder}/${filelist[i]}`;
+                    const destination = `${setFolder}/${filelist[i]}`;
+                    const options = {
+                        clobber: true
+                    };
+
+                    ncp(source, destination, options, function (err) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        console.log('done!');
+                    });
+                }
+            });
 
 
-        const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
+            const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
 
-        await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
+            await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
+        }
+    } catch (error) {
+        console.log(error.message);
     }
+
+
 
     res.json({ status: 'success!' })
 })
@@ -173,7 +179,7 @@ router.post('/duplicate_mini', async (req, res, next) => {
 
 // chkRateMaster
 router.get('/detail/:id', async (req, res, next) => {
-    
+
     const getHyInfoSql = `SELECT * FROM hy_site WHERE hy_id = ?`;
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
@@ -186,7 +192,7 @@ router.get('/detail/:id', async (req, res, next) => {
 
     // get_site_list
 
-    if(!get_hy_info){
+    if (!get_hy_info) {
         return false;
     }
 
@@ -201,7 +207,7 @@ router.get('/detail/:id', async (req, res, next) => {
     } catch (error) {
         get_hy_info.hy_image_arr = []
     }
-    
+
 
 
     res.render('crm/work_side_detail_test', { get_hy_info, get_site_list })
@@ -276,19 +282,19 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
     const searchImgSite = await sql_con.promise().query(searchImgSiteSql, [req.body.hy_num]);
     const search_img_site = searchImgSite[0][0];
     console.log(search_img_site);
-    if(req.body.original_name == search_img_site.hy_main_image){
+    if (req.body.original_name == search_img_site.hy_main_image) {
         console.log('여기가 메인 이미지!!!');
         const updateMainImeUrl = `/img/${req.body.hy_num}/${req.file.originalname}`;
         const updateImgListSql = `UPDATE hy_site SET hy_main_image = ? WHERE hy_num = ?`;
         await sql_con.promise().query(updateImgListSql, [updateMainImeUrl, req.body.hy_num]);
-    }else{
+    } else {
         console.log('여기가 이미지 리스트!!!!');
         console.log(search_img_site.hy_image_list);
         let resultImgStr = '';
-        if(!search_img_site.hy_image_list.includes('img')){
+        if (!search_img_site.hy_image_list.includes('img')) {
             // 'img' 가 없으면 싹 지우고 새 내용
             resultImgStr = `/img/${req.body.hy_num}/${req.file.originalname}`;
-        }else{
+        } else {
             // 배열로 변경해서 해당 내용 있으면 교체, 없으면 추가 해서 새내용
             const getImgListPreArr = search_img_site.hy_image_list.split(',');
             getImgListPreArr.push(`/img/${req.body.hy_num}/${req.file.originalname}`);
@@ -299,18 +305,18 @@ router.use('/new_change', uploadSimple.single('change_img'), async (req, res, ne
         await sql_con.promise().query(updateImgListSql, [resultImgStr, req.body.hy_num]);
 
 
-        
-        
+
+
     }
     const tempFileArr = req.body.original_name.split('/');
     const delFile = `uploads/${req.body.hy_num}/${tempFileArr[tempFileArr.length - 1]}`;
-    fs.unlink(delFile, function(err){
-        if(err) {
-          console.log("Error : ", err)
+    fs.unlink(delFile, function (err) {
+        if (err) {
+            console.log("Error : ", err)
         }
-      })
+    })
     console.log('=======================================================================================================================================================================================================================');
-    
+
 
     try {
         fs.readdirSync(`uploads/${req.body.hy_num}`);

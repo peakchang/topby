@@ -1,0 +1,7 @@
+User-agent: Google
+Allow:/
+User-agent: Yeti
+Allow:/
+User-agent : *
+Disallow: /crm
+Sitemap : /sitemap.xml

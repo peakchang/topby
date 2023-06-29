@@ -1,5 +1,6 @@
 const express = require('express');
 
+const xml2js = require('xml2js');
 const sql_con = require('../db_lib');
 const router = express.Router();
 var requestIp = require('request-ip');
@@ -10,6 +11,7 @@ const { aligoKakaoNotification } = require('../db_lib/back_lib')
 const app_root_path = require('app-root-path').path;
 
 const moment = require('moment');
+const { log } = require('winston');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -19,14 +21,68 @@ router.use((req, res, next) => {
 });
 
 
+router.get('/testxml', (req, res, next) => {
 
+    var obj = {
+        urlset: {
+            '$': {
+                'xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation': `http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd`
+            },
+            url: [
+                { loc: 'https://adpeak.kr/0', lastmod: '2023-06-28T01:39:46+00:00' },
+                { loc: 'https://adpeak.kr/11', lastmod: '2023-06-28T01:39:46+00:00' },
+                { loc: 'https://adpeak.kr/22', lastmod: '2023-06-28T01:39:46+00:00' }
+            ]
+        }
+    }
 
-router.get("/robots.txt", (req, res) => {
-    res.type("text/plain");
-    res.send(
-        "User-agent: *\nDisallow: /crm/\nAllow: /\n"
-    );
+    var builder = new xml2js.Builder();
+    var xml = builder.buildObject(obj);
+
+    fs.writeFile('public/test.xml', xml, function (err) {
+        if (err) throw err;
+        console.log('It\'s saved!');
+    });
+    res.send('dkdkdkdkdkdk')
 });
+
+
+// router.get("/robots.txt", (req, res) => {
+//     res.type("text/plain");
+//     const data = fs.readFileSync('/robots.txt');
+//     res.send(
+//         "User-agent: *\nAllow: /\nDisallow: /crm/\n"
+//     );
+// });
+
+// router.get("/sitemap.xml", async (req, res) => {
+
+//     const getHysiteListSql = `SELECT * FROM hy_site`;
+//     const getHySiteList = await sql_con.promise().query(getHysiteListSql)
+//     console.log(getHySiteList[0]);
+
+
+//     res.type("text/xml");
+//     const data = `
+//     <?xml version="1.0" encoding="UTF-8"?>
+//     <urlset
+//       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+//       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+//       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+//             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+//     <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+//     <url>
+//         <loc>https://adpeak.kr/</loc>
+//         <lastmod>2023-06-28T01:39:46+00:00</lastmod>
+//     </url>
+//     </urlset>
+//     `
+
+
+//     res.send();
+// });
 
 
 
@@ -104,8 +160,8 @@ router.use('/test', (req, res, next) => {
 router.get('/', async (req, res, next) => {
 
     var testString = "+8210.2222.3333"
-    var result = testString.replace('+82','').replace(/[^0-9]/g, "");
-    if (result.charAt(0) != '0'){
+    var result = testString.replace('+82', '').replace(/[^0-9]/g, "");
+    if (result.charAt(0) != '0') {
         result = `0${result}`
     }
     console.log(result);
