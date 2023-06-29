@@ -8,7 +8,7 @@ const xlsx = require("xlsx");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs')
-
+const xml2js = require('xml2js');
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
@@ -119,7 +119,7 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 router.post('/duplicate_mini', async (req, res, next) => {
 
     console.log('여기로는 오는거니?');
-
+    let errmessage = '';
     try {
         const chkArr = req.body['chkIdListVal[]'];
         for (let i = 0; i < chkArr.length; i++) {
@@ -166,10 +166,10 @@ router.post('/duplicate_mini', async (req, res, next) => {
             await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
         }
     } catch (error) {
-        console.log(error.message);
+        errmessage = error.message
     }
-    
-    res.json({ status: 'success!' })
+
+    res.json({ status: 'success!', errmessage })
 })
 
 
@@ -358,12 +358,13 @@ router.use('/new_change_end', async (req, res, next) => {
 // chkRateMaster
 router.use('/', async (req, res, next) => {
 
+    // 사이트맵 만들기
+    await chkSiteMap();
+
     console.log('메인으로 오는건 아니지??!!');
 
     let errorMessage = '';
     if (req.method == 'POST') {
-
-        console.log(req.body);
 
         try {
             if (req.body.submit_val == 'site_update') {
@@ -455,7 +456,6 @@ router.use('/', async (req, res, next) => {
     const getSiteListSql = `SELECT * FROM hy_site ${searchQuery} ORDER BY hy_id DESC ${pageQuery} `;
     const getSiteListAll = await sql_con.promise().query(getSiteListSql)
     const get_site_list = getSiteListAll[0];
-    console.log(get_site_list);
 
 
     // 
@@ -468,6 +468,56 @@ router.use('/', async (req, res, next) => {
 })
 
 
+
+const chkSiteMap = async () => {
+    console.log('사이트맵 만들기!!!!');
+    const getSiteListSql = `SELECT hy_num,hy_creted_at  FROM hy_site`;
+    const getSiteList = await sql_con.promise().query(getSiteListSql)
+    console.log(getSiteList[0]);
+
+    const addArr = getSiteList[0].map((e) => {
+        let dateStr;
+        if (e.hy_creted_at) {
+            var date = new Date(e.hy_creted_at);
+            dateStr = `${date.getFullYear()}-${date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}T${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}:${date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()}+00:00`
+
+        } else {
+            var date = new Date();
+            let getMonth;
+            if (date.getMonth() < 10) {
+                getMonth = `0${date.getMonth() + 1}`
+            } else {
+                getMonth = `${date.getMonth() + 1}`
+            }
+            dateStr = `${date.getFullYear()}-${date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}T${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}:${date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()}+00:00`
+        }
+
+        const tempObj = { loc: `https://adpeak.kr/${e.hy_num}`, lastmod: `${dateStr}` }
+        return tempObj
+    })
+    console.log(addArr);
+
+    var obj = {
+        urlset: {
+            '$': {
+                'xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation': `http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd`
+            },
+            url: [
+                { loc: 'https://adpeak.kr/', lastmod: '2023-06-28T01:39:46+00:00' },
+                addArr
+            ]
+        }
+    }
+    var builder = new xml2js.Builder();
+    var xml = builder.buildObject(obj);
+
+    fs.writeFile('public/sitemap.xml', xml, function (err) {
+        if (err) throw err;
+        console.log('It\'s saved!');
+    });
+}
 
 
 module.exports = router;

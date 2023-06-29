@@ -96,7 +96,7 @@
             <td class="border border-slate-300 py-2 text-center">
                 <input type="hidden" class="site_id" name="site_id" value="{{ site.hy_id }}">
                 <input type="checkbox" name="table_num" value="{{ loop.index0 }}">
-                
+
             </td>
             <td class="border border-slate-300 py-2 text-center">
                 <input type="text"
@@ -113,9 +113,10 @@
                     <button type="button" class="p-2 rounded-lg bg-green-200">바로가기</button>
                 </a>
 
-                {% if site.hy_main_image and site.hy_image_list and site.hy_num not in site.hy_main_image and site.hy_num not in site.hy_image_list  %}
+                <!-- {% if site.hy_main_image and site.hy_image_list and site.hy_num not in site.hy_main_image and
+                site.hy_num not in site.hy_image_list %}
                 <button type="button" class="change_new bg-orange-400 py-2 rounded-lg px-2 text-white">변경</button>
-                {% endif %}
+                {% endif %} -->
             </td>
 
         </tr>
@@ -202,10 +203,10 @@
                 console.log(error);
             }
 
-            
+
         }
 
-        
+
 
 
 
@@ -215,7 +216,7 @@
 
     })
 
-    $('.change_new_end').click(async function() {
+    $('.change_new_end').click(async function () {
         console.log('asldjflajsdlifjasfd');
         console.log('마지막으로 와야지?!?!?!?!?!??!');
         const hyNum = this.parentNode.parentNode.children[1].firstElementChild.value;
@@ -366,7 +367,12 @@
             url: "/crm/side/duplicate_mini",
             data: params,
             success: function (res) {
-                location.reload();
+                console.log(res);
+                if (res.errmessage) {
+                    alert(res.errmessage)
+                } else {
+                    location.reload();
+                }
             },
             error: function (XMLHttpRequest, textStatus, err) {
                 console.log(err);
