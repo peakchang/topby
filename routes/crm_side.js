@@ -495,6 +495,9 @@ const chkSiteMap = async () => {
         const tempObj = { loc: `https://adpeak.kr/side/${e.hy_num}`, lastmod: `${dateStr}` }
         return tempObj
     })
+    
+    addArr.unshift({ loc: 'https://adpeak.kr/', lastmod: '2022-06-28T01:39:46+00:00' })
+
     console.log(addArr);
 
     var obj = {
@@ -504,10 +507,7 @@ const chkSiteMap = async () => {
                 'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
                 'xsi:schemaLocation': `http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd`
             },
-            url: [
-                { loc: 'https://adpeak.kr/', lastmod: '2023-06-28T01:39:46+00:00' },
-                addArr
-            ]
+            url: addArr
         }
     }
     var builder = new xml2js.Builder();
