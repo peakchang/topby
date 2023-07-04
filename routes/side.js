@@ -20,6 +20,8 @@ router.use((req, res, next) => {
 
 router.use('/:name', async (req, res, next) => {
 
+    console.log('이게 여기로 와야 정상인데 맞는거지?!??!?!?!?!');
+
     if (req.method == "POST") {
 
         var setPhone = `${req.body.phnum_1}${req.body.phnum_2}${req.body.phnum_3}`
@@ -39,6 +41,7 @@ router.use('/:name', async (req, res, next) => {
             mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
             mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
+            console.log(findUser);
             for (let p = 0; p < findUser.length; p++) {
                 console.log('Email Send GO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                 const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
