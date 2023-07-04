@@ -32,8 +32,9 @@ router.use('/:name', async (req, res, next) => {
 
 
         try {
-            const userFindSql = `SELECT * FROM users WHERE manage_estate = ?;`;
-            const findUserData = await sql_con.promise().query(userFindSql, [req.body.hy_set_site]);
+            const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
+
+            const findUserData = await sql_con.promise().query(userFindSql);
             const findUser = findUserData[0];
 
             const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
