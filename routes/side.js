@@ -32,30 +32,35 @@ router.use('/:name', async (req, res, next) => {
 
 
         try {
-            const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
 
-            const findUserData = await sql_con.promise().query(userFindSql);
-            const findUser = findUserData[0];
+            console.log('등록된 현장 명은?!?!?!? ', req.body.hy_set_site);
+            if (req.body.hy_set_site) {
+                const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
 
-            const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
-            const mailContent = `현장: ${req.body.hy_set_site} / 이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
-            mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
-            mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
+                const findUserData = await sql_con.promise().query(userFindSql);
+                const findUser = findUserData[0];
 
-            console.log(findUser);
-            for (let p = 0; p < findUser.length; p++) {
-                console.log('Email Send GO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
-                const mailContentManager = `이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
-                mailSender.sendEmail(findUser[p].user_email, mailSubjectManager, mailContentManager);
+                const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
+                const mailContent = `현장: ${req.body.hy_set_site} / 이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
+                mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
+                mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
-                const receiverStr = `${setPhone}`
+                console.log(findUser);
+                for (let p = 0; p < findUser.length; p++) {
+                    console.log('Email Send GO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                    const mailSubjectManager = `${req.body.af_mb_name} 고객 DB 접수되었습니다.`;
+                    const mailContentManager = `이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
+                    mailSender.sendEmail(findUser[p].user_email, mailSubjectManager, mailContentManager);
 
-                var customerInfo = { ciName: req.body.af_mb_name, ciCompany: '탑분양정보', ciSite: req.body.hy_set_site, ciPhone: findUser[p].user_phone, ciReceiver: receiverStr }
-                aligoKakaoNotification_formanager(req, customerInfo)
+                    const receiverStr = `${setPhone}`
+
+                    var customerInfo = { ciName: req.body.af_mb_name, ciCompany: '탑분양정보', ciSite: req.body.hy_set_site, ciPhone: findUser[p].user_phone, ciReceiver: receiverStr }
+                    aligoKakaoNotification_formanager(req, customerInfo)
+                }
             }
 
-            
+
+
         } catch (error) {
 
         }
