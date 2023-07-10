@@ -82,6 +82,8 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
+    // ALTER TABLE hy_site ADD COLUMN hy_counter INT(255) AFTER hy_callnumber;
+
 
     let makeVisitChkTable = `CREATE TABLE IF NOT EXISTS visit_chk(
         vc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

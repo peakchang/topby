@@ -35,7 +35,7 @@ router.use('/:name', async (req, res, next) => {
 
             console.log('등록된 현장 명은?!?!?!? ', req.body.hy_set_site);
             if (req.body.hy_set_site) {
-                const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
+                const userFindSql = `SELECT * FROM users W HERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
 
                 const findUserData = await sql_con.promise().query(userFindSql);
                 const findUser = findUserData[0];
@@ -75,19 +75,34 @@ router.use('/:name', async (req, res, next) => {
 
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-    const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
-    const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
-    if (nameChk[0][0]) {
-        const setData = nameChk[0][0];
-        if (setData.hy_image_list) {
-            setData.hy_image_list_arr = setData.hy_image_list.split(',');
+    try {
+        const nameChkSql = `SELECT * FROM hy_site WHERE hy_num = ?`;
+        const nameChk = await sql_con.promise().query(nameChkSql, [req.params.name]);
+        if (nameChk[0][0]) {
+            const setData = nameChk[0][0];
+            if (setData.hy_image_list) {
+                setData.hy_image_list_arr = setData.hy_image_list.split(',');
+            }
+
+            const updateCounerPage = `UPDATE hy_site SET hy_counter = ? WHERE hy_num = ?`;
+            if(!setData.hy_counter && !req.user){
+                await sql_con.promise().query(updateCounerPage, [1, req.params.name]);
+            }else if(setData.hy_counter && !req.user){
+                const getCount = Number(setData.hy_counter) + 1;
+                await sql_con.promise().query(updateCounerPage, [getCount, req.params.name]);
+            }
+
+            res.render('side/hynjang', { setData })
+        } else {
+            const err = new Error('존재하지 않는 url 입니다');
+            err.status = 404;
+            next(err);
         }
-        res.render('side/hynjang', { setData })
-    } else {
-        const err = new Error('존재하지 않는 url 입니다');
-        err.status = 404;
-        next(err);
+    } catch (error) {
+        console.log(error.message);
     }
+
+
 })
 
 

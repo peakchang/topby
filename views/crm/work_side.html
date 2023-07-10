@@ -88,6 +88,7 @@
             <th class="border border-slate-300 py-2 text-center">아이디</th>
             <th class="border border-slate-300 py-2 text-center">현장명</th>
             <th class="border border-slate-300 py-2 text-center">바로보기</th>
+            <th class="border border-slate-300 py-2 text-center">조회수</th>
         </tr>
 
         {% for site in get_site_list %}
@@ -117,6 +118,15 @@
                 site.hy_num not in site.hy_image_list %}
                 <button type="button" class="change_new bg-orange-400 py-2 rounded-lg px-2 text-white">변경</button>
                 {% endif %} -->
+            </td>
+
+            <td class="border border-slate-300 py-2 text-center">
+                {% if site.hy_counter %}
+                {{ site.hy_counter }}
+                {% else %}
+                <span>조회수 없음</span>
+                {% endif %}
+                
             </td>
 
         </tr>
