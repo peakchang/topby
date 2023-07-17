@@ -195,11 +195,11 @@
 
 <script>
 
-    $('.del_user').click(function(e){
+    $('.del_user').click(function (e) {
         const user_chk_all = document.querySelectorAll('.user_chk');
         var chk_list = [];
         for (let i = 0; i < user_chk_all.length; i++) {
-            if(user_chk_all[i].checked){
+            if (user_chk_all[i].checked) {
                 console.log(user_chk_all[i]);
                 var chkCheckBoxVal = user_chk_all[i].previousElementSibling.value
                 chk_list.push(parseInt(chkCheckBoxVal))
@@ -233,15 +233,18 @@
 
     $('.change_email').click(function () {
         const email_val = this.previousElementSibling.value;
-        const id_val = this.parentNode.parentNode.firstElementChild.value
+        const id_val = this.parentNode.parentNode.firstElementChild.firstElementChild.value
         console.log(email_val);
         console.log(id_val);
+
+
 
 
         axios.post('/crm/user_manage_update', { email_val, id_val }).then((res) => {
             console.log(res);
             location.reload()
         }).catch((err) => {
+            console.error(err)
             alert('이메일은 중복될수 없습니다. (다른 회원이 사용중인 이메일 입니다)')
             location.reload()
         })
