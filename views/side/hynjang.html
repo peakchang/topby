@@ -36,6 +36,18 @@
     <meta property="og:description" content="{{ setData.hy_description }}">
     <meta property="og:url" content="https://adpeak.kr/side/{{ setData.hy_num }}">
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EV29LC08JG">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-EV29LC08JG');
+    </script>
+
+
     {% if setData.hy_main_image %}
     <meta property="og:image" content="{{ setData.hy_main_image }}">
     {% endif %}
@@ -103,65 +115,6 @@
                 <img src="{{ setData.hy_main_image }}" alt="" class="mx-auto">
                 {% endif %}
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 border-t-2 my-3 py-3 border-b-2">
-                <table>
-                    <tr>
-                        <th class="py-1" style="width:50%">사&nbsp;&nbsp;업&nbsp;&nbsp;명</th>
-                        <td>{{ setData.hy_businessname }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-1" style="width:50%">분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;류</th>
-                        <td>{{ setData.hy_type }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-1" style="width:50%">규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모</th>
-                        <td>{{ setData.hy_scale }}</td>
-                    </tr>
-
-                </table>
-                <table>
-                    <tr>
-                        <th class="py-1" style="width:50%">전용면적</th>
-                        <td>{{ setData.hy_areasize }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-1" style="width:50%">세&nbsp;&nbsp;대&nbsp;&nbsp;수</th>
-                        <td>{{ setData.hy_house_number }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-1" style="width:50%">공급위치</th>
-                        <td>{{ setData.hy_location }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-1" style="width:50%">입주예정</th>
-                        <td>{{ setData.hy_scheduled }}</td>
-                    </tr>
-
-                </table>
-            </div>
-            <!-- <tr>
-                <th class="py-1">시&nbsp;&nbsp;공&nbsp;&nbsp;사111</th>
-                <td>{{ setData.hy_builder }}</td>
-            </tr>
-            <tr>
-                <th class="py-1">시&nbsp;&nbsp;행&nbsp;&nbsp;사</th>
-                <td>{{ setData.hy_conduct }}</td>
-            </tr> -->
-
-            <div class="border-b-2 mb-3 pb-3">
-                <div>
-                    <div
-                        class="border border-l-8 border-l-red-700 rounded-lg p-1 pl-6 font-semibold text-xl tracking-widest">
-                        현장 특장점</div>
-                </div>
-
-                <div>
-                    <div class="border rounded-lg p-4 mt-4 text-sm md:text-base">
-                        {{ setData.hy_features | striptags(true) | escape | nl2br }}
-                    </div>
-                </div>
-            </div>
-
 
             <form method="post">
                 <input type="hidden" name="hy_set_site" value="{{setData.hy_set_site}}">
@@ -223,6 +176,69 @@
 
                 </div>
             </form>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 border-t-2 my-3 py-3 border-b-2">
+                <table>
+                    <tr>
+                        <th class="py-1" style="width:50%">사&nbsp;&nbsp;업&nbsp;&nbsp;명</th>
+                        <td>{{ setData.hy_businessname }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-1" style="width:50%">분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;류</th>
+                        <td>{{ setData.hy_type }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-1" style="width:50%">규&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모</th>
+                        <td>{{ setData.hy_scale }}</td>
+                    </tr>
+
+                </table>
+                <table>
+                    <tr>
+                        <th class="py-1" style="width:50%">전용면적</th>
+                        <td>{{ setData.hy_areasize }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-1" style="width:50%">세&nbsp;&nbsp;대&nbsp;&nbsp;수</th>
+                        <td>{{ setData.hy_house_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-1" style="width:50%">공급위치</th>
+                        <td>{{ setData.hy_location }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-1" style="width:50%">입주예정</th>
+                        <td>{{ setData.hy_scheduled }}</td>
+                    </tr>
+
+                </table>
+            </div>
+            <!-- <tr>
+                <th class="py-1">시&nbsp;&nbsp;공&nbsp;&nbsp;사111</th>
+                <td>{{ setData.hy_builder }}</td>
+            </tr>
+            <tr>
+                <th class="py-1">시&nbsp;&nbsp;행&nbsp;&nbsp;사</th>
+                <td>{{ setData.hy_conduct }}</td>
+            </tr> -->
+
+            <div class="border-b-2 mb-3 pb-3">
+                <div>
+                    <div
+                        class="border border-l-8 border-l-red-700 rounded-lg p-1 pl-6 font-semibold text-xl tracking-widest">
+                        현장 특장점</div>
+                </div>
+
+                <div>
+                    <div class="border rounded-lg p-4 mt-4 text-sm md:text-base">
+                        {{ setData.hy_features | striptags(true) | escape | nl2br }}
+                    </div>
+                </div>
+            </div>
+
+
+
 
             <!-- {{setData.hy_image_list_arr}} -->
             {% if setData.hy_image_list_arr %}
