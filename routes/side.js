@@ -33,12 +33,15 @@ router.use('/:name', async (req, res, next) => {
 
         try {
 
-            console.log('등록된 현장 명은?!?!?!? ', req.body.hy_set_site);
+            console.log('hyunjang???? ', req.body.hy_set_site);
             if (req.body.hy_set_site) {
+                console.log('inner push work~~~~~~~~');
                 const userFindSql = `SELECT * FROM users W HERE manage_estate LIKE '%${req.body.hy_set_site}%';`;
 
                 const findUserData = await sql_con.promise().query(userFindSql);
                 const findUser = findUserData[0];
+
+                console.log(findUser);
 
                 const mailSubject = `${req.body.hy_set_site} 고객명 ${req.body.af_mb_name} 접수되었습니다.`;
                 const mailContent = `현장: ${req.body.hy_set_site} / 이름 : ${req.body.af_mb_name} / 전화번호 : ${setPhone}`;
@@ -58,11 +61,8 @@ router.use('/:name', async (req, res, next) => {
                     aligoKakaoNotification_formanager(req, customerInfo)
                 }
             }
-
-
-
         } catch (error) {
-
+            console.error(error.message);
         }
 
 
