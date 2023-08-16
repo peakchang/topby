@@ -546,14 +546,15 @@
         })
 
         $('#user_form').submit(function () {
-            const af_mb_name = document.querySelector('.af_mb_name')
+
+            
+            const af_mb_name = document.querySelector('input[name="af_mb_name"]')
             if (!af_mb_name.value) {
                 alert('이름을 입력해주세요')
                 return false;
             }
-
-            const phnum_2 = document.querySelector('.phnum_2')
-            const phnum_3 = document.querySelector('.phnum_3')
+            const phnum_2 = document.querySelector('input[name="phnum_2"]')
+            const phnum_3 = document.querySelector('input[name="phnum_3"]')
             if (!phnum_2.value || !phnum_3.value) {
                 alert('전화번호를 입력해주세요')
                 return false;
@@ -569,8 +570,6 @@
                 alert('광고성 정보수신 동의 항목에 체크해주세요')
                 return false;
             }
-
-
         })
     </script>
 </body>
