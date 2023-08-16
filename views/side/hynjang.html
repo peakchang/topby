@@ -547,25 +547,25 @@
 
         $('#user_form').submit(function () {
             const af_mb_name = document.querySelector('.af_mb_name')
-            if (!af_mb_name) {
+            if (!af_mb_name.value) {
                 alert('이름을 입력해주세요')
                 return false;
             }
 
             const phnum_2 = document.querySelector('.phnum_2')
             const phnum_3 = document.querySelector('.phnum_3')
-            if (!phnum_2 || !phnum_3) {
+            if (!phnum_2.value || !phnum_3.value) {
                 alert('전화번호를 입력해주세요')
                 return false;
             }
 
             const personal_info = document.querySelector('.personal_info')
             const ad_info = document.querySelector('.ad_info')
-            if (!personal_info) {
+            if (!personal_info.checked) {
                 alert('개인정보 수집 동의 항목에 체크해주세요')
                 return false;
             }
-            if (!ad_info) {
+            if (!ad_info.checked) {
                 alert('광고성 정보수신 동의 항목에 체크해주세요')
                 return false;
             }
