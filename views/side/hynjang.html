@@ -47,6 +47,14 @@
         gtag('config', 'G-EV29LC08JG');
     </script>
 
+    <!-- 전환페이지 설정 -->
+    <script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+    <script type="text/javascript">
+        var _nasa = {};
+        if (window.wcs) _nasa["cnv"] = wcs.cnv("1", "10"); // 전환유형, 전환가치 설정해야함. 설치매뉴얼 참고
+    </script>
+
+
 
     {% if setData.hy_main_image %}
     <meta property="og:image" content="{{ setData.hy_main_image }}">
@@ -219,8 +227,7 @@
 
             <form method="post" id="user_form">
                 <input type="hidden" name="hy_set_site" value="{{setData.hy_set_site}}">
-                <div
-                    class="container my-4 mx-auto max-w-4xl px-1 border relative py-5 rounded-lg interest-area">
+                <div class="container my-4 mx-auto max-w-4xl px-1 border relative py-5 rounded-lg interest-area">
 
 
                     <div class="text-center">
@@ -231,21 +238,23 @@
                             <i class="fa fa-star-half-o" aria-hidden="true"></i> 관심고객 등록하기 <i class="fa fa-star-half-o"
                                 aria-hidden="true"></i>
                         </h2> -->
-    
-    
-    
+
+
+
                         <div class="my-4 w-full md:w-3/4 mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-    
-                            <div class="flex items-center border border-gray-300 rounded-full overflow-hidden py-1 px-3">
+
+                            <div
+                                class="flex items-center border border-gray-300 rounded-full overflow-hidden py-1 px-3">
                                 <div class="w-1/5 border-r">이름</div>
                                 <div class="w-4/5">
                                     <input type="text" name="af_mb_name"
                                         class="w-full border-none rounded-full focus:ring-0" placeholder="이름을 입력하세요!">
                                 </div>
                             </div>
-    
-    
-                            <div class="flex items-center border border-gray-300 rounded-full overflow-hidden py-1 px-3">
+
+
+                            <div
+                                class="flex items-center border border-gray-300 rounded-full overflow-hidden py-1 px-3">
                                 <div class="w-1/5 border-r">연락처</div>
                                 <div class="w-4/5 flex">
                                     <input type="text" name="phnum_1" value="010"
@@ -259,15 +268,15 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="w-3/4 md:w-1/2 mx-auto py-1">
                             <label class="flex items-center gap-2">
                                 <input type="checkbox" class="allchk">
                                 <span>전체동의</span>
                             </label>
                         </div>
-    
-    
+
+
                         <div class="w-3/4 md:w-1/2 mx-auto text-xs md:text-sm py-1">
                             <label class="flex items-center gap-2">
                                 <input type="checkbox" class="personal_info" checked>
@@ -278,12 +287,13 @@
                                 </button>
                             </label>
                         </div>
-    
+
                         <div class="w-3/4 md:w-1/2 mx-auto text-xs md:text-sm pb-4">
                             <label class="flex items-center gap-2">
                                 <input type="checkbox" class="ad_info" checked>
                                 <span>광고성 정보수신 동의</span>
-                                <button type="button" data-modal-target="ad_info_modal" data-modal-toggle="ad_info_modal">
+                                <button type="button" data-modal-target="ad_info_modal"
+                                    data-modal-toggle="ad_info_modal">
                                     [보기]
                                 </button>
                             </label>
@@ -292,7 +302,7 @@
                             <img src="/img/mini_site/success_btn.webp" alt="" class="max-w-fit w-full mx-auto">
                         </button>
                     </div>
-                    
+
             </form>
 
 
@@ -465,18 +475,32 @@
 
     </button> -->
 
-    <div class="fixed bottom-6 right-3 md:right-7 z-10">
+    <div class="fixed bottom-6 right-3 md:right-7 z-10 hidden md:block">
         <a href="https://pf.kakao.com/_sxmHKxj/chat" target="_blank">
-            <button class="border rounded-full hidden md:block w-28 mb-3">
+            <button class="border rounded-full block w-28 mb-3">
                 <img src="/img/mini_site/right_fix_katalk.png" alt="">
             </button>
         </a>
 
-        <button class="border rounded-full hidden md:block w-28 mb-3">
-            <img src="/img/mini_site/right_fix_call.png" alt="">
-        </button>
+        {% if setData.hy_callnumber %}
+        <div class="border rounded-full w-28 h-28 mb-3 bg-black text-white flex justify-center items-center">
+            <div class="text-center leading-none">
+                <p class="font-bold text-xl">대표번호</p>
+                <p class="font-extrabold text-xl">{{setData.hy_callnumber}}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="border rounded-full w-28 h-28 mb-3 bg-black text-white flex justify-center items-center">
+            <div class="text-center leading-none">
+                <p class="font-bold text-xl">대표번호</p>
+                <p class="font-extrabold text-xl">1644</p>
+                <p class="font-extrabold text-xl">9714</p>
+            </div>
+        </div>
+        {% endif %}
 
-        <button class="border border-emerald-600 p-5 rounded-full bg-emerald-600 move-interest hidden md:block">
+
+        <button class="border border-emerald-600 w-28 h-28 p-5 rounded-full bg-emerald-600 move-interest block">
             <span class="animate-pulse font-semibold text-xl text-white">
                 관심고객<br>
                 등록하기
@@ -490,11 +514,21 @@
         style="background-color: rgba( 0, 34, 102, 0.7 );">
 
 
+        {% if setData.hy_callnumber %}
+        <a href="TEL:{{setData.hy_callnumber}}">
+            <div>
+                <img src="/img/mini_site/call_btn.webp" alt="">
+            </div>
+        </a>
+        {% else %}
         <a href="TEL:1644-9714">
             <div>
                 <img src="/img/mini_site/call_btn.webp" alt="">
             </div>
         </a>
+        {% endif %}
+
+
 
         <a href="https://pf.kakao.com/_sxmHKxj/chat" target="_blank">
             <div>
@@ -547,7 +581,7 @@
 
         $('#user_form').submit(function () {
 
-            
+
             const af_mb_name = document.querySelector('input[name="af_mb_name"]')
             if (!af_mb_name.value) {
                 alert('이름을 입력해주세요')
@@ -572,4 +606,17 @@
             }
         })
     </script>
+
+    <!-- 공통 적용 스크립트 , 모든 페이지에 노출되도록 설치. 단 전환페이지 설정값보다 항상 하단에 위치해야함 -->
+    <script type="text/javascript" src="//wcs.naver.net/wcslog.js"> </script>
+    <script type="text/javascript">
+        if (!wcs_add) var wcs_add = {};
+        wcs_add["wa"] = "s_48e9da352f0a";
+        if (!_nasa) var _nasa = {};
+        if (window.wcs) {
+            wcs.inflow();
+            wcs_do(_nasa);
+        }
+    </script>
+
 </body>
