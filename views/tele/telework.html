@@ -58,8 +58,8 @@
                 </button>
             </a>
         </div>
-        
-        
+
+
         <form>
             <div class="table_wrap">
                 <div class="table_area">
@@ -139,18 +139,31 @@
                                 {% if user.authvalue %}
                                 <div>
                                     <button type="button" value="update"
-                                        class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">수정</button>
+                                        class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">
+                                        수정
+                                    </button>
                                     {% else %}
                                     <div>
                                         <button type="button" value="make"
-                                            class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">발급</button>
+                                            class="py-1 px-2 bg-emerald-700 ml-1 rounded text-white uid_work">
+                                            발급
+                                        </button>
                                         {% endif %}
 
                                         <button type="button" value="delete"
-                                            class="py-1 px-2 bg-indigo-600 ml-1 rounded text-white uid_work">삭제</button>
+                                            class="py-1 px-2 bg-indigo-600 ml-1 rounded text-white uid_work">
+                                            삭제
+                                        </button>
 
                                         <button type="button"
-                                            class="py-1 px-2 bg-rose-600 ml-1 rounded text-white uid_copy">복사</button>
+                                            class="py-1 px-2 bg-rose-600 ml-1 rounded text-white uid_copy">
+                                            복사
+                                        </button>
+
+                                        <button type="button" value="mac_initial"
+                                            class="py-1 px-2 bg-amber-600 ml-1 rounded text-white mac_initial">
+                                            이동
+                                        </button>
                                     </div>
 
 
@@ -253,6 +266,20 @@
 
         })
 
+        $('.mac_initial').click(function (e) {
+            const id_val = this.parentNode.parentNode.parentNode.firstElementChild.firstElementChild.value;
+            const work_type = this.value
+            console.log(id_val);
+            console.log(work_type);
+            axios.post('/telework/updatework', { work_type, id_val }).then((res) => {
+                console.log(res);
+                location.reload();
+                alert('자리이동 준비가 완료 되었습니다.')
+            }).catch((err) => {
+                console.error(err.message);
+            })
+        })
+
         $('.uid_copy').click(function (e) {
             console.log(this.parentNode.previousElementSibling.innerHTML.trim());
             const copy_uid = this.parentNode.previousElementSibling.innerHTML.trim();
@@ -267,6 +294,8 @@
             var copy = document.execCommand('copy');
             alert('클립보드에 복사 되었습니다. ctrl + v 로 붙여넣기 해주세요!')
         })
+
+
 
     </script>
 </body>

@@ -30,6 +30,9 @@ router.post('/updatework', async (req, res, next) => {
     } else if (req.body.link_val) {
         const linkUpdateUidSql = `UPDATE hidden_link SET hidden_link = ? WHERE hidden_chk = ?`;
         await sql_con.promise().query(linkUpdateUidSql, [req.body.link_val, 'main']);
+    } else if(req.body.work_type == 'mac_initial'){
+        const initialMacQuery = `UPDATE users SET macvalue = ? WHERE id = ?`;
+        await sql_con.promise().query(initialMacQuery, [null, req.body.id_val]);
     }
 
     res.send('어떻게 되었니?!?!?!?!?')
