@@ -570,10 +570,6 @@
             document.querySelector('.ad_info').checked = this.checked;
         })
 
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log('레디레디레디!!!!!!!!!!!');
-        });
-
         $('.move-interest').click(function () {
             const interestArea = document.querySelector('.get-interest');
             interestArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -618,5 +614,16 @@
             wcs_do(_nasa);
         }
     </script>
+
+    {{setData.hy_num}}
+
+    {%if setData.hy_num == 'hy288'%}
+    <!-- Smartlog -->
+    <script type="text/javascript"> 
+        var hpt_info={'_account':'UHPT-24243', '_server': 'a26'};
+    </script>
+    <script language="javascript" src="//cdn.smlog.co.kr/core/smart.js" charset="utf-8"></script>
+    <noscript><img src="//a26.smlog.co.kr/smart_bda.php?_account=24243" style="display:none;width:0;height:0;" border="0"/></noscript>
+    {% endif %}
 
 </body>
