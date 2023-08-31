@@ -49,7 +49,6 @@ router.get('/', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const sendMsg = `인터넷 초특가 렌티입니다. 사이트를 확인해주세요 renty.co.kr`;
     var getData = req.body
     console.log(`The first data we got was?! ${getData}`);
 
@@ -78,6 +77,11 @@ router.post('/', async (req, res) => {
 
         console.log(`show LeadsData : ${LeadsData}`);
         console.log(`show formData : ${formData}`);
+
+        if(formData.name.includes('rich')){
+            console.log('여기는 리치분양꺼!!!!');
+            return res.sendStatus(200);
+        }
 
 
         // 테스트로 새로 만들자!!
@@ -234,8 +238,9 @@ router.post('/', async (req, res) => {
         }
 
 
-        res.sendStatus(200);
         console.log('success!!!!!');
+        return res.sendStatus(200);
+        
     } catch (error) {
 
         console.log(error);
@@ -245,8 +250,6 @@ router.post('/', async (req, res) => {
         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
 
         res.sendStatus(200);
-
-
     }
 
 })
