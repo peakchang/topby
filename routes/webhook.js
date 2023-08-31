@@ -109,7 +109,7 @@ router.post('/', async (req, res) => {
         if (getFormData.name.includes('rich')) {
             console.log('This is Richies place!!');
 
-            axios.post('https://richby.co.kr/webhook/richhook', { test: 'gpogpgpgpgpgp' }).then((res) => {
+            axios.post('https://richby.co.kr/webhook/richhook', { baseData, getFormData }).then((res) => {
                 console.log(res.status);
             }).catch((err) => {
                 console.error(err);
