@@ -6,7 +6,9 @@ const request = require('request');
 const mysql_conn = require('../db_lib');
 const { sendSms } = require('../db_lib/back_lib');
 var token = process.env.TOKEN || 'token';
+const axios = require('axios');
 var received_updates = [];
+
 
 const { aligoKakaoNotification, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
 
