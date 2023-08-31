@@ -114,13 +114,16 @@ router.post('/', async (req, res) => {
         console.log('//////////////////////////////////////////');
 
         if (getFormData.name.includes('rich')) {
-            console.log('여기는 리치분양꺼!!!!');
+            console.log('This is Richies place!!');
 
             axios.post('https://richby.co.kr/webhook/richhook', { test: 'gpogpgpgpgpgp' }).then((res) => {
                 console.log(res.status);
             }).catch((err) => {
                 console.error(err);
             })
+
+            console.log('rich by is ok!!');
+
 
 
             return res.sendStatus(200);
