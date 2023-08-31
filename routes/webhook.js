@@ -109,7 +109,7 @@ router.post('/', async (req, res) => {
         if (getFormData.name.includes('rich')) {
             console.log('This is Richies place!!');
 
-            axios.post('https://richby.co.kr/webhook/richhook', { baseData, getFormData }).then((res) => {
+            axios.post('https://richby.co.kr/webhook/richhook', { baseData, getFormData, leadsId }).then((res) => {
                 console.log(res.status);
             }).catch((err) => {
                 console.error(err);
@@ -222,7 +222,7 @@ router.post('/', async (req, res) => {
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
-        // 고객한테 갈 알림톡
+        // 매니저한테 알림톡 발송
         const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
