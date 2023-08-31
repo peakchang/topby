@@ -78,15 +78,6 @@ router.post('/', async (req, res) => {
         console.log(`show LeadsData : ${LeadsData}`);
         console.log(`show formData : ${formData}`);
 
-
-        console.log(getFormData.name);
-
-        if (getFormData.name.includes('rich')) {
-            console.log('여기는 리치분양꺼!!!!');
-            return res.sendStatus(200);
-        }
-
-
         // 테스트로 새로 만들자!!
         const leadsData = getLeadsData.field_data;
         let baseData = {};
