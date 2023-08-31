@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
 
         console.log(getFormData.name);
 
-        if(getFormData.name.includes('rich')){
+        if (getFormData.name.includes('rich')) {
             console.log('여기는 리치분양꺼!!!!');
             return res.sendStatus(200);
         }
@@ -112,6 +112,19 @@ router.post('/', async (req, res) => {
         console.log('//////////////////////////////////////////');
         console.log(baseData);
         console.log('//////////////////////////////////////////');
+
+        if (getFormData.name.includes('rich')) {
+            console.log('여기는 리치분양꺼!!!!');
+
+            axios.post('https://richby.co.kr/webhook/richhook', { test: 'gpogpgpgpgpgp' }).then((res) => {
+                console.log(res.status);
+            }).catch((err) => {
+                console.error(err);
+            })
+
+
+            return res.sendStatus(200);
+        }
 
 
 
@@ -166,7 +179,7 @@ router.post('/', async (req, res) => {
         let getArr;
         let formInertSql = '';
         try {
-            
+
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
 
@@ -185,7 +198,7 @@ router.post('/', async (req, res) => {
 
 
 
-        
+
 
 
 
@@ -243,7 +256,7 @@ router.post('/', async (req, res) => {
 
         console.log('success!!!!!');
         return res.sendStatus(200);
-        
+
     } catch (error) {
 
         console.log(error);
