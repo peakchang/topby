@@ -79,7 +79,7 @@ router.post('/', async (req, res) => {
         console.log(`show formData : ${formData}`);
 
 
-        console.log(formData.name);
+        console.log(getFormData.name);
 
         // if(formData.name.includes('rich')){
         //     console.log('여기는 리치분양꺼!!!!');
