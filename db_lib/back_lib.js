@@ -250,6 +250,9 @@ ${customerInfo.ciSite} 관심고객으로 등록해 주셔서 감사드립니다
 
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
+        console.log('kakao send arrived~~!!');
+        console.log(req.body);
+        console.log(AuthData);
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
           // console.log('alligo', r);
           console.log('kakao send is success!!!!!!!!!!!!');
