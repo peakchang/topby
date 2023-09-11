@@ -493,6 +493,7 @@
 
             if (img_ext == 'jpg' || img_ext == 'png' || img_ext == 'jpeg' || img_ext == 'JPG' || img_ext == 'PNG' || img_ext == 'JPEG') {
                 // 확장자가 jpg / png / jpeg 일경우 webp로 변환해서 올리기
+                console.log("확장자가 jpg / png / jpeg 일경우 webp로 변환해서 올리기");
                 const reader = new FileReader();
                 reader.readAsDataURL(img_file);
                 reader.onload = function (r) {
@@ -531,15 +532,48 @@
                         imgForm.append("hy_num", hyNum);
 
                         // FormData의 key 값과 value값 찾기
-                        // let keys = imgForm.keys();
-                        // for (const pair of keys) {
-                        //     console.log(`name : ${pair}`);
-                        // }
+                        let keys = imgForm.keys();
+                        for (const pair of keys) {
+                            console.log(`name : ${pair}`);
+                        }
 
-                        // let values = imgForm.values();
-                        // for (const pair of values) {
-                        //     console.log(`value : ${pair}`);
-                        // }
+                        let values = imgForm.values();
+                        for (const pair of values) {
+                            console.log(`value : ${pair}`);
+                        }
+
+                        const config = {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        };
+
+                        const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
+                        console.log(getVal);
+
+                        if (work == 'list') {
+                            const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                            let nowImageList = nowImageListVal.value.split(',');
+
+                            if (nowImageList[0]) {
+                                nowImageList.push(getVal.data.getUploadImgUrl)
+                            } else {
+                                nowImageList = [getVal.data.getUploadImgUrl]
+                            }
+
+                            const nowImageStr = nowImageList.join(',');
+                            nowImageListVal.value = nowImageStr;
+
+
+                            sortWrapLoop(nowImageList);
+                        } else {
+                            console.log('여기서 이미지를 리턴 받을거야!!');
+                            console.log(getVal.data.getUploadImgUrl);
+                            const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
+                            mainImgFileName.value = getVal.data.getUploadImgUrl
+                        }
+
+
                     };
                 }
             } else {
@@ -555,38 +589,52 @@
                 imgForm.append("onimg", file, fileName);
                 imgForm.append("hy_num", hyNum);
 
-            }
+                const config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                };
 
-            const config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+
+                // FormData의 key 값과 value값 찾기
+                let keys = imgForm.keys();
+                for (const pair of keys) {
+                    console.log(`name : ${pair}`);
                 }
-            };
 
-            const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
-            console.log(getVal);
+                let values = imgForm.values();
+                for (const pair of values) {
+                    console.log(`value : ${pair}`);
+                }
 
-            if (work == 'list') {
-                const nowImageListVal = document.querySelector('input[name=hy_image_list]');
-                let nowImageList = nowImageListVal.value.split(',');
+                const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
+                console.log(getVal);
 
-                if (nowImageList[0]) {
-                    nowImageList.push(getVal.data.getUploadImgUrl)
+                if (work == 'list') {
+                    const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                    let nowImageList = nowImageListVal.value.split(',');
+
+                    if (nowImageList[0]) {
+                        nowImageList.push(getVal.data.getUploadImgUrl)
+                    } else {
+                        nowImageList = [getVal.data.getUploadImgUrl]
+                    }
+
+                    const nowImageStr = nowImageList.join(',');
+                    nowImageListVal.value = nowImageStr;
+
+
+                    sortWrapLoop(nowImageList);
                 } else {
-                    nowImageList = [getVal.data.getUploadImgUrl]
+                    console.log('여기서 이미지를 리턴 받을거야!!');
+                    console.log(getVal.data.getUploadImgUrl);
+                    const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
+                    mainImgFileName.value = getVal.data.getUploadImgUrl
                 }
 
-                const nowImageStr = nowImageList.join(',');
-                nowImageListVal.value = nowImageStr;
-
-
-                sortWrapLoop(nowImageList);
-            } else {
-                console.log('여기서 이미지를 리턴 받을거야!!');
-                console.log(getVal.data.getUploadImgUrl);
-                const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
-                mainImgFileName.value = getVal.data.getUploadImgUrl
             }
+
+
         }
     }
 
