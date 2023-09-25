@@ -223,7 +223,7 @@ exports.tableSetting = async () => {
             fs_estate_status VARCHAR(255),
             fs_estate_status_color VARCHAR(255),
             fs_estate_list TEXT,
-            fs_marketer_list VARCHAR(255),
+            fs_marketer_list VARCHAR(255)
         );`
     try {
         sql_con.query(makeFormTypesTable, async (err, result) => { });
@@ -235,7 +235,7 @@ exports.tableSetting = async () => {
 
 
 
-
+    // ALTER TABLE hy_site ADD COLUMN hy_kakao_link VARCHAR(255) AFTER hy_callnumber;
     // ALTER TABLE users ADD COLUMN status VARCHAR(5) AFTER rate;
     // ALTER TABLE users ADD COLUMN type VARCHAR(10) AFTER manage_estate;
     // ALTER TABLE users ADD COLUMN authvalue VARCHAR(120) AFTER type;
