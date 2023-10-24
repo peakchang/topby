@@ -541,17 +541,28 @@
                 <img src="/img/mini_site/call_btn.webp" alt="">
             </div>
         </a>
+
+        <a href="SMS:{{setData.hy_callnumber}}?body=테스트입니다.">
+            <div>
+                <img src="/img/mini_site/sms_btn.webp" alt="">
+            </div>
+        </a>
         {% else %}
         <a href="TEL:1644-9714">
             <div>
                 <img src="/img/mini_site/call_btn.webp" alt="">
             </div>
         </a>
+        <a href="SMS:1644-9714?body=테스트입니다.">
+            <div>
+                <img src="/img/mini_site/sms_btn.webp" alt="">
+            </div>
+        </a>
         {% endif %}
 
 
 
-        {% if setData.hy_kakao_link %}
+        <!-- {% if setData.hy_kakao_link %}
         <a href="{{setData.hy_kakao_link}}" target="_blank">
             <div>
                 <img src="/img/mini_site/katalk_btn.webp" alt="">
@@ -563,7 +574,7 @@
                 <img src="/img/mini_site/katalk_btn.webp" alt="">
             </div>
         </a>
-        {% endif %}
+        {% endif %} -->
 
         <!-- <button class="move-interest"><i class="fa fa-check-square-o" aria-hidden="true"></i> 관심고객 등록</button> -->
     </div>
