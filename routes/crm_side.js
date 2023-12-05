@@ -118,58 +118,94 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 
 router.post('/duplicate_mini', async (req, res, next) => {
 
-    console.log('여기로는 오는거니?');
-    let errmessage = '';
-    try {
-        const chkArr = req.body['chkIdListVal[]'];
-        for (let i = 0; i < chkArr.length; i++) {
-            const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
+    console.log('다시 시작하자고!');
 
-            const copyFromHyNum = req.body['hyIdList[]'][Number(chkArr[i])]
+    console.log(req.body);
 
-            if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
-                copyHyNum = req.body['duplicateSiteIdValList[]'];
-            } else {
-                copyHyNum = req.body['duplicateSiteIdValList[]'][i];
-            }
+    const sourceFolder = `uploads/${req.body.preHyIdVal}`;
+    const destinationFolder = `uploads/${req.body.targetHyId}`;
 
-            const getFolder = `uploads/${copyFromHyNum}`;
-            const setFolder = `uploads/${copyHyNum}`;
-
-            try {
-                fs.mkdirSync(setFolder)
-            } catch (error) {
-                console.log('folder is already!!');
-            }
-
-            fs.readdir(getFolder, function (error, filelist) {
-
-                for (let i = 0; i < filelist.length; i++) {
-                    const source = `${getFolder}/${filelist[i]}`;
-                    const destination = `${setFolder}/${filelist[i]}`;
-                    const options = {
-                        clobber: true
-                    };
-
-                    ncp(source, destination, options, function (err) {
-                        if (err) {
-                            return console.error(err);
-                        }
-                        console.log('done!');
-                    });
-                }
-            });
-
-
-            const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
-
-            await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
-        }
-    } catch (error) {
-        errmessage = error.message
+    // hy002 폴더가 없으면 생성합니다.
+    if (!fs.existsSync(destinationFolder)) {
+        fs.mkdirSync(destinationFolder);
     }
 
-    res.json({ status: 'success!', errmessage })
+    fs.readdir(sourceFolder, (err, files) => {
+        if (err) {
+            console.error('폴더를 읽는 도중 오류 발생:', err);
+            return;
+        }
+
+        // 각 파일을 복사합니다.
+        files.forEach((file) => {
+            const sourceFilePath = path.join(sourceFolder, file);
+            const destinationFilePath = path.join(destinationFolder, file);
+
+            fs.copyFile(sourceFilePath, destinationFilePath, (err) => {
+                if (err) {
+                    console.error(`${file} 파일을 복사하는 도중 오류 발생:`, err);
+                } else {
+                    console.log(`${file} 파일을 복사했습니다.`);
+                }
+            });
+        });
+    });
+
+
+
+
+    // console.log('여기로는 오는거니?');
+    // let errmessage = '';
+    // try {
+    //     const chkArr = req.body['chkIdListVal[]'];
+    //     for (let i = 0; i < chkArr.length; i++) {
+    //         const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
+
+    //         const copyFromHyNum = req.body['hyIdList[]'][Number(chkArr[i])]
+
+    //         if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
+    //             copyHyNum = req.body['duplicateSiteIdValList[]'];
+    //         } else {
+    //             copyHyNum = req.body['duplicateSiteIdValList[]'][i];
+    //         }
+
+    //         const getFolder = `uploads/${copyFromHyNum}`;
+    //         const setFolder = `uploads/${copyHyNum}`;
+
+    //         try {
+    //             fs.mkdirSync(setFolder)
+    //         } catch (error) {
+    //             console.log('folder is already!!');
+    //         }
+
+    //         fs.readdir(getFolder, function (error, filelist) {
+
+    //             for (let i = 0; i < filelist.length; i++) {
+    //                 const source = `${getFolder}/${filelist[i]}`;
+    //                 const destination = `${setFolder}/${filelist[i]}`;
+    //                 const options = {
+    //                     clobber: true
+    //                 };
+
+    //                 ncp(source, destination, options, function (err) {
+    //                     if (err) {
+    //                         return console.error(err);
+    //                     }
+    //                     console.log('done!');
+    //                 });
+    //             }
+    //         });
+
+
+    //         const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
+
+    //         await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
+    //     }
+    // } catch (error) {
+    //     errmessage = error.message
+    // }
+
+    res.json({ status: 'success!' })
 })
 
 
@@ -358,8 +394,6 @@ router.use('/new_change_end', async (req, res, next) => {
 // chkRateMaster
 router.use('/', async (req, res, next) => {
 
-    // 사이트맵 만들기
-    await chkSiteMap();
 
     console.log('메인으로 오는건 아니지??!!');
 
@@ -495,7 +529,7 @@ const chkSiteMap = async () => {
         const tempObj = { loc: `https://adpeak.kr/side/${e.hy_num}`, lastmod: `${dateStr}` }
         return tempObj
     })
-    
+
     addArr.unshift({ loc: 'https://adpeak.kr/', lastmod: '2022-06-28T01:39:46+00:00' })
 
     console.log(addArr);
