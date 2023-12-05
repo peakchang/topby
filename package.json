@@ -23,6 +23,7 @@
     "express-session": "^1.17.3",
     "express-x-hub": "^1.0.4",
     "facebook-nodejs-business-sdk": "^14.0.0",
+    "fs-extra": "^11.2.0",
     "helmet": "^6.0.0",
     "hpp": "^0.2.3",
     "morgan": "^1.10.0",

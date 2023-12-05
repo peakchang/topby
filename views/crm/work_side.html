@@ -65,6 +65,8 @@
 
     <div class="mb-3 text-center duplicate_site_area" style="display:none;">
 
+        <input type="hidden" name="previous_site_name">
+
         <input type="text" name="duplicate_site_name" placeholder="변경할 아이디 값 입력"
             class="border text-xs md:text-sm rounded-md p-2">
         <button type="button"
@@ -281,44 +283,62 @@
 
     $('.duplicate_site_open').click(function (e) {
         const tableNum = document.querySelectorAll('input[name=table_num]');
-        const siteNumList = document.querySelectorAll('input[name=site_num]');
 
-        console.log(tableNum);
-        console.log(siteNumList);
-
-        if (tableNum.length > 1) {
+        let checked_arr = []
+        for (let i = 0; i < tableNum.length; i++) {
+            if (tableNum[i].checked) {
+                checked_arr.push(tableNum[i].value)
+            }
+        }
+        if (checked_arr.length > 1) {
             alert('복사는 하나씩만 가능합니다.')
             return false;
         }
 
+        const checkedVal = checked_arr[0]
+
+        const siteNumList = document.querySelectorAll('input[name=site_num]');
+        const resultVal = siteNumList[Number(checkedVal)].value
+        console.log(resultVal);
+
+        document.querySelector('input[name=previous_site_name]').value = resultVal
+
+
+
         $('.duplicate_site_area').toggle()
 
+    })
+
+    $('.site_duplicate').click(function (e) {
+
+        const preHyIdVal = document.querySelector('input[name=previous_site_name]').value
+        const targetHyId = document.querySelector('input[name=duplicate_site_name]').value;
+        console.log(targetHyId);
+
+        $.ajax({
+            type: "POST",
+            url: "/crm/side/duplicate_mini",
+            data: {
+                preHyIdVal,
+                targetHyId
+            },
+            success: function (res) {
+                console.log(res);
+
+                if (res.status == 'fail') {
+                    alert(res.message)
+                } else {
+                    // alert('복사가 완료 되었습니다.')
+                    // location.reload()
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, err) {
+                console.log(err);
+            }
+        });
 
 
-        // // Element를 찾으면 Array가 아닌 Object가 반환 됨, Object.values를 통해 values 모음인 배열로 반환하고 checked 가 되어있으면 새로운 배열(checkedArr) 생성
-        // let checkedArr = Object.values(tableNum).filter(e => e.checked)
-        // if (checkedArr.length == 0) {
-        //     alert('복사할 항목을 하나 이상 선택하세요.');
-        //     return false;
-        // }
-
-        // // Array.from 은 조건에 맞는 새로운 배열을 만든다. (filter / map도 공부하자)
-        // let idArr = Array.from(checkedArr, e => e.value);
-
-        // $('.du_table').empty();
-        // for (let i = 0; i < idArr.length; i++) {
-        //     const template = `
-        //     <tr>
-        //         <td class="text-center">
-        //             <input type="text" name="duplicate_site_id" class="border px-2 py-1 text-sm" placeholder="${siteNumList[Number(idArr[i])].value}의 변경할 값">
-        //         </td>
-        //     </tr>
-        //     `
-        //     $('.du_table').append(template);
-        // }
-
-
-        // $('.duplicate_site_area').toggle()
     })
 
     // 상세(수정) 항목 열기
@@ -361,43 +381,7 @@
         }
     })
 
-    $('.site_duplicate').click(function (e) {
 
-        const preHyNum = document.querySelectorAll('input[name=table_num]');
-        const preHyId = document.querySelectorAll('input[name=site_num]');
-
-        const preHyNumVal = preHyNum[0].value;
-        const preHyIdVal = preHyId[0].value;
-
-        console.log(preHyNumVal);
-        console.log(preHyIdVal);
-
-        const targetHyId = document.querySelector('input[name=duplicate_site_name]').value;
-        console.log(targetHyId);
-
-        $.ajax({
-            type: "POST",
-            url: "/crm/side/duplicate_mini",
-            data: {
-                preHyNumVal,
-                preHyIdVal,
-                targetHyId
-            },
-            success: function (res) {
-                console.log(res);
-                if (res.errmessage) {
-                    alert(res.errmessage)
-                } else {
-                    location.reload();
-                }
-            },
-            error: function (XMLHttpRequest, textStatus, err) {
-                console.log(err);
-            }
-        });
-
-
-    })
 
 
     const dataURItoBlob = (dataURI) => {

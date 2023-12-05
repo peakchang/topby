@@ -118,94 +118,68 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 
 router.post('/duplicate_mini', async (req, res, next) => {
 
-    console.log('다시 시작하자고!');
+    let status = true;
+    let message = ""
+    const previousVal = req.body.preHyIdVal
+    const targetVal = req.body.targetHyId
 
-    console.log(req.body);
+    const getExistSiteNameQuery = "SELECT * FROM hy_site WHERE hy_num = ?"
+    const getExistSiteNameTemp = await sql_con.promise().query(getExistSiteNameQuery, [req.body.targetHyId]);
+    const getExistSiteName = getExistSiteNameTemp[0][0];
 
-    const sourceFolder = `uploads/${req.body.preHyIdVal}`;
-    const destinationFolder = `uploads/${req.body.targetHyId}`;
-
-    // hy002 폴더가 없으면 생성합니다.
-    if (!fs.existsSync(destinationFolder)) {
-        fs.mkdirSync(destinationFolder);
+    console.log(getExistSiteName);
+    if (getExistSiteName) {
+        status = false;
+        return res.json({ status, message: "사용중인 현장명이 있습니다." })
     }
+    const sourceFolder = `uploads/${previousVal}`;
 
-    fs.readdir(sourceFolder, (err, files) => {
-        if (err) {
-            console.error('폴더를 읽는 도중 오류 발생:', err);
-            return;
+    if (fs.existsSync(sourceFolder)) {
+        const destinationFolder = `uploads/${targetVal}`;
+
+        // hy002 폴더가 없으면 생성합니다.
+        if (!fs.existsSync(destinationFolder)) {
+            fs.mkdirSync(destinationFolder);
         }
 
-        // 각 파일을 복사합니다.
-        files.forEach((file) => {
-            const sourceFilePath = path.join(sourceFolder, file);
-            const destinationFilePath = path.join(destinationFolder, file);
+        fs.readdir(sourceFolder, (err, files) => {
+            if (err) {
+                console.error('폴더를 읽는 도중 오류 발생:', err);
+                return res.json({ status, message: "에러 발생! 다시 시도해주세요!" })
+            }
 
-            fs.copyFile(sourceFilePath, destinationFilePath, (err) => {
-                if (err) {
-                    console.error(`${file} 파일을 복사하는 도중 오류 발생:`, err);
-                } else {
-                    console.log(`${file} 파일을 복사했습니다.`);
-                }
+            // 각 파일을 복사합니다.
+            files.forEach((file) => {
+                const sourceFilePath = path.join(sourceFolder, file);
+                const destinationFilePath = path.join(destinationFolder, file);
+
+                fs.copyFile(sourceFilePath, destinationFilePath, (err) => {
+                    if (err) {
+                        console.error(`${file} 파일을 복사하는 도중 오류 발생:`, err);
+                        return res.json({ status, message: "에러 발생! 다시 시도해주세요!" })
+                    } else {
+                        console.log(`${file} 파일을 복사했습니다.`);
+                    }
+                });
             });
         });
-    });
+    }
+
+    const getPrevioussiteQuery = "SELECT * FROM hy_site WHERE hy_num = ?"
+    const getPrevioussite = await sql_con.promise().query(getPrevioussiteQuery, [previousVal]);
+    const chkSiteInfo = getPrevioussite[0][0];
+    const setMainImg = chkSiteInfo.hy_main_image.replace(previousVal, targetVal)
+    const setListImg = chkSiteInfo.hy_image_list.split(previousVal).join(targetVal);
+    const now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    console.log(setMainImg);
+    console.log(chkSiteInfo);
+    console.log(setListImg);
 
 
 
 
-    // console.log('여기로는 오는거니?');
-    // let errmessage = '';
-    // try {
-    //     const chkArr = req.body['chkIdListVal[]'];
-    //     for (let i = 0; i < chkArr.length; i++) {
-    //         const columnStr = 'hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber';
 
-    //         const copyFromHyNum = req.body['hyIdList[]'][Number(chkArr[i])]
-
-    //         if (typeof (req.body['duplicateSiteIdValList[]']) == 'string') {
-    //             copyHyNum = req.body['duplicateSiteIdValList[]'];
-    //         } else {
-    //             copyHyNum = req.body['duplicateSiteIdValList[]'][i];
-    //         }
-
-    //         const getFolder = `uploads/${copyFromHyNum}`;
-    //         const setFolder = `uploads/${copyHyNum}`;
-
-    //         try {
-    //             fs.mkdirSync(setFolder)
-    //         } catch (error) {
-    //             console.log('folder is already!!');
-    //         }
-
-    //         fs.readdir(getFolder, function (error, filelist) {
-
-    //             for (let i = 0; i < filelist.length; i++) {
-    //                 const source = `${getFolder}/${filelist[i]}`;
-    //                 const destination = `${setFolder}/${filelist[i]}`;
-    //                 const options = {
-    //                     clobber: true
-    //                 };
-
-    //                 ncp(source, destination, options, function (err) {
-    //                     if (err) {
-    //                         return console.error(err);
-    //                     }
-    //                     console.log('done!');
-    //                 });
-    //             }
-    //         });
-
-
-    //         const duplicateSql = `INSERT INTO hy_site (hy_num,${columnStr}) SELECT ?,${columnStr}  FROM hy_site WHERE hy_num = ?;`;
-
-    //         await sql_con.promise().query(duplicateSql, [copyHyNum, copyFromHyNum]);
-    //     }
-    // } catch (error) {
-    //     errmessage = error.message
-    // }
-
-    res.json({ status: 'success!' })
+    return res.json({ status })
 })
 
 
