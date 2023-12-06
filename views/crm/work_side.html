@@ -323,13 +323,13 @@
                 targetHyId
             },
             success: function (res) {
-                console.log(res);
 
-                if (res.status == 'fail') {
-                    alert(res.message)
+                if (res.status) {
+                    alert('복사가 완료 되었습니다.')
+                    location.reload()
                 } else {
-                    // alert('복사가 완료 되었습니다.')
-                    // location.reload()
+                    alert(res.message)
+
                 }
 
             },
