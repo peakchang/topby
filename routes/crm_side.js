@@ -173,9 +173,9 @@ router.post('/duplicate_mini', async (req, res, next) => {
         const setListImg = chkSiteInfo.hy_image_list.split(previousVal).join(targetVal);
         const now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-        const copyQuery = `INSERT INTO hy_site (hy_num,hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber,hy_counter,hy_kakao_link,kakao_link,hy_creted_at)
+        const copyQuery = `INSERT INTO hy_site (hy_num,hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,hy_main_image,hy_image_list,hy_callnumber,hy_counter,hy_kakao_link,hy_creted_at)
 
-    SELECT '${targetVal}',hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,'${setMainImg}','${setListImg}',hy_callnumber,hy_counter,hy_kakao_link,kakao_link,'${now}'
+    SELECT '${targetVal}',hy_title,hy_description,hy_keywords,hy_site_name,hy_businessname,hy_set_site,hy_type,hy_scale,hy_areasize,hy_house_number,hy_location,hy_scheduled,hy_builder,hy_conduct,hy_features,'${setMainImg}','${setListImg}',hy_callnumber,hy_counter,hy_kakao_link,'${now}'
     FROM hy_site
     WHERE hy_num = '${previousVal}';`
 
