@@ -352,6 +352,7 @@
         const siteList = [];
         try {
             const res = await axios.post('/crm/side/finter_sitelist', { filterValue })
+            console.log(res.data);
             if (res.data.status) {
                 siteList = res.data.filter_site_list
                 console.log(siteList);

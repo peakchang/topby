@@ -56,7 +56,7 @@ router.post('/finter_sitelist', async (req, res, next) => {
     const filterValue = req.body.filterValue;
     const filter_site_list = [];
     try {
-        const getFilterQuery = `SELECT * FROM site_list LIKE '%${filterValue}%'`;
+        const getFilterQuery = `SELECT * FROM site_list LIKE '%${filterValue}%' ORDER BY sl_id DESC`;
         const getFilter = getFilterQuery[0]
         filter_site_list = getFilter
     } catch (error) {
@@ -217,7 +217,7 @@ router.get('/detail/:id', async (req, res, next) => {
     const getHyInfo = await sql_con.promise().query(getHyInfoSql, [req.params.id]);
     var get_hy_info = getHyInfo[0][0];
 
-    const getSiteListSql = `SELECT * FROM site_list`;
+    const getSiteListSql = `SELECT * FROM site_list ORDER BY sl_id DESC`;
     const getSiteList = await sql_con.promise().query(getSiteListSql);
     const get_site_list = getSiteList[0];
 
