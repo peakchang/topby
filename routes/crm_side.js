@@ -50,6 +50,21 @@ const upload = multer({
 
 const uploadSimple = multer();
 
+
+router.post('/finter_sitelist', async (req, res, next) => {
+    let status = true;
+    const filterValue = req.body.filterValue;
+    const filter_site_list = [];
+    try {
+        const getFilterQuery = `SELECT * FROM site_list LIKE '%${filterValue}%'`;
+        const getFilter = getFilterQuery[0]
+        filter_site_list = getFilter
+    } catch (error) {
+        status = false;
+    }
+    res.json({ status, filter_site_list })
+})
+
 router.use('/testiii', async (req, res, next) => {
     const getFolder = `uploads/hy123`;
     const setFolder = `uploads/testfolder`;
@@ -179,7 +194,7 @@ router.post('/duplicate_mini', async (req, res, next) => {
     FROM hy_site
     WHERE hy_num = '${previousVal}';`
 
-    console.log(copyQuery);
+        console.log(copyQuery);
 
         await sql_con.promise().query(copyQuery);
     } catch (error) {
@@ -228,7 +243,7 @@ router.get('/detail/:id', async (req, res, next) => {
 
 
 
-    res.render('crm/work_side_detail_test', { get_hy_info, get_site_list })
+    res.render('crm/work_side_detail', { get_hy_info, get_site_list })
 })
 
 // chkRateMaster
@@ -237,9 +252,9 @@ router.post('/detail/:id', async (req, res, next) => {
 
 
 
-    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_keywords = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_kakao_link = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_card_image = ?, hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_kakao_link = ?, hy_creted_at = ? WHERE hy_id = ?;`;
 
-    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_keywords, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, req.body.hy_kakao_link, now, req.body.hy_id]
+    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.card_img_file_name, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, req.body.hy_kakao_link, now, req.body.hy_id]
     await sql_con.promise().query(allUpdateSql, allUpdateArr);
 
 

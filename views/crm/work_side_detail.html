@@ -1,6 +1,7 @@
 {% include "crm/db_head.html" %}
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
     .dropBox {
         height: 7rem;
@@ -37,12 +38,12 @@
 
 <body>
     <div class="container w-11/12 mt-2 rounded-md text-sm suit-font text-center">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post">
             <table class="border-collapse border border-slate-400 w-full  rounded">
                 <input type="hidden" name="hy_id" value="{{ get_hy_info.hy_id }}">
                 <input type="hidden" name="hy_num" value="{{ get_hy_info.hy_num }}">
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장명11</th>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장명</th>
                     <td class="border border-slate-300 py-1 text-center">
                         <input type="text"
                             class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
@@ -56,7 +57,7 @@
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">간략설명</th>
                     <td class="border border-slate-300 py-1 text-center">
-                        
+
                         {% if get_hy_info.hy_description %}
                         <textarea name="hy_description" id="" rows="3"
                             class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_description | trim }}</textarea>
@@ -66,22 +67,35 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr>
+
+                <!-- <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">키워드</th>
                     <td class="border border-slate-300 py-1 text-center">
                         <input type="text"
                             class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
                             name="hy_keywords" placeholder="" value="{{get_hy_info.hy_keywords}}">
                     </td>
-                </tr>
+                </tr> -->
+
 
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">타겟현장</th>
                     <td class="border border-slate-300 py-1 text-center">
-                        <select name="hy_set_site" id="" class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto">
+
+                        <div class="flex w-4/5 mx-auto gap-1 mb-1">
+                            <input type="text" name="" id=""
+                                class="filter_sitelist py-1 px-2 bg-gray-50 rounded-lg border border-gray-300 w-full">
+                            <button type="button" class="filter_sitelist_act w-28 bg-blue-300 text-white rounded-lg">
+                                1차 검색
+                            </button>
+                        </div>
+
+                        <select name="hy_set_site" id=""
+                            class="hy_set_site block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto">
                             <option value="">현장을 선택하세요</option>
                             {% for site in get_site_list %}
-                            <option value="{{site.sl_site_name}}" {% if get_hy_info.hy_set_site == site.sl_site_name %} SELECTED {% endif %}>{{site.sl_site_name}}</option>
+                            <option value="{{site.sl_site_name}}" {% if get_hy_info.hy_set_site==site.sl_site_name %}
+                                SELECTED {% endif %}>{{site.sl_site_name}}</option>
                             {% endfor %}
                         </select>
                     </td>
@@ -153,6 +167,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">카카오링크</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_kakao_link" placeholder="" value="{{get_hy_info.hy_kakao_link}}">
+                    </td>
+                </tr>
+                <!-- <tr>f
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">시공사11</th>
                     <td class="border border-slate-300 py-1 text-center">
                         <input type="text"
@@ -167,7 +189,7 @@
                             class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
                             name="hy_conduct" placeholder="" value="{{get_hy_info.hy_conduct}}">
                     </td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">특장점</th>
                     <td class="border border-slate-300 py-1 text-center">
@@ -188,7 +210,25 @@
                         <input type="text"
                             class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
                             name="hy_callnumber" placeholder="" value="{{get_hy_info.hy_callnumber}}">
-                        <span>※ 미입력시 기본 대표번호로 등록됩니다.</span>
+                        <span>※ 미입력시 기본 대표번호로 등록됩니다!!!.</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">명함이미지</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="hidden" name="card_img_file_name" value="{{get_hy_info.hy_card_image}}">
+                        <input name="card_img"
+                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            type="file" id="cardformFile">
+
+                        <div class="text-center max-w-xs mx-auto mt-4">
+                            {% if get_hy_info.hy_card_image %}
+                            <img src="{{get_hy_info.hy_card_image}}" alt="" class="mx-auto show_card_image">
+                            {% endif %}
+                            <img src="" alt="" class="mx-auto preview_card_image">
+                        </div>
+
                     </td>
                 </tr>
 
@@ -198,11 +238,11 @@
                         <input type="hidden" name="main_img_file_name" value="{{get_hy_info.hy_main_image}}">
                         <input name="main_img"
                             class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            type="file" id="formFile">
+                            type="file" id="mainFormFile">
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_main_image %}
-                            <img src="/img/{{get_hy_info.hy_num}}/{{get_hy_info.hy_main_image}}" alt="" class="mx-auto show_main_image">
+                            <img src="{{get_hy_info.hy_main_image}}" alt="" class="mx-auto show_main_image">
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_main_image">
                         </div>
@@ -212,38 +252,37 @@
             </table>
 
 
-
-
             <div class="mt-3 text-center">
-
-
                 <input type="hidden" name="hy_image_list" value="{{get_hy_info.hy_image_list}}">
 
 
-                {% if get_hy_info.hy_image_arr[0] %}
-                <div class="text-xl">이미지 리스트</div>
-                <div class="grid grid-cols-4 gap-1 p-1 imge_list">
+
+
+                <div id="items" class="flex flex-wrap sort-wrap">
                     {% for hy_image in get_hy_info.hy_image_arr %}
-                    <div class="border border-gray-500 rounded-lg overflow-hidden relative drag_items">
-                        <span class="absolute top-1 right-1 text-2xl text-red-500 cursor-pointer del_img"><i
-                                class="fa fa-times-circle"></i></span>
-
-                        <span class="absolute bottom-1 left-1 text-2xl text-red-500 cursor-pointer move_left">
-                            <i class="fa fa-arrow-circle-left"></i>
+                    {% if 'img' in hy_image %}
+                    <div
+                        class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                        <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                         </span>
-
-                        <span class="absolute bottom-1 right-1 text-2xl text-red-500 cursor-pointer move_right">
-                            <i class="fa fa-arrow-circle-right"></i>
-                        </span>
-
-
-                        <div class="h-full flex items-center">
-                            <img src="/img/{{get_hy_info.hy_num}}/{{hy_image}}" alt="">
-                        </div>
+                        <img src="{{hy_image}}" alt="">
                     </div>
+
+                    {% else %}
+                    <div
+                        class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                        <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                        </span>
+                        <span class="absolute top-1 right-5 text-red-600 cursor-pointer">
+                            <i class="fa fa-file-video-o" aria-hidden="true"></i>
+                        </span>
+                        <img src="https://img.youtube.com/vi/{{hy_image}}/mqdefault.jpg" alt="">
+                    </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
-                {% endif %}
 
 
 
@@ -257,7 +296,14 @@
                                 aria-hidden="true"></i></span>
                     </div>
                 </div>
+
+                <div>동영상 아이디 넣기</div>
+                <div class="flex my-2">
+                    <input class="youtube_id border w-full p-2 rounded-sm" type="text"><button
+                        class="youtube_upload w-32 bg-orange-200" type="button">업로드</button>
+                </div>
             </div>
+
             <button class="border rounded-lg py-2 text-white bg-cyan-700 text-xl w-3/5 mb-7">등록하기</button>
 
         </form>
@@ -265,147 +311,151 @@
 
     <input type="file" name="" id="fake_file" class="hidden fake_file" multiple>
 
+
+
+
+
 </body>
 
 <script>
 
-    $('.move_left,.move_right').click(function (e) {
+    var el = document.getElementById('items');
+    var sortable = Sortable.create(el, {
+        delay: 0, // 클릭이 밀리는 것을 방지하기 위해 약간의 지연 시간을 추가합니다.
+        animation: 500, // 정렬할 때 애니메이션 속도(ms)를 지정합니다.
+        forceFallback: true, // 다양한 환경의 일관된 Drag&Drop(DnD)을 위해 HTML5 기본 DnD 동작을 무시하고 내장 기능을 사용합니다.
+        animation: 150,
+        onSort: function (e) {
 
-
-        if (this.classList.contains('move_left')) {
-            if (!this.parentNode.previousElementSibling) {
-                alert('변경할수 없습니다.')
-                return false
+            var items = e.to.children;
+            let tempArr = [];
+            for (let i = 0; i < items.length; i++) {
+                const tempSrc = items[i].querySelector("img").src.split('/');
+                let tempSrc2 = '';
+                if (tempSrc[3] == 'img') {
+                    tempSrc2 = `/${tempSrc[3]}/${tempSrc[4]}/${tempSrc[5]}`;
+                } else {
+                    tempSrc2 = tempSrc[4];
+                }
+                tempArr.push(tempSrc2);
             }
-            var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
-            var changeTargetSrc = this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src
+            document.querySelector('input[name=hy_image_list]').value = tempArr.join(',');
+        },
+    });
 
-            this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
-            this.parentNode.previousElementSibling.lastElementChild.firstElementChild.src = thisSrc
 
-            const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
-            const thisIndex = $(this.parentNode).index();
-            var changeImgList = changeArrayOrder(imgList, thisIndex, -1).join(',');
-            document.querySelector('input[name=hy_image_list]').value = changeImgList
+    $('.filter_sitelist_act').click(async function () {
 
-            console.log(document.querySelector('input[name=hy_image_list]').value);
-        } else {
-            if (!this.parentNode.nextElementSibling) {
-                alert('변경할수 없습니다.')
-                return false
+        const filterValue = document.querySelector('.filter_sitelist').value;
+        console.log(filterValue);
+
+        const siteList = [];
+        try {
+            const res = await axios.post('/crm/side/finter_sitelist', { filterValue })
+            if (res.data.status) {
+                siteList = res.data.filter_site_list
+                console.log(siteList);
+                console.log(siteList.length);
+                if (siteList.length > 0) {
+                    $('.hy_set_site').empty();
+                    $('.hy_set_site').append("<option>현장을 선택하세요</option>");
+                    for (let i = 0; i < siteList.length; i++) {
+                        const ele = siteList[i];
+                        const template = `<option value="${ele}">${ele}</option>`
+                        $('.hy_set_site').append(template);
+                    }
+                }
             }
-            var thisSrc = this.parentNode.lastElementChild.firstElementChild.src;
-            var changeTargetSrc = this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src
 
-            this.parentNode.lastElementChild.firstElementChild.src = changeTargetSrc
-            this.parentNode.nextElementSibling.lastElementChild.firstElementChild.src = thisSrc
 
-            const imgList = document.querySelector('input[name=hy_image_list]').value.split(',')
-            const thisIndex = $(this.parentNode).index();
-            var changeImgList = changeArrayOrder(imgList, thisIndex, 1).join(',');
-            document.querySelector('input[name=hy_image_list]').value = changeImgList
-            console.log(document.querySelector('input[name=hy_image_list]').value);
+        } catch (error) {
+
         }
-    })
 
+    })
 
     $(document).on('click', '.del_img', function (e) {
-        const hy_num = document.querySelector('input[name=hy_num]').value
-        var imgList = document.querySelector('input[name=hy_image_list]').value.split(',');
-        const getDelIndex = $(this.parentNode).index();
-        const getDelTargetImg = imgList[getDelIndex]
-        imgList.splice(getDelIndex, 1)
-        const getUpdateImgList = imgList.join(',');
-        document.querySelector('input[name=hy_image_list]').value = getUpdateImgList;
-        $(this.parentNode).remove()
-        $.ajax({
-            url: '/crm/del_image',
-            // dataType: 'json',
-            // async: false,
-            method: 'POST',
-            data: { hy_num, getDelTargetImg, getUpdateImgList },
-            success: function (data) {
-                console.log('succedd!!!');
-                // location.reload()
-            }, error: function () {
-                console.log('failed!!!');
-            }
-        });
+
+        const getIdx = $(this.parentNode).index();
+        console.log(getIdx);
+
+        console.log(this.parentNode);
+        const getUrl = this.parentNode.querySelector('img').src;
+        const getUrlArr = getUrl.split('/');
+
+
+
+        const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+        let nowImageList = nowImageListVal.value.split(',');
+        nowImageList.splice(getIdx, 1);
+
+        const nowImageListStr = nowImageList.join(',');
+        if (getUrlArr[3] == 'img') {
+            const getDelTargetImg = getUrlArr[getUrlArr.length - 1];
+            const getUpdateImgList = nowImageListStr;
+            const hy_num = document.querySelector('input[name=hy_num]').value;
+            console.log(getDelTargetImg);
+            console.log(getUpdateImgList);
+            console.log(hy_num);
+
+            axios.post('/crm/side/del_image', { getDelTargetImg, getUpdateImgList, hy_num }).then((res) => {
+                console.log('success!!!!');
+            }).catch((err) => {
+                console.log(err);
+            })
+
+        }
+
+        nowImageListVal.value = nowImageListStr
+        sortWrapLoop(nowImageList);
     })
 
+    $('.youtube_upload').click(() => {
+        const youtubeId = document.querySelector('.youtube_id').value;
+        if (youtubeId.includes('youtube') || youtubeId.includes('http') || youtubeId.includes('/') || !youtubeId) {
+            alert('유튜브 링크의 아이디 값만 입력 해주세요.')
+            return false;
+        }
+
+        const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+        let nowImageList = nowImageListVal.value.split(',');
+
+
+
+
+        if (nowImageList[0]) {
+            nowImageList.push(youtubeId)
+        } else {
+            nowImageList = [youtubeId]
+        }
+
+        const nowImageStr = nowImageList.join(',');
+        nowImageListVal.value = nowImageStr;
+
+        sortWrapLoop(nowImageList);
+
+
+    })
+
+
+
+
+
+    // 여기서부터 시작!!
     const $drop = document.querySelector(".dropBox");
     const dragItems = $('.drag_items')
+    let fileListArr = [];
     // 드래그한 파일 객체가 해당 영역에 놓였을 때
 
     $($drop).click(function (e) {
         $('#fake_file').trigger('click')
     })
 
-    $('#fake_file').change(function (e) {
-
-        if(document.querySelector('input[name=hy_image_list]').value){
-            var preFileList = document.querySelector('input[name=hy_image_list]').value.split(',');
-        }else{
-            var preFileList = [];
-        }
-
-        const files = this.files;
-        const formData = new FormData();
-
-        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
-        for (let i = 0; i < files.length; i++) {
-            if (check.test(files[i].name)) {
-                alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
-                return false
-            } else if (preFileList.includes(files[i].name)) {
-                alert('중복되는 파일이 있습니다! 확인해주세요!')
-                return false
-            } else {
-                preFileList.push(files[i].name)
-            }
-        }
-
-        if(preFileList){
-            var fileListStr = preFileList.join(',');
-        }
-        formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
-        formData.append('fileListStr', fileListStr);
-
-
-
-        for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
-
-        $.ajax({
-            url: '/crm/arr_image',
-            dataType: 'json',
-            // async: false,
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            beforeSend: function () {
-                console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
-            }, success: function (data) {
-                $('.imge_list').empty()
-                for (let i = 0; i < data.SetHyImgList.length; i++) {
-                    const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
-                            <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
-                                    class="fa fa-times-circle"></i></span>
-                            <div class="h-full flex items-center">
-                            <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
-                            </div>
-                        </div>`
-                    $('.imge_list').append(template)
-                }
-                location.reload()
-
-                // const SetImgListStr = data.SetHyImgList.join(',');
-                // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
-            }, error: function () {
-                console.log('failed!!!');
-            }
-        });
-
+    // 클릭해서 넣었을때 이벤트
+    $('#fake_file').change(async function (e) {
+        const getFiles = e.target.files;
+        const hyNum = '{{get_hy_info.hy_num}}';
+        imageResizing(getFiles, hyNum);
     })
 
 
@@ -414,82 +464,18 @@
         'dragstart': function (e) {
         }
     })
+
+    // 드롭해서 넣었을때 이벤트
     $drop.ondrop = (e) => {
         e.preventDefault();
-
-        if(document.querySelector('input[name=hy_image_list]').value){
-            var preFileList = document.querySelector('input[name=hy_image_list]').value.split(',');
-        }else{
-            var preFileList = [];
-        }
-        
-
-        $drop.className = "dropBox";
-
-
         var $file = document.getElementById("file")
         var dropZone = document.querySelector(".drop-zone")
 
-        // 파일 리스트
-        const files = [...e.dataTransfer?.files];
+        // // 파일 리스트
+        const getFiles = [...e.dataTransfer?.files];
+        const hyNum = '{{get_hy_info.hy_num}}';
+        imageResizing(getFiles, hyNum);
 
-        const formData = new FormData();
-
-        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
-        for (let i = 0; i < files.length; i++) {
-            if (check.test(files[i].name)) {
-                alert('파일명에 한글이 포함되어 있으면 안됩니다! 영어/숫자로 변경해주세요!')
-                return false
-            } else if (preFileList.includes(files[i].name)) {
-                alert('중복되는 파일이 있습니다! 확인해주세요!')
-                return false
-            } else {
-                preFileList.push(files[i].name)
-            }
-        }
-
-        if(preFileList){
-            var fileListStr = preFileList.join(',');
-        }
-
-        formData.append('hy_num', document.querySelector('input[name=hy_num]').value);
-        formData.append('fileListStr', fileListStr);
-
-
-
-        for (let i = 0; i < files.length; i++) formData.append('testimg', files[i]);
-
-        $.ajax({
-            url: '/crm/arr_image',
-            dataType: 'json',
-            // async: false,
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            beforeSend: function () {
-                console.log('로딩중입니다~~~~~~~~~~~~~~~~~~~~~~');
-            }, success: function (data) {
-                $('.imge_list').empty()
-                for (let i = 0; i < data.SetHyImgList.length; i++) {
-                    const template = `<div class="border border-gray-500 rounded-lg overflow-hidden relative">
-                            <span class="absolute top-1 right-1 text-2xl text-red-500 text-center"><i
-                                    class="fa fa-times-circle"></i></span>
-                            <div class="h-full flex items-center">
-                            <img src="/img/${document.querySelector('input[name=hy_num]').value}/${data.SetHyImgList[i]}" alt="">
-                            </div>
-                        </div>`
-                    $('.imge_list').append(template)
-                }
-                location.reload()
-
-                // const SetImgListStr = data.SetHyImgList.join(',');
-                // document.querySelector('input[name=hy_image_list]').value = SetImgListStr
-            }, error: function () {
-                console.log('failed!!!');
-            }
-        });
-        // $drop.classList.add("dropdown");
     }
 
     // ondragover 이벤트가 없으면 onDrop 이벤트가 실핻되지 않습니다.
@@ -513,10 +499,29 @@
         $drop.classList.remove("dropactive");
     }
 
-    $('#formFile').change(function (e) {
+
+    $('#cardformFile').change(async function (e) {
+        console.log('!??!?!?!?!');
+        $('.show_card_image').hide()
+        const previewImage = document.querySelector('.preview_card_image')
+        readImage(e.target, previewImage)
+
+        const getFiles = e.target.files;
+        const hyNum = '{{get_hy_info.hy_num}}';
+        const getImageSrc = await imageResizing(getFiles, hyNum, 'single', 'card');
+        console.log(getImageSrc);
+    })
+
+    $('#mainFormFile').change(async function (e) {
+        console.log('!??!?!?!?!');
         $('.show_main_image').hide()
         const previewImage = document.querySelector('.preview_main_image')
         readImage(e.target, previewImage)
+
+        const getFiles = e.target.files;
+        const hyNum = '{{get_hy_info.hy_num}}';
+        const getImageSrc = await imageResizing(getFiles, hyNum, 'single', 'main');
+        console.log(getImageSrc);
     })
 
     function readImage(input, previewImage) {
@@ -531,6 +536,244 @@
             }
             // reader가 이미지 읽도록 하기
             reader.readAsDataURL(input.files[0])
+        }
+    }
+
+
+    const imageResizing = async (getFiles, hyNum, work = 'list', type = 'list') => {
+
+        let imgForm
+
+        for (let i = 0; i < getFiles.length; i++) {
+            const chkFile = getFiles[i];
+            const img_name_arr = chkFile.name.split('.');
+            const img_ext = img_name_arr[img_name_arr.length - 1];
+            console.log(img_ext);
+            if (img_ext != 'jpg' && img_ext != 'png' && img_ext != 'webp' && img_ext != 'gif' && img_ext != 'jpeg' && img_ext != 'JPG' && img_ext != 'JPEG' && img_ext != 'PNG' && img_ext != 'WEBP') {
+                alert('이미지 파일만 업로드 가능합니다.')
+                return false;
+            }
+        }
+
+        for await (const file of getFiles) {
+            const maxWidth = 1200;
+            const img_file = file;
+
+            console.log(img_file.name.split('.'));
+            const img_name_arr = img_file.name.split('.');
+            const img_ext = img_name_arr[img_name_arr.length - 1];
+            console.log(img_ext);
+
+            if (img_ext == 'jpg' || img_ext == 'png' || img_ext == 'jpeg' || img_ext == 'JPG' || img_ext == 'PNG' || img_ext == 'JPEG') {
+                // 확장자가 jpg / png / jpeg 일경우 webp로 변환해서 올리기
+                console.log("확장자가 jpg / png / jpeg 일경우 webp로 변환해서 올리기");
+                const reader = new FileReader();
+                reader.readAsDataURL(img_file);
+                reader.onload = function (r) {
+                    const img = new Image();
+                    img.src = r.target.result;
+                    img.onload = async function (e) {
+                        if (img.width >= maxWidth) {
+                            var share = img.width / maxWidth;
+                            var setHeight = Math.floor(img.height / share);
+                            var setWidth = maxWidth;
+                        } else {
+                            var setWidth = img.width;
+                            var setHeight = img.height;
+                        }
+
+                        var canvas = document.createElement("canvas");
+                        canvas.width = setWidth;
+                        canvas.height = setHeight;
+                        canvas.display = "inline-block";
+                        canvas
+                            .getContext("2d")
+                            .drawImage(img, 0, 0, setWidth, setHeight);
+
+                        var getReImgUrl = canvas.toDataURL("image/webp");
+
+                        const resultImage = dataURItoBlob(getReImgUrl);
+
+                        imgForm = new FormData();
+
+                        const timestamp = new Date().getTime();
+                        const fileName = `${timestamp}${Math.random()
+                            .toString(36)
+                            .substring(2, 11)}.webp`;
+
+                        imgForm.append("onimg", resultImage, fileName);
+                        imgForm.append("hy_num", hyNum);
+
+                        // FormData의 key 값과 value값 찾기
+                        let keys = imgForm.keys();
+                        for (const pair of keys) {
+                            console.log(`name : ${pair}`);
+                        }
+
+                        let values = imgForm.values();
+                        for (const pair of values) {
+                            console.log(`value : ${pair}`);
+                        }
+
+                        const config = {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        };
+
+                        const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
+                        console.log(getVal);
+
+                        if (work == 'list') {
+                            const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                            let nowImageList = nowImageListVal.value.split(',');
+
+                            if (nowImageList[0]) {
+                                nowImageList.push(getVal.data.getUploadImgUrl)
+                            } else {
+                                nowImageList = [getVal.data.getUploadImgUrl]
+                            }
+
+                            const nowImageStr = nowImageList.join(',');
+                            nowImageListVal.value = nowImageStr;
+
+
+                            sortWrapLoop(nowImageList);
+                        } else {
+                            if (type == 'main') {
+                                console.log('여기서 메인 이미지를 리턴 받을거야!!');
+                                console.log(getVal.data.getUploadImgUrl);
+                                const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
+                                mainImgFileName.value = getVal.data.getUploadImgUrl
+                            } else if (type == 'card') {
+                                console.log('여기서 카드 이미지를 리턴 받을거야!!');
+                                console.log(getVal.data.getUploadImgUrl);
+                                const mainImgFileName = document.querySelector('input[name=card_img_file_name]');
+                                mainImgFileName.value = getVal.data.getUploadImgUrl
+                            }
+                        }
+
+
+                    };
+                }
+            } else {
+
+                console.log('여기는 GIF 랑 WEBP!!');
+                imgForm = new FormData();
+
+                const timestamp = new Date().getTime();
+                const fileName = `${timestamp}${Math.random()
+                    .toString(36)
+                    .substring(2, 11)}.webp`;
+
+                imgForm.append("onimg", file, fileName);
+                imgForm.append("hy_num", hyNum);
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                };
+
+
+                // FormData의 key 값과 value값 찾기
+                let keys = imgForm.keys();
+                for (const pair of keys) {
+                    console.log(`name : ${pair}`);
+                }
+
+                let values = imgForm.values();
+                for (const pair of values) {
+                    console.log(`value : ${pair}`);
+                }
+
+                const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
+                console.log(getVal);
+
+                if (work == 'list') {
+                    const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                    let nowImageList = nowImageListVal.value.split(',');
+
+                    if (nowImageList[0]) {
+                        nowImageList.push(getVal.data.getUploadImgUrl)
+                    } else {
+                        nowImageList = [getVal.data.getUploadImgUrl]
+                    }
+
+                    const nowImageStr = nowImageList.join(',');
+                    nowImageListVal.value = nowImageStr;
+
+
+                    sortWrapLoop(nowImageList);
+                } else {
+
+                    if (type == 'main') {
+                        console.log('여기서 메인 이미지를 리턴 받을거야!!');
+                        console.log(getVal.data.getUploadImgUrl);
+                        const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
+                        mainImgFileName.value = getVal.data.getUploadImgUrl
+                    } else if (type == 'card') {
+                        console.log('여기서 카드 이미지를 리턴 받을거야!!');
+                        console.log(getVal.data.getUploadImgUrl);
+                        const mainImgFileName = document.querySelector('input[name=card_img_file_name]');
+                        mainImgFileName.value = getVal.data.getUploadImgUrl
+                    }
+
+                }
+
+            }
+
+
+        }
+    }
+
+
+    const dataURItoBlob = (dataURI) => {
+        const bytes =
+            dataURI.split(",")[0].indexOf("base64") >= 0
+                ? atob(dataURI.split(",")[1])
+                : unescape(dataURI.split(",")[1]);
+        const mime = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const max = bytes.length;
+        const ia = new Uint8Array(max);
+        for (let i = 0; i < max; i++) ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], { type: mime });
+    };
+
+    function switchValues(arr, index1, index2) {
+        const tmp = arr[index1];
+        arr[index1] = arr[index2];
+        arr[index2] = tmp;
+    }
+
+
+    const sortWrapLoop = (nowImageList) => {
+        $('.sort-wrap').empty();
+
+        for (let i = 0; i < nowImageList.length; i++) {
+            let sortTemplate = '';
+            if (nowImageList[i].includes('img')) {
+                sortTemplate = `
+                <div class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                    <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </span>
+                    <img src="${nowImageList[i]}" alt="">
+                </div>`;
+            } else {
+                sortTemplate = `
+                <div class="list border border-slate-400 w-24 h-24 rounded-lg flex items-center justify-center overflow-hidden mb-1 ml-1 relative cursor-pointer">
+                    <span class="absolute top-1 right-1 text-red-600 cursor-pointer del_img">
+                        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                    </span>
+                    <span class="absolute top-1 right-5 text-red-600 cursor-pointer">
+                        <i class="fa fa-file-video-o" aria-hidden="true"></i>
+                    </span>
+                        <img src="https://img.youtube.com/vi/${nowImageList[i]}/mqdefault.jpg" alt="">
+                </div>`;
+            }
+
+            $('.sort-wrap').append(sortTemplate);
         }
     }
 </script>

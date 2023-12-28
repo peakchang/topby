@@ -71,6 +71,7 @@ exports.tableSetting = async () => {
         hy_builder VARCHAR(100) ,
         hy_conduct VARCHAR(100) ,
         hy_features TEXT ,
+        hy_card_image VARCHAR(100),
         hy_main_image VARCHAR(100),
         hy_image_list TEXT ,
         hy_callnumber VARCHAR(100) ,
@@ -83,6 +84,7 @@ exports.tableSetting = async () => {
     }
 
     // ALTER TABLE hy_site ADD COLUMN hy_counter INT(255) AFTER hy_callnumber;
+    // ALTER TABLE hy_site ADD COLUMN hy_card_image VARCHAR(100) AFTER hy_features;
 
 
     let makeVisitChkTable = `CREATE TABLE IF NOT EXISTS visit_chk(
