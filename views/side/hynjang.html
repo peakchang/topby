@@ -8,7 +8,7 @@
     <meta name="facebook-domain-verification" content="hfcyr4o7sysuuo31cswpzaz70ie0uf" />
 
     <title>{{ setData.hy_title }} - 탑분양</title>
-    <meta name="title" content="{{ setData.hy_title }}">>
+    <meta name="title" content="{{ setData.hy_title }}">
     <meta name="description" content="{{ setData.hy_description }}">
 
     <meta property="og:title" content="{{ setData.hy_title }} - 탑분양">
@@ -16,14 +16,14 @@
     <meta property="og:type" content="website">
     <meta property="og:description" content="{{ setData.hy_description }}">
 
-    {% if setData.hy_main_image %}
+    {% if setData.hy_card_image %}
     <meta property="og:image" content="{{ setData.hy_card_image }}">
     {% else %}
     <meta property="og:image" content="{{ setData.hy_main_image }}">
     {% endif %}
     <meta property="article:published_time" content="{{ setData.hy_creted_at | date(" Y-MM-DD Thh:MM:SS+00:00") }}">
     <meta name="naver-site-verification" content="eac9d4ee9921a03f4f6dd6b674d702dab852a08f" />
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EV29LC08JG">
     </script>
@@ -53,13 +53,6 @@
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-5NDRG3SJ');</script>
     <!-- End Google Tag Manager -->
-
-
-
-    {% if setData.hy_main_image %}
-    <meta property="og:image" content="{{ setData.hy_main_image }}">
-    {% endif %}
-    <meta property="description" content="{{ setData.hy_description }}">
 
     <!-- AOS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
