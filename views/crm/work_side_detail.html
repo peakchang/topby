@@ -349,7 +349,7 @@
         const filterValue = document.querySelector('.filter_sitelist').value;
         console.log(filterValue);
 
-        const siteList = [];
+        let siteList = [];
         try {
             const res = await axios.post('/crm/side/finter_sitelist', { filterValue })
             console.log(res.data);
