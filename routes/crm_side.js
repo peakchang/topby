@@ -54,7 +54,7 @@ const uploadSimple = multer();
 router.post('/finter_sitelist', async (req, res, next) => {
     let status = true;
     const filterValue = req.body.filterValue;
-    const filter_site_list = [];
+    let filter_site_list = [];
     try {
         const getFilterQuery = `SELECT * FROM site_list WHERE sl_site_name LIKE '%${filterValue}%' ORDER BY sl_id DESC;`;
         const getFilter = getFilterQuery[0]
