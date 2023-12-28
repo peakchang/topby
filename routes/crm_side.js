@@ -60,6 +60,7 @@ router.post('/finter_sitelist', async (req, res, next) => {
         const getFilter = getFilterQuery[0]
         filter_site_list = getFilter
     } catch (error) {
+        console.error(error.message);
         status = false;
     }
     res.json({ status, filter_site_list })
