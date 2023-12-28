@@ -57,8 +57,8 @@ router.post('/finter_sitelist', async (req, res, next) => {
     let filter_site_list = [];
     try {
         const getFilterQuery = `SELECT * FROM site_list WHERE sl_site_name LIKE '%${filterValue}%' ORDER BY sl_id DESC;`;
-        const getFilter = getFilterQuery[0]
-        filter_site_list = getFilter
+        const getFilter = await sql_con.promise().query(getFilterQuery);
+        filter_site_list = getFilter[0];
     } catch (error) {
         console.error(error.message);
         status = false;
