@@ -521,87 +521,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 })
 
 
-router.get('/user_manage', chkRateMaster, async (req, res, next) => {
-
-    const masterLoadSql = `SELECT * FROM users WHERE rate = 5;`;
-    const masterLoadTemp = await sql_con.promise().query(masterLoadSql);
-    const master_load = masterLoadTemp[0];
-
-    console.log(req.query.rate);
-
-    if (!req.query.rate) {
-        var userLoadSql = `SELECT * FROM users WHERE rate = 2 AND type IS NULL;`;
-    } else if (req.query.rate == 'all') {
-        var userLoadSql = `SELECT * FROM users WHERE rate < 5 AND type IS NULL;`;
-    } else {
-        var userLoadSql = `SELECT * FROM users WHERE rate = ${parseInt(req.query.rate)} AND type IS NULL;`;
-    }
-
-    const userListTemp = await sql_con.promise().query(userLoadSql);
-    const user_list = userListTemp[0];
 
 
 
-    // const locationListSql = `SELECT fs_estate_list FROM form_status WHERE fs_id = 1;`;
-    // const locationListTemp = await sql_con.promise().query(locationListSql);
-    // const location_list = locationListTemp[0][0].fs_estate_list.split(',')
-
-    const getSiteListSql = "SELECT * FROM site_list";
-    const getSiteListResult = await sql_con.promise().query(getSiteListSql)
-    const location_list = [];
-    for (const getSiteListFor of getSiteListResult[0]) {
-        location_list.push(getSiteListFor.sl_site_name)
-    }
-
-    res.render('crm/user_manage', { master_load, user_list, location_list });
-})
-
-router.post('/user_manage', chkRateManager, async (req, res, next) => {
-    console.log(req.body);
-    res.redirect('/crm/user_manage');
-})
 
 
-router.post('/user_manage_update', async (req, res, next) => {
-    try {
-        if (req.body.pwd_val) {
-            const hash = await bcrypt.hash(req.body.pwd_val, 12);
-            const valArr = [hash, req.body.id_val]
-            const pwdUpdateSql = `UPDATE users SET password = ? WHERE id = ?;`;
-            await sql_con.promise().query(pwdUpdateSql, valArr);
-        } else if (req.body.rate_val) {
-            const valArr = [req.body.rate_val, req.body.id_val]
-            const rateUpdateSql = `UPDATE users SET rate = ? WHERE id = ?;`;
-            await sql_con.promise().query(rateUpdateSql, valArr);
-        } else if (req.body.location_val) {
-            const valArr = [req.body.location_val, req.body.id_val]
-            const locationUpdateSql = `UPDATE users SET manage_estate = ? WHERE id = ?;`;
-            await sql_con.promise().query(locationUpdateSql, valArr);
-        } else if (req.body.delval) {
-            const valArr = [req.body.id_val]
-            const locationDeleteSql = `UPDATE users SET manage_estate = '' WHERE id = ?;`;
-            await sql_con.promise().query(locationDeleteSql, valArr);
-        } else if (req.body.email_val) {
-            const valArr = [req.body.email_val, req.body.id_val]
-            const emailUpdateSql = `UPDATE users SET user_email = ? WHERE id = ?;`;
-            await sql_con.promise().query(emailUpdateSql, valArr);
-        } else if (req.body.phone_val) {
-            var phone_val = req.body.phone_val.replace(/\-/g, '');
-            const valArr = [phone_val, req.body.id_val]
-            const phoneUpdateSql = `UPDATE users SET user_phone = ? WHERE id = ?;`;
-            await sql_con.promise().query(phoneUpdateSql, valArr);
-        } else if (req.body.chk_list) {
-            for await (const i of req.body.chk_list) {
-                const delUserSql = `DELETE FROM users WHERE id = ?`
-                await sql_con.promise().query(delUserSql, [i]);
-            }
-        }
-        res.send(200)
-    } catch (error) {
-        res.send(404)
-    }
-
-})
 
 
 router.post('/memo_manage', async (req, res, next) => {

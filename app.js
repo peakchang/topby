@@ -19,6 +19,9 @@ tableSetting()
 
 const crmRouter = require('./routes/crm');
 const crmSideRouter = require('./routes/crm_side');
+const crmUserRouter = require('./routes/crm_user');
+
+
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
@@ -103,6 +106,7 @@ app.use('/', mainRouter);
 
 
 app.use('/crm/side', crmSideRouter);
+app.use('/crm/user', crmUserRouter);
 app.use('/crm', crmRouter);
 
 app.use('/auth', authRouter);

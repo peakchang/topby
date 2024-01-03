@@ -172,7 +172,11 @@ exports.tableSetting = async () => {
         nick VARCHAR(50) NOT NULL,
         password VARCHAR(150),
         rate VARCHAR(10) NOT NULL DEFAULT '1',
+        // status VARCHAR(5),
         manage_estate VARCHAR(50),
+        // type VARCHAR(10),
+        // authvalue VARCHAR(120),
+        // macvalue VARCHAR(120),
         provider VARCHAR(10) NOT NULL DEFAULT 'local',
         snsId VARCHAR(50),
         created_at DATETIME DEFAULT NOW(),
@@ -184,6 +188,9 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+    
+
 
 
     let make_application_form = `CREATE TABLE IF NOT EXISTS application_form(
@@ -232,6 +239,12 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+
+    // ALTER TABLE users ADD COLUMN status VARCHAR(255) AFTER rate;
+    // ALTER TABLE users ADD COLUMN authvalue VARCHAR(120) AFTER manage_estate;
+    // ALTER TABLE users ADD COLUMN macvalue VARCHAR(120) AFTER manage_estate;
+    // ALTER TABLE users ADD COLUMN type VARCHAR(10) AFTER manage_estate;
 
 
 
