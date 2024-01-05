@@ -67,17 +67,22 @@
                 </tr>
 
                 {% for site in on_site_list %}
-
+                <!-- {{loop.index}} -->
+                {% if loop.index % 2 == 0 %}
+                <tr class="bg-gray-200">
+                    {% else %}
                 <tr>
+                    {% endif %}
                     <td class="border border-slate-300 py-2 text-center">
                         <input type="checkbox" class="site_id" name="site_id" value="{{ site.sl_id }}">
                     </td>
-                    <td class="border border-slate-300 py-2 text-left">
+                    <td class="border border-slate-300 py-2 pl-2 text-left">
                         {{site.sl_site_name}}
                     </td>
                     <td class="border border-slate-300 p-1 text-left">
                         <div class="flex justify-center gap-2">
-                            <input type="text" class="border py-1 px-2 w-3/4 rounded-sm" value="{{site.sl_site_realname}}">
+                            <input type="text" class="border py-1 px-2 w-3/4 rounded-sm"
+                                value="{{site.sl_site_realname}}">
                             <button type="button"
                                 class="update-realname w-20 bg-amber-600 text-white rounded-lg">적용하기</button>
                         </div>
