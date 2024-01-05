@@ -130,6 +130,7 @@ exports.tableSetting = async () => {
         sl_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         sl_site_name VARCHAR(100),
         sl_site_link VARCHAR(255),
+        sl_sms_content TEXT,
         sl_created_at DATETIME
     );`
     try {
@@ -137,6 +138,9 @@ exports.tableSetting = async () => {
     } catch (err) {
         console.error(err);
     }
+
+    // ALTER TABLE site_list ADD COLUMN sl_sms_content TEXT AFTER sl_site_link;
+    // ALTER TABLE site_list ADD COLUMN sl_site_realname VARCHAR(100) AFTER sl_site_name;
 
 
     let makeAlldataTable = `CREATE TABLE IF NOT EXISTS webhookdatas(

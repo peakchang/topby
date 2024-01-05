@@ -40,10 +40,53 @@ router.use('/site', async (req, res, next) => {
         }
         return res.redirect('/crm/site')
     }
-    const onSiteListSql = "SELECT * FROM site_list";
+    const onSiteListSql = "SELECT * FROM site_list ORDER BY sl_id DESC";
     const onSiteList = await sql_con.promise().query(onSiteListSql);
     const on_site_list = onSiteList[0]
+    console.log(on_site_list);
     res.render('crm/work_site', { on_site_list })
+})
+
+router.use('/site_sms_load', async (req, res, next) => {
+    let status = true;
+    console.log('일단 들어와쏘~~~');
+    let sms_content = ""
+    try {
+        const getSmsContentLoadQuery = "SELECT sl_sms_content FROM site_list WHERE sl_id = ?";
+        const getSmsContentLoad = await sql_con.promise().query(getSmsContentLoadQuery, [req.body.getId]);
+        sms_content = getSmsContentLoad[0][0].sl_sms_content
+    } catch (error) {
+
+    }
+    console.log(sms_content);
+    res.json({ status, sms_content })
+})
+
+router.use('/site_sms_upload', async (req, res, next) => {
+    let status = true;
+    try {
+        const body = req.body;
+        const updateSmsContent = "UPDATE site_list SET sl_sms_content = ? WHERE sl_id = ?";
+        await sql_con.promise().query(updateSmsContent, [body.smsContent, body.getId]);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
+router.use('/site_realname_upload', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+
+    try {
+        const updateRealNameQuery = "UPDATE site_list SET sl_site_realname = ? WHERE sl_id = ?";
+        await sql_con.promise().query(updateRealNameQuery, [body.realName, body.getId]);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
 })
 
 

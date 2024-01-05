@@ -217,10 +217,16 @@
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">명함이미지</th>
                     <td class="border border-slate-300 py-1 text-center">
-                        <input type="hidden" name="card_img_file_name" value="{{get_hy_info.hy_card_image}}">
-                        <input name="card_img"
-                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            type="file" id="cardformFile">
+
+                        <div class="flex justify-center w-2/3 mx-auto gap-3">
+                            <input type="hidden" name="card_img_file_name" value="{{get_hy_info.hy_card_image}}">
+                            <input name="card_img" class="form-control block py-1.5 mx-auto text-xs" type="file"
+                                id="cardformFile">
+                            <button type="button" class="w-20 bg-red-400 text-white rounded-lg delete_card">
+                                삭제
+                            </button>
+                        </div>
+
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_card_image %}
@@ -236,9 +242,8 @@
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">메인이미지</th>
                     <td class="border border-slate-300 py-1 text-center">
                         <input type="hidden" name="main_img_file_name" value="{{get_hy_info.hy_main_image}}">
-                        <input name="main_img"
-                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            type="file" id="mainFormFile">
+                        <input name="main_img" class="form-control block w-2/4 py-1.5 mx-auto text-xs" type="file"
+                            id="mainFormFile">
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_main_image %}
@@ -342,6 +347,23 @@
             document.querySelector('input[name=hy_image_list]').value = tempArr.join(',');
         },
     });
+
+
+    $('.delete_card').click(async function () {
+        const cardImgFileName = document.querySelector('input[name=card_img_file_name]').value;
+        const hyId = document.querySelector('input[name=hy_id]').value;
+        try {
+            const res = await axios.post('/crm/side/delete_card_img', {
+                hyId,
+                cardImgFileName
+            })
+            console.log(res.data);
+            if (res.data.status) {
+                location.reload();
+            }
+        } catch (error) {
+        }
+    })
 
 
     $('.filter_sitelist_act').click(async function () {
@@ -730,7 +752,6 @@
 
         }
     }
-
 
     const dataURItoBlob = (dataURI) => {
         const bytes =

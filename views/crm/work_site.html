@@ -2,6 +2,50 @@
 
 {% block dbmanage_content %}
 
+<style>
+    .modal-wrap {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        background-color: gray;
+        opacity: .5;
+        width: 100%;
+        height: 100%;
+    }
+
+
+    .modal-inner {
+        position: fixed;
+        width: 800px;
+        height: 80%;
+        overflow: auto;
+        max-width: 90%;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 1200;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="sitelist-modal hidden">
+    <div class="modal-wrap" style="z-index: 1100;"></div>
+    <div class="modal-inner relative">
+        <input type="hidden" id="modal_in_id">
+        <div class="mb-4 text-right">
+            <button class="update-button mr-10 bg-cyan-700 text-white text-sm py-1 px-3 rounded-md">업데이트</button>
+            <button class="close-modal"><i class="fa fa-times text-xl" aria-hidden="true"></i></button>
+        </div>
+        <div>
+            <textarea class="border rounded-md p-2 w-full h-screen focus:ring-0 sms-content"
+                placeholder="발송할 내용을 입력해주세요">
+            </textarea>
+        </div>
+    </div>
+</div>
+
 
 <form method="post">
     <div class="container mt-3">
@@ -18,6 +62,8 @@
                         <input type="checkbox" name="" id="all_chk">
                     </th>
                     <th class="border border-slate-300 py-2 text-center">현장명</th>
+                    <th class="border border-slate-300 py-2 text-center">톡 발송 현장명</th>
+                    <th class="border border-slate-300 py-2 text-center">문자내용</th>
                 </tr>
 
                 {% for site in on_site_list %}
@@ -29,6 +75,19 @@
                     <td class="border border-slate-300 py-2 text-left">
                         {{site.sl_site_name}}
                     </td>
+                    <td class="border border-slate-300 p-1 text-left">
+                        <div class="flex justify-center gap-2">
+                            <input type="text" class="border py-1 px-2 w-3/4 rounded-sm" value="{{site.sl_site_realname}}">
+                            <button type="button"
+                                class="update-realname w-20 bg-amber-600 text-white rounded-lg">적용하기</button>
+                        </div>
+
+                    </td>
+                    <td class="border border-slate-300 py-2 text-center">
+                        <button type="button" class="sms_mod_modal py-1 px-3 bg-teal-700 text-white rounded-md">
+                            문자 내용 확인 / 수정
+                        </button>
+                    </td>
 
                 </tr>
                 {% endfor %}
@@ -38,7 +97,62 @@
 </form>
 
 <script>
-    $('#all_chk').change(function(e) {
+
+    $('.update-realname').click(async function () {
+        console.log('여긴 맞자나?');
+        const getId = this.parentNode.parentNode.parentNode.children[0].children[0].value
+        const realName = this.previousElementSibling.value;
+        console.log(getId);
+        console.log(realName);
+
+        try {
+            const res = await axios.post('/crm/site_realname_upload', { getId, realName })
+            if (res.data.status) {
+                location.reload();
+            }
+        } catch (error) {
+            alert('에러가 발생 했습니다.')
+        }
+
+
+    })
+
+    $('.close-modal').click(function () {
+        const sitelistModal = document.querySelector('.sitelist-modal');
+        sitelistModal.classList.add("hidden");
+    })
+
+    $('.sms_mod_modal').click(async function (e) {
+        const getId = this.parentNode.parentNode.children[0].children[0].value
+        document.querySelector('#modal_in_id').value = getId;
+
+        const res = await axios.post('/crm/site_sms_load', { getId })
+        if (res.data.status && res.data.sms_content) {
+            console.log('불러왔지롱~~~~');
+            console.log(res.data.sms_content);
+            document.querySelector('.sms-content').value = res.data.sms_content
+        } else {
+            document.querySelector('.sms-content').value = ""
+        }
+        const sitelistModal = document.querySelector('.sitelist-modal');
+        sitelistModal.classList.remove("hidden");
+    })
+
+    $('.update-button').click(async function () {
+        const getId = document.querySelector('#modal_in_id').value
+        const smsContent = document.querySelector('.sms-content').value;
+        // const smsContent = smsContentTemp.replace(/\n/g, '\\n');
+        console.log(getId);
+        const res = await axios.post('/crm/site_sms_upload', { getId, smsContent })
+        if (res.data.status) {
+            location.reload();
+        }
+
+
+    })
+
+
+    $('#all_chk').change(function (e) {
         const chkList = document.querySelectorAll('.site_id');
         for (let i = 0; i < chkList.length; i++) {
             chkList[i].checked = this.checked
