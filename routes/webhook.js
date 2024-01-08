@@ -41,7 +41,6 @@ doRequest = (url) => {
 
 router.get('/', async (req, res) => {
     if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == token) {
-        console.log('여기 안들어옴??');
         res.send(req.query['hub.challenge']);
     } else {
         res.send('웹 훅 인증 대기 페이지 입니다!!!')
@@ -52,18 +51,18 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     var getData = req.body
-    console.log(`The first data we got was?! ${getData}`);
+    // console.log(`The first data we got was?! ${getData}`);
 
     try {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
 
-        console.log(`get leads Id is~~~ : ${leadsId}`);
+        // console.log(`get leads Id is~~~ : ${leadsId}`);
 
 
         let formId = getData.entry[0].changes[0].value.form_id
 
-        console.log(`get form Id is~~~ : ${formId}`);
+        // console.log(`get form Id is~~~ : ${formId}`);
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -77,8 +76,8 @@ router.post('/', async (req, res) => {
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        console.log(`show LeadsData : ${LeadsData}`);
-        console.log(`show formData : ${formData}`);
+        // console.log(`show LeadsData : ${LeadsData}`);
+        // console.log(`show formData : ${formData}`);
 
         // 테스트로 새로 만들자!!
         const leadsData = getLeadsData.field_data;
@@ -107,10 +106,10 @@ router.post('/', async (req, res) => {
         console.log('//////////////////////////////////////////');
 
         if (getFormData.name.includes('rich')) {
-            console.log('This is Richies place!!');
+            // console.log('This is Richies place!!');
 
             axios.post('https://richby.co.kr/webhook/richhook', { baseData, getFormData, leadsId }).then((res) => {
-                console.log(res.status);
+                // console.log(res.status);
             }).catch((err) => {
                 console.error(err);
             })
@@ -134,7 +133,7 @@ router.post('/', async (req, res) => {
 
 
         let get_created_time = getLeadsData.created_time
-        console.log(getFormData);
+        // console.log(getFormData);
 
         var get_form_name = getFormData.name
         var form_type_in = '분양'
@@ -179,11 +178,11 @@ router.post('/', async (req, res) => {
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
 
-            console.log(formInertSql);
+            // console.log(formInertSql);
 
             await mysql_conn.promise().query(formInertSql, getArr)
 
-            console.log('modify success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            // console.log('modify success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         } catch (error) {
             // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
@@ -226,10 +225,16 @@ router.post('/', async (req, res) => {
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
 
+
+        console.log(`getSiteInfo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
         console.log(getSiteInfo);
         let sendMessageObj = ""
 
+        console.log(getSiteInfo.sl_site_realname);
+        console.log(getSiteInfo.sl_sms_content);
+
         if(getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content){
+            console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
             sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
             sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
             sendMessageObj['receiver'] = baseData.db_phone
@@ -256,15 +261,9 @@ router.post('/', async (req, res) => {
             }
 
             if (customerInfo.ciPhone.includes('010')) {
-                console.log('매니저에게 카톡 발송하기~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log(customerInfo.ciPhone);
-                console.log('GOGOGOGOGOGOGOGOGGO!!!!!!!!');
                 aligoKakaoNotification_formanager(req, customerInfo)
             }
         }
-
-
-        console.log('success!!!!!');
         return res.sendStatus(200);
 
     } catch (error) {
