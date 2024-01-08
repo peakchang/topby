@@ -239,10 +239,14 @@ router.post('/', async (req, res) => {
                 sendMessageObj['company'] = '탑분양정보'
             }
 
-            console.log(sendMessageObj);
+            
         } catch (error) {
             console.error(error.message);
         }
+
+        console.log('////////////////////sendMessageObj////////////////////');
+        console.log(sendMessageObj);
+        console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
 
 
 
