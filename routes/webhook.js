@@ -228,7 +228,7 @@ router.post('/', async (req, res) => {
 
         console.log(`getSiteInfo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
         console.log(getSiteInfo);
-        let sendMessageObj = ""
+        let sendMessageObj = {}
 
         try {
             if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
