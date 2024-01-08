@@ -227,6 +227,19 @@ router.post('/', async (req, res) => {
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
 
+        console.log(getSiteInfo);
+        let sendMessageObj = ""
+
+        if(getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content){
+            sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
+            sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
+            sendMessageObj['receiver'] = baseData.db_phone
+            sendMessageObj['company'] = '탑분양정보'
+        }
+
+        console.log(sendMessageObj);
+
+
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
@@ -237,6 +250,8 @@ router.post('/', async (req, res) => {
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
         for (let oo = 0; oo < findUser.length; oo++) {
             var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+
+
             if (oo == 0) {
                 // aligoKakaoNotification(req, customerInfo)
             }
