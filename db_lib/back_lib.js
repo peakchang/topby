@@ -237,7 +237,7 @@ exports.aligoKakaoNotification_detail = async (req, sendMessageObj) => {
       receiver_1: sendMessageObj.receiver,
       subject_1: '분양정보 신청고객 알림톡',
       message_1: `${sendMessageObj.customerName}님!
-안녕하세요. ${sendMessageObj.company} 입니다 !
+안녕하세요. [${sendMessageObj.company}] 입니다 !
 ${sendMessageObj.siteRealName}에 문의 주셧네요!
       
 ${sendMessageObj.smsContent}
