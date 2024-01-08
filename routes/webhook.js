@@ -208,7 +208,6 @@ router.post('/', async (req, res) => {
 
         // 담당자들 에게 이메일 발송
         for await (const goUser of findUser) {
-            console.log(goUser.user_email);
             const mailSubjectManager = `${reFormName} / ${baseData.db_name} 고객 DB 접수되었습니다.`;
             const mailContentManager = `현장 : ${reFormName} / 이름 : ${baseData.db_name} / 전화번호 : ${baseData.db_phone} ${addEtcMessage}`;
             mailSender.sendEmail(goUser.user_email, mailSubjectManager, mailContentManager);
