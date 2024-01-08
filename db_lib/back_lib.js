@@ -234,13 +234,13 @@ exports.aligoKakaoNotification_detail = async (req, sendMessageObj) => {
       tpl_code: 'TQ_7435',
       token: result.token,
       sender: '010-4478-1127',
-      receiver_1: customerInfo.ciReceiver,
+      receiver_1: sendMessageObj.receiver,
       subject_1: '분양정보 신청고객 알림톡',
-      message_1: `${customerInfo.ciName}님!
-      안녕하세요. [${customerInfo.ciCompany}] 입니다 !
-      ${customerInfo.ciCompany}에 문의 주셧네요!
+      message_1: `${sendMessageObj.customerName}님!
+      안녕하세요. [${sendMessageObj.company}] 입니다 !
+      ${sendMessageObj.siteRealName}에 문의 주셧네요!
       
-      ${customerInfo.ciCompany}
+      ${sendMessageObj.smsContent}
       
       현장 "무료상담"은 정상적으로 접수 되셧구요!
       부동산 정보는 많이 알아두시는게 좋습니다!

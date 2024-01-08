@@ -10,7 +10,7 @@ const axios = require('axios');
 var received_updates = [];
 
 
-const { aligoKakaoNotification, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
+const { aligoKakaoNotification_detail, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
 
 const moment = require('moment');
 const { log } = require('console');
@@ -233,10 +233,12 @@ router.post('/', async (req, res) => {
         try {
             if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
                 console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                sendMessageObj['customerName'] = baseData.db_name
                 sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
                 sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
                 sendMessageObj['receiver'] = baseData.db_phone
                 sendMessageObj['company'] = '탑분양정보'
+                aligoKakaoNotification_detail(req, sendMessageObj)
             }
 
             
@@ -247,6 +249,8 @@ router.post('/', async (req, res) => {
         console.log('////////////////////sendMessageObj////////////////////');
         console.log(sendMessageObj);
         console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
+
+
 
 
 
