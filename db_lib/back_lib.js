@@ -237,15 +237,15 @@ exports.aligoKakaoNotification_detail = async (req, sendMessageObj) => {
       receiver_1: sendMessageObj.receiver,
       subject_1: '분양정보 신청고객 알림톡',
       message_1: `${sendMessageObj.customerName}님!
-      안녕하세요. [${sendMessageObj.company}] 입니다 !
-      ${sendMessageObj.siteRealName}에 문의 주셧네요!
+안녕하세요. [${sendMessageObj.company}] 입니다 !
+${sendMessageObj.siteRealName}에 문의 주셧네요!
       
-      ${sendMessageObj.smsContent}
+${sendMessageObj.smsContent}
       
-      현장 "무료상담"은 정상적으로 접수 되셧구요!
-      부동산 정보는 많이 알아두시는게 좋습니다!
-      잠시 후 연락드리겠습니다!
-      * 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람 접수를 한 신청자에게만 발송되는 메시지입니다.`,
+현장 "무료상담"은 정상적으로 접수 되셧구요!
+부동산 정보는 많이 알아두시는게 좋습니다!
+잠시 후 연락드리겠습니다!
+* 해당 알림톡은 탑분양정보 에서 현장정보에 대한 알람 접수를 한 신청자에게만 발송되는 메시지입니다.`,
     }
 
     // console.log(req.body);
