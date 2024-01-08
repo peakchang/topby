@@ -230,18 +230,20 @@ router.post('/', async (req, res) => {
         console.log(getSiteInfo);
         let sendMessageObj = ""
 
-        console.log(getSiteInfo.sl_site_realname);
-        console.log(getSiteInfo.sl_sms_content);
+        try {
+            if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
+                console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
+                sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
+                sendMessageObj['receiver'] = baseData.db_phone
+                sendMessageObj['company'] = '탑분양정보'
+            }
 
-        if(getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content){
-            console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
-            sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
-            sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
-            sendMessageObj['receiver'] = baseData.db_phone
-            sendMessageObj['company'] = '탑분양정보'
+            console.log(sendMessageObj);
+        } catch (error) {
+            console.error(error.message);
         }
 
-        console.log(sendMessageObj);
 
 
 
