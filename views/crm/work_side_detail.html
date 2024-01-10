@@ -204,6 +204,19 @@
                 </tr>
 
                 <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">추가 스크립트</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        {% if get_hy_info.hy_add_script %}
+                        <textarea name="hy_add_script" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_add_script | trim}}</textarea>
+                        {% else %}
+                        <textarea name="hy_add_script" id="" rows="5"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">전화번호</th>
                     <td class="border border-slate-300 py-1 text-center">
 
