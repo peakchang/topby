@@ -285,6 +285,8 @@ router.post('/detail/:id', async (req, res, next) => {
         const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.hy_add_script, req.body.card_img_file_name, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, req.body.hy_kakao_link, now, req.body.hy_id]
 
         await sql_con.promise().query(allUpdateSql, allUpdateArr);
+
+        console.log('update success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     } catch (error) {
         console.error(error.message);
     }
