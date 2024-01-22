@@ -12,7 +12,7 @@ const xml2js = require('xml2js');
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
-const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData, getExLength, randomChracter, getQueryStr } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform, log } = require('winston');
@@ -277,25 +277,33 @@ router.get('/detail/:id', async (req, res, next) => {
 
 // chkRateMaster
 router.post('/detail/:id', async (req, res, next) => {
-    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    let body = Object.create(null);
+    body = { ...req.body };
+    console.log(body);
+
+    const hy_id = body.hy_id;
+    delete body.hy_id;
+    delete body.card_img;
+    delete body.main_img;
+
+    let sendScript = `<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`
 
     try {
-        const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_add_script=?,hy_card_image = ?, hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_kakao_link = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+        console.log(hy_id);
+        const queryStr = getQueryStr(body, 'update', 'hy_creted_at')
+        console.log(queryStr);
 
-        const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.hy_add_script, req.body.card_img_file_name, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, req.body.hy_kakao_link, now, req.body.hy_id]
+        const allUpdateSql = `UPDATE hy_site SET ${queryStr.str} WHERE hy_id=?`;
+        queryStr.values.push(hy_id);
+        await sql_con.promise().query(allUpdateSql, queryStr.values);
 
-        await sql_con.promise().query(allUpdateSql, allUpdateArr);
-
-        console.log('update success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        console.log('update success!!!!!!!!!!!!!!!!!!!!!!');
     } catch (error) {
+        sendScript = `<script type="text/javascript">alert("${error.message} 에러 발생! 에러 메세지를 캡쳐해서 용이한테 주세욤"); window.location = document.referrer; </script>`
         console.error(error.message);
     }
 
-
-
-
-
-    res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
+    res.send(sendScript);
 })
 
 
