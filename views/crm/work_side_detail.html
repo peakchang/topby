@@ -734,17 +734,17 @@
                     console.log(`value : ${pair}`);
                 }
 
-                const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
-                console.log(getVal);
+                const res = await axios.post('/crm/side/upload_img', imgForm, config);
+                console.log(res.data);
 
                 if (work == 'list') {
                     const nowImageListVal = document.querySelector('input[name=hy_image_list]');
                     let nowImageList = nowImageListVal.value.split(',');
 
                     if (nowImageList[0]) {
-                        nowImageList.push(getVal.data.getUploadImgUrl)
+                        nowImageList.push(res.data.getUploadImgUrl)
                     } else {
-                        nowImageList = [getVal.data.getUploadImgUrl]
+                        nowImageList = [res.data.getUploadImgUrl]
                     }
 
                     const nowImageStr = nowImageList.join(',');
