@@ -328,7 +328,7 @@
                 </div>
 
                 <div>
-                    <div class="border rounded-lg p-4 mt-4 text-sm md:text-base">
+                    <div class="border rounded-lg p-4 mt-4 hy_features_area">
                         {{ setData.hy_features | striptags(true) | escape | nl2br }}
                     </div>
                 </div>
@@ -561,6 +561,10 @@
 
 
     <script>
+
+        const hy_features_area = document.querySelector('.hy_features_area');
+        const hyFontSize = "{{setData.hy_font_size}}"
+        hy_features_area.style.fontSize = `${parseInt(hyFontSize)}px`
 
         const allChk = document.querySelector('.allchk')
         allChk.addEventListener('change', function () {

@@ -130,35 +130,68 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 
 
 
-router.post('/delete_card_img', async (req, res, next) => {
+router.post('/delete_img', async (req, res, next) => {
     let status = true;
-    try {
-        const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
-        const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
-        const hy_site_info = getHysiteInfo[0][0]
-        const cardImgLink = hy_site_info.hy_card_image
 
-        if (cardImgLink) {
+    if (req.body.type == 'cardimg') {
+        try {
+            const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
+            const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
+            const hy_site_info = getHysiteInfo[0][0]
+            const cardImgLink = hy_site_info.hy_card_image
 
-            const deleteCardImgQuery = "UPDATE hy_site SET hy_card_image = NULL WHERE hy_id = ?";
-            await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+            if (cardImgLink) {
 
-            const getCardImgLink = `uploads/${cardImgLink.split('/')[2]}/${cardImgLink.split('/')[3]}`
-            fs.unlink(getCardImgLink, err => {
-                console.log(err);
-            })
-        } else {
-            if (req.body.cardImgFileName) {
-                const getCardImgLink = `uploads/${req.body.cardImgFileName.split('/')[2]}/${req.body.cardImgFileName.split('/')[3]}`
+                const deleteCardImgQuery = "UPDATE hy_site SET hy_card_image = NULL WHERE hy_id = ?";
+                await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+
+                const getCardImgLink = `uploads/${cardImgLink.split('/')[2]}/${cardImgLink.split('/')[3]}`
                 fs.unlink(getCardImgLink, err => {
                     console.log(err);
                 })
+            } else {
+                if (req.body.cardImgFileName) {
+                    const getCardImgLink = `uploads/${req.body.cardImgFileName.split('/')[2]}/${req.body.cardImgFileName.split('/')[3]}`
+                    fs.unlink(getCardImgLink, err => {
+                        console.log(err);
+                    })
+                }
             }
+        } catch (error) {
+            console.error(error.message);
+            status = false;
         }
-    } catch (error) {
-        console.error(error.message);
-        status = false;
+    } else {
+        try {
+            const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
+            const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
+            const hy_site_info = getHysiteInfo[0][0]
+            const mainImgLink = hy_site_info.hy_main_image
+
+            if (mainImgLink) {
+
+                const deleteCardImgQuery = "UPDATE hy_site SET hy_main_image = NULL WHERE hy_id = ?";
+                await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+
+                const getMainImgLink = `uploads/${mainImgLink.split('/')[2]}/${mainImgLink.split('/')[3]}`
+                fs.unlink(getMainImgLink, err => {
+                    console.log(err);
+                })
+            } else {
+                if (req.body.mainImgFileName) {
+                    const getMainImgLink = `uploads/${req.body.mainImgFileName.split('/')[2]}/${req.body.mainImgFileName.split('/')[3]}`
+                    fs.unlink(getMainImgLink, err => {
+                        console.log(err);
+                    })
+                }
+            }
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+
     }
+
     res.json({ status })
 })
 

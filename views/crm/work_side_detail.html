@@ -42,6 +42,7 @@
             <table class="border-collapse border border-slate-400 w-full  rounded">
                 <input type="hidden" name="hy_id" value="{{ get_hy_info.hy_id }}">
                 <input type="hidden" name="hy_num" value="{{ get_hy_info.hy_num }}">
+                <input type="hidden" name="hy_font_size" value="{{ get_hy_info.hy_font_size }}">
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장명</th>
                     <td class="border border-slate-300 py-1 text-center">
@@ -195,11 +196,22 @@
                     <td class="border border-slate-300 py-1 text-center">
                         {% if get_hy_info.hy_features %}
                         <textarea name="hy_features" id="" rows="12"
-                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_features | trim}}</textarea>
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2 hy_features_area">{{get_hy_info.hy_features | trim}}</textarea>
                         {% else %}
                         <textarea name="hy_features" id="" rows="12"
                             class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
                         {% endif %}
+
+                        <div>
+                            <button type="button" value="plus"
+                                class="features_font_size border py-1 px-3 active:bg-gray-200">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" value="minus"
+                                class="features_font_size border py-1 px-3 active:bg-gray-200">
+                                <i class="fa fa-minus" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
 
@@ -238,6 +250,10 @@
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_card_image %}
                             <img src="{{get_hy_info.hy_card_image}}" alt="" class="mx-auto show_card_image">
+                            <button type="button" value="cardimg"
+                                class="deleteimg mt-2 py-1 px-5 bg-red-400 active:bg-red-500 rounded-md text-white">
+                                이미지 삭제
+                            </button>
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_card_image">
                         </div>
@@ -257,6 +273,10 @@
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_main_image %}
                             <img src="{{get_hy_info.hy_main_image}}" alt="" class="mx-auto show_main_image">
+                            <button type="button" value="mainimg"
+                                class="deleteimg mt-2 py-1 px-5 bg-red-400 active:bg-red-500 rounded-md text-white">
+                                이미지 삭제
+                            </button>
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_main_image">
                         </div>
@@ -333,6 +353,63 @@
 
 <script>
 
+    const getFeaturesSize = document.querySelector('input[name="hy_font_size"]').value;
+
+    const hy_features_area = document.querySelector('.hy_features_area')
+    hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+
+    $('.features_font_size').click(function () {
+        let getFeaturesSize = document.querySelector('input[name="hy_font_size"]').value;
+        const hy_features_area = document.querySelector('.hy_features_area')
+        if (this.value == 'plus') {
+            getFeaturesSize = parseInt(getFeaturesSize) + 1
+            document.querySelector('input[name="hy_font_size"]').value = getFeaturesSize
+            hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+            console.log(getFeaturesSize);
+        } else {
+            getFeaturesSize = parseInt(getFeaturesSize) - 1
+            document.querySelector('input[name="hy_font_size"]').value = getFeaturesSize
+            hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+        }
+    })
+
+    $('.deleteimg').click(async function () {
+        console.log(this.value);
+        if (this.value == 'mainimg') {
+            const mainImgFileName = document.querySelector('input[name=hy_main_image]').value;
+            const hyId = document.querySelector('input[name=hy_id]').value;
+            try {
+                const res = await axios.post('/crm/side/delete_img', {
+                    type : this.value,
+                    hyId,
+                    mainImgFileName
+                })
+                console.log(res.data);
+                if (res.data.status) {
+                    location.reload();
+                }
+            } catch (error) {
+            }
+        } else {
+            const cardImgFileName = document.querySelector('input[name=hy_card_image]').value;
+            const hyId = document.querySelector('input[name=hy_id]').value;
+            try {
+                const res = await axios.post('/crm/side/delete_img', {
+                    type : this.value,
+                    hyId,
+                    cardImgFileName
+                })
+                console.log(res.data);
+                if (res.data.status) {
+                    location.reload();
+                }
+            } catch (error) {
+            }
+        }
+    })
+
+
+
     var el = document.getElementById('items');
     var sortable = Sortable.create(el, {
         delay: 0, // 클릭이 밀리는 것을 방지하기 위해 약간의 지연 시간을 추가합니다.
@@ -358,21 +435,7 @@
     });
 
 
-    $('.delete_card').click(async function () {
-        const cardImgFileName = document.querySelector('input[name=card_img_file_name]').value;
-        const hyId = document.querySelector('input[name=hy_id]').value;
-        try {
-            const res = await axios.post('/crm/side/delete_card_img', {
-                hyId,
-                cardImgFileName
-            })
-            console.log(res.data);
-            if (res.data.status) {
-                location.reload();
-            }
-        } catch (error) {
-        }
-    })
+
 
 
     $('.filter_sitelist_act').click(async function () {
