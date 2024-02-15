@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
@@ -8,6 +9,7 @@ const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const dateFilter = require('nunjucks-date-filter');
+const cors = require('cors');
 
 const helmet = require('helmet');
 const hpp = require('hpp');
@@ -21,7 +23,6 @@ const crmRouter = require('./routes/crm');
 const crmSideRouter = require('./routes/crm_side');
 const crmUserRouter = require('./routes/crm_user');
 
-
 const mainRouter = require('./routes/main');
 const authRouter = require('./routes/auth');
 const webhookRouter = require('./routes/webhook');
@@ -30,6 +31,8 @@ const passportConfig = require('./passport');
 const siteRouter = require('./routes/site');
 const nworkRouter = require('./routes/nwork');
 const teleRouter = require('./routes/telework');
+
+const subdomainRouter = require('./routes/sub_domain/subdomain');
 
 
 const app = express();
@@ -100,6 +103,14 @@ app.use(session(sessionOption));
 app.use(passport.initialize());
 app.use(passport.session());
 
+let corsOptions = {
+  // 여기는 svelte (프론트엔드) 가 돌아가는 주소
+  origin: true,
+  credentials: true
+}
+
+app.use(cors(corsOptions));
+
 
 
 app.use('/', mainRouter);
@@ -115,6 +126,9 @@ app.use('/side', sideRouter);
 app.use('/site', siteRouter);
 app.use('/nwork', nworkRouter);
 app.use('/telework', teleRouter);
+
+app.use('/api/subdomain', subdomainRouter);
+
 
 app.use('/favicon.ico', (req, res) => res.status(204));
 
