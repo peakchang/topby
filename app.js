@@ -69,6 +69,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET }));
 
 app.use('/img', express.static(path.join(__dirname, 'uploads')));
+app.use('/subimg', express.static(path.join(__dirname, 'subuploads/img')));
 app.use('/lib', express.static(path.join(__dirname, 'db_lib')));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -128,7 +129,6 @@ app.use('/nwork', nworkRouter);
 app.use('/telework', teleRouter);
 
 app.use('/api/subdomain', subdomainRouter);
-
 
 app.use('/favicon.ico', (req, res) => res.status(204));
 
