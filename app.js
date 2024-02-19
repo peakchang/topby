@@ -32,6 +32,8 @@ const siteRouter = require('./routes/site');
 const nworkRouter = require('./routes/nwork');
 const teleRouter = require('./routes/telework');
 
+const minisiteRouter = require('./routes/crm_minisite')
+
 const subdomainRouter = require('./routes/sub_domain/subdomain');
 
 
@@ -116,7 +118,7 @@ app.use(cors(corsOptions));
 
 app.use('/', mainRouter);
 
-
+app.use('/crm/minisite', minisiteRouter);
 app.use('/crm/side', crmSideRouter);
 app.use('/crm/user', crmUserRouter);
 app.use('/crm', crmRouter);
