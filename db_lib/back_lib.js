@@ -4,6 +4,55 @@ const nodemailer = require('nodemailer');
 const sql_con = require('../db_lib');
 const aligoapi = require('aligoapi')
 const n_sql_con = require('./sub_db');
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
+exports.getQueryStr = (data, type, addTimeStr = '') => {
+
+  console.log('씨부랄탱.... 함수도 안들어와?!?!?!?');
+  let returnData = {
+      str: '',
+      question: '',
+      values: []
+  }
+  if (type == 'insert') {
+
+      for (const key in data) {
+          returnData['str'] = returnData['str'] + `${key},`
+          returnData['question'] = returnData['question'] + `?,`
+          returnData['values'].push(data[key])
+      }
+
+      if (addTimeStr) {
+
+          const now = moment().format('YYYY-MM-DD HH:mm:ss')
+          returnData['str'] = returnData['str'] + addTimeStr;
+          returnData['question'] = returnData['question'] + '?';
+          returnData['values'].push(now)
+      } else {
+          returnData['str'] = returnData['str'].replace(/,$/, '');
+          returnData['question'] = returnData['question'].replace(/,$/, '');
+      }
+
+  } else if (type == 'update') {
+      const now = moment().format('YYYY-MM-DD HH:mm:ss')
+      for (const key in data) {
+          returnData['str'] = returnData['str'] + `${key}=?,`
+          returnData['values'].push(data[key])
+      }
+
+      if (addTimeStr) {
+          returnData['str'] = returnData['str'] + `${addTimeStr} = ?`;
+          returnData['values'].push(now)
+      } else {
+          returnData['str'] = returnData['str'].replace(/,$/, '');
+      }
+
+  }
+
+  return returnData;
+}
 
 /** 알리고 문자 발송  **/
 exports.sendSms = (receivers, message) => {
@@ -196,6 +245,87 @@ exports.getExLength = (worksheet) => {
   return chkCount - 1
 }
 
+
+exports.aligoKakaoNotification_detail = async (req, sendMessageObj) => {
+  try {
+    const AuthData = {
+      apikey: process.env.ALIGOKEY,
+      // 이곳에 발급받으신 api key를 입력하세요
+      userid: process.env.ALIGOID,
+      // 이곳에 userid를 입력하세요
+    }
+
+    req.body = {
+      type: 'i',  // 유효시간 타입 코드 // y(년), m(월), d(일), h(시), i(분), s(초)
+      time: 1, // 유효시간
+    }
+    // console.log('req.body', req.body)
+
+    const result = await new Promise((resolve, reject) => {
+      if (true) {
+        aligoapi.token(req, AuthData)
+          .then((r) => {
+            // console.log('alligo', r);
+            resolve(r);
+          })
+          .catch((e) => {
+            // console.error('err', e)
+            reject(e)
+          })
+      } else {
+        // console.log(2)
+        resolve(true)
+      }
+    })
+
+    req.body = {
+      senderkey: process.env.ALIGO_SENDERKEY,
+      tpl_code: 'TQ_7435',
+      token: result.token,
+      sender: '010-4478-1127',
+      receiver_1: sendMessageObj.receiver,
+      subject_1: '분양정보 신청고객 알림톡',
+      message_1: `${sendMessageObj.customerName}님!
+안녕하세요. [${sendMessageObj.company}] 입니다 !
+${sendMessageObj.siteRealName}에 문의 주셧네요!
+      
+${sendMessageObj.smsContent}
+      
+현장 "무료상담"은 정상적으로 접수 되셧구요!
+부동산 정보는 많이 알아두시는게 좋습니다!
+잠시 후 연락드리겠습니다!
+
+`,
+    }
+
+    // console.log(req.body);
+
+    let resultSend = await new Promise((resolve, reject) => {
+      if (true) {
+        console.log('kakao send arrived~~!!');
+        console.log(req.body);
+        console.log(AuthData);
+        aligoapi.alimtalkSend(req, AuthData).then((r) => {
+          // console.log('alligo', r);
+          console.log('kakao send is success!!!!!!!!!!!!');
+          resolve(true);
+        }).catch((e) => {
+          console.error('err', e)
+          console.log('kakao send is false T.T');
+          reject(false);
+        })
+      } else {
+        console.log('kakao send is false T.T');
+        // console.log(2)
+        resolve(true)
+      }
+    })
+  } catch (e) {
+    // await db.rollback(connection);
+    // next(e);
+    console.error(e);
+  }
+}
 
 exports.aligoKakaoNotification = async (req, customerInfo) => {
   try {

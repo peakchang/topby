@@ -355,7 +355,26 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 })
 
-
+router.use('/estate_work_list_filter', async (req, res, next) => {
+    let status = true;
+    console.log('gogogogo');
+    const filterValue = req.body.filterValue;
+    console.log(filterValue);
+    let site_list = [];
+    try {
+        const getFilterEstateListQuery = `SELECT sl_site_name FROM site_list WHERE sl_site_name LIKE '%${filterValue}%'`
+        const getFilterEstateList = await sql_con.promise().query(getFilterEstateListQuery)
+        const siteList = getFilterEstateList[0]
+        console.log(siteList);
+        for (let i = 0; i < siteList.length; i++) {
+            site_list.push(siteList[i]['sl_site_name'])
+        }
+    } catch (error) {
+        console.error(error.message);
+    }
+    console.log(site_list);
+    res.json({ status, site_list })
+})
 
 
 

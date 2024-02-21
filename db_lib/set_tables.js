@@ -75,6 +75,9 @@ exports.tableSetting = async () => {
         hy_main_image VARCHAR(100),
         hy_image_list TEXT ,
         hy_callnumber VARCHAR(100) ,
+        hy_sms VARCHAR(100),
+        hy_add_script TEXT,
+        hy_font_size INT DEFAULT 16,
         hy_creted_at DATETIME
     );`;
     try {
@@ -85,6 +88,10 @@ exports.tableSetting = async () => {
 
     // ALTER TABLE hy_site ADD COLUMN hy_counter INT(255) AFTER hy_callnumber;
     // ALTER TABLE hy_site ADD COLUMN hy_card_image VARCHAR(100) AFTER hy_features;
+
+    // ALTER TABLE hy_site ADD COLUMN hy_add_script TEXT AFTER hy_callnumber;
+    // ALTER TABLE hy_site ADD COLUMN hy_font_size INT DEFAULT 16 AFTER hy_add_script;
+    // ALTER TABLE hy_site ADD COLUMN hy_sms VARCHAR(100) AFTER hy_callnumber;
 
 
     let makeVisitChkTable = `CREATE TABLE IF NOT EXISTS visit_chk(

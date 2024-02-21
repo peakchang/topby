@@ -1,0 +1,96 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+
+<div class="p-3">
+    <button class="text-sm text-white bg-green-500 active:bg-green-600 py-1 px-3 rounded-md add_row_btn">
+        행추가
+    </button>
+
+    <button class="text-sm text-white bg-red-500 active:bg-red-600 py-1 px-3 rounded-md">
+        선택삭제
+    </button>
+</div>
+
+<div class="p-3 hidden add_row">
+    <table class="w-full text-center">
+        <tr>
+            <th class="border p-2">사이트 이름 (서브도메인)</th>
+            <td class="border p-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-full">
+                        <input type="text" class="border p-1.5 w-full focus:outline-none border-blue-400 add_row_value">
+                    </div>
+                    <div class="w-full text-left">
+                        <button
+                            class="bg-blue-500 active:bg-blue-600 py-1 text-white rounded-md px-5 text-sm add_row_act">
+                            행 추가 완료하기
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="p-3">
+    <table class="w-full text-center">
+        <tr>
+            <th class="border py-1.5 w-12">
+                <input type="checkbox" name="" id="">
+            </th>
+
+            <th class="border py-1.5">사이트 이름 (서브도메인)</th>
+            <th class="border py-1.5">관리</th>
+        </tr>
+
+        <tr>
+            <td class="border py-1.5 w-12">
+                <input type="checkbox" value="" />
+            </td>
+            <td class="border py-1.5">사이트 이름 (서브도메인)</td>
+            <td class="border py-1.5">
+                <button class="text-sm text-white bg-blue-500 active:bg-blue-600 py-1 px-3 rounded-md">
+                    사이트 바로가기
+                </button>
+
+                <button class="text-sm text-white bg-pink-500 active:bg-pink-600 py-1 px-3 rounded-md">
+                    관리 바로가기
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script>
+    $('.add_row_btn').click(function () {
+        const addRow = document.querySelector('.add_row');
+        if (addRow.classList.contains('hidden')) {
+            addRow.classList.remove('hidden');
+        } else {
+            addRow.classList.add('hidden');
+        }
+    })
+
+    $('.add_row_act').click(async function () {
+        console.log('aslidfjliasjf923402843098234');
+        const addRowValue = document.querySelector('.add_row_value').value;
+        console.log(addRowValue);
+        try {
+            const res = await axios.post('/crm/minisite/add_row_data', { addRowValue })
+            console.log(res.data);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })
+
+
+</script>
+
+
+{% endblock %}

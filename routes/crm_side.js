@@ -12,7 +12,7 @@ const xml2js = require('xml2js');
 const app_root_path = require('app-root-path').path;
 var url = require('url');
 
-const { setDbData, getDbData, getExLength, randomChracter } = require('../db_lib/back_lib.js');
+const { setDbData, getDbData, getExLength, randomChracter, getQueryStr } = require('../db_lib/back_lib.js');
 
 const moment = require('moment');
 const { Logform, log } = require('winston');
@@ -130,35 +130,68 @@ router.post('/upload_img', uploadSimple.single('onimg'), async (req, res, next) 
 
 
 
-router.post('/delete_card_img', async (req, res, next) => {
+router.post('/delete_img', async (req, res, next) => {
     let status = true;
-    try {
-        const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
-        const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
-        const hy_site_info = getHysiteInfo[0][0]
-        const cardImgLink = hy_site_info.hy_card_image
 
-        if (cardImgLink) {
+    if (req.body.type == 'cardimg') {
+        try {
+            const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
+            const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
+            const hy_site_info = getHysiteInfo[0][0]
+            const cardImgLink = hy_site_info.hy_card_image
 
-            const deleteCardImgQuery = "UPDATE hy_site SET hy_card_image = NULL WHERE hy_id = ?";
-            await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+            if (cardImgLink) {
 
-            const getCardImgLink = `uploads/${cardImgLink.split('/')[2]}/${cardImgLink.split('/')[3]}`
-            fs.unlink(getCardImgLink, err => {
-                console.log(err);
-            })
-        } else {
-            if (req.body.cardImgFileName) {
-                const getCardImgLink = `uploads/${req.body.cardImgFileName.split('/')[2]}/${req.body.cardImgFileName.split('/')[3]}`
+                const deleteCardImgQuery = "UPDATE hy_site SET hy_card_image = NULL WHERE hy_id = ?";
+                await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+
+                const getCardImgLink = `uploads/${cardImgLink.split('/')[2]}/${cardImgLink.split('/')[3]}`
                 fs.unlink(getCardImgLink, err => {
                     console.log(err);
                 })
+            } else {
+                if (req.body.cardImgFileName) {
+                    const getCardImgLink = `uploads/${req.body.cardImgFileName.split('/')[2]}/${req.body.cardImgFileName.split('/')[3]}`
+                    fs.unlink(getCardImgLink, err => {
+                        console.log(err);
+                    })
+                }
             }
+        } catch (error) {
+            console.error(error.message);
+            status = false;
         }
-    } catch (error) {
-        console.error(error.message);
-        status = false;
+    } else {
+        try {
+            const getHysiteInfoQuery = `SELECT * FROM hy_site WHERE hy_id = ?`;
+            const getHysiteInfo = await sql_con.promise().query(getHysiteInfoQuery, [req.body.hyId]);
+            const hy_site_info = getHysiteInfo[0][0]
+            const mainImgLink = hy_site_info.hy_main_image
+
+            if (mainImgLink) {
+
+                const deleteCardImgQuery = "UPDATE hy_site SET hy_main_image = NULL WHERE hy_id = ?";
+                await sql_con.promise().query(deleteCardImgQuery, [req.body.hyId]);
+
+                const getMainImgLink = `uploads/${mainImgLink.split('/')[2]}/${mainImgLink.split('/')[3]}`
+                fs.unlink(getMainImgLink, err => {
+                    console.log(err);
+                })
+            } else {
+                if (req.body.mainImgFileName) {
+                    const getMainImgLink = `uploads/${req.body.mainImgFileName.split('/')[2]}/${req.body.mainImgFileName.split('/')[3]}`
+                    fs.unlink(getMainImgLink, err => {
+                        console.log(err);
+                    })
+                }
+            }
+        } catch (error) {
+            console.error(error.message);
+            status = false;
+        }
+
     }
+
     res.json({ status })
 })
 
@@ -277,18 +310,33 @@ router.get('/detail/:id', async (req, res, next) => {
 
 // chkRateMaster
 router.post('/detail/:id', async (req, res, next) => {
-    var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+    let body = Object.create(null);
+    body = { ...req.body };
+    console.log(body);
 
+    const hy_id = body.hy_id;
+    delete body.hy_id;
+    delete body.card_img;
+    delete body.main_img;
 
+    let sendScript = `<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`
 
-    const allUpdateSql = `UPDATE hy_site SET hy_title = ?, hy_description = ?, hy_site_name = ?, hy_businessname = ?, hy_set_site = ?,hy_type = ?, hy_scale = ?, hy_areasize = ?, hy_house_number = ?, hy_location = ?, hy_scheduled = ?, hy_builder = ?, hy_conduct = ?, hy_features = ?,hy_card_image = ?, hy_main_image = ?, hy_image_list = ?, hy_callnumber = ?, hy_kakao_link = ?, hy_creted_at = ? WHERE hy_id = ?;`;
+    try {
+        console.log(hy_id);
+        const queryStr = getQueryStr(body, 'update', 'hy_creted_at')
+        console.log(queryStr);
 
-    const allUpdateArr = [req.body.hy_title, req.body.hy_description, req.body.hy_site_name, req.body.hy_businessname, req.body.hy_set_site, req.body.hy_type, req.body.hy_scale, req.body.hy_areasize, req.body.hy_house_number, req.body.hy_location, req.body.hy_scheduled, req.body.hy_builder, req.body.hy_conduct, req.body.hy_features, req.body.card_img_file_name, req.body.main_img_file_name, req.body.hy_image_list, req.body.hy_callnumber, req.body.hy_kakao_link, now, req.body.hy_id]
-    await sql_con.promise().query(allUpdateSql, allUpdateArr);
+        const allUpdateSql = `UPDATE hy_site SET ${queryStr.str} WHERE hy_id=?`;
+        queryStr.values.push(hy_id);
+        await sql_con.promise().query(allUpdateSql, queryStr.values);
 
+        console.log('update success!!!!!!!!!!!!!!!!!!!!!!');
+    } catch (error) {
+        sendScript = `<script type="text/javascript">alert("${error.message} 에러 발생! 에러 메세지를 캡쳐해서 용이한테 주세욤"); window.location = document.referrer; </script>`
+        console.error(error.message);
+    }
 
-
-    res.send(`<script type="text/javascript">alert("수정이 완료 되었습니다."); window.location = document.referrer; </script>`);
+    res.send(sendScript);
 })
 
 

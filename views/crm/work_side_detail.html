@@ -42,6 +42,7 @@
             <table class="border-collapse border border-slate-400 w-full  rounded">
                 <input type="hidden" name="hy_id" value="{{ get_hy_info.hy_id }}">
                 <input type="hidden" name="hy_num" value="{{ get_hy_info.hy_num }}">
+                <input type="hidden" name="hy_font_size" value="{{ get_hy_info.hy_font_size }}">
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">현장명</th>
                     <td class="border border-slate-300 py-1 text-center">
@@ -195,9 +196,33 @@
                     <td class="border border-slate-300 py-1 text-center">
                         {% if get_hy_info.hy_features %}
                         <textarea name="hy_features" id="" rows="12"
-                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_features | trim}}</textarea>
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2 hy_features_area">{{get_hy_info.hy_features | trim}}</textarea>
                         {% else %}
                         <textarea name="hy_features" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
+                        {% endif %}
+
+                        <div>
+                            <button type="button" value="plus"
+                                class="features_font_size border py-1 px-3 active:bg-gray-200">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" value="minus"
+                                class="features_font_size border py-1 px-3 active:bg-gray-200">
+                                <i class="fa fa-minus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">추가 스크립트</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        {% if get_hy_info.hy_add_script %}
+                        <textarea name="hy_add_script" id="" rows="12"
+                            class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2">{{get_hy_info.hy_add_script | trim}}</textarea>
+                        {% else %}
+                        <textarea name="hy_add_script" id="" rows="5"
                             class="text-gray-900 bg-gray-50 rounded-lg border border-gray-300 w-4/5 p-2"></textarea>
                         {% endif %}
                     </td>
@@ -215,22 +240,31 @@
                 </tr>
 
                 <tr>
-                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">명함이미지</th>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">문자번호</th>
                     <td class="border border-slate-300 py-1 text-center">
 
-                        <div class="flex justify-center w-2/3 mx-auto gap-3">
-                            <input type="hidden" name="card_img_file_name" value="{{get_hy_info.hy_card_image}}">
-                            <input name="card_img" class="form-control block py-1.5 mx-auto text-xs" type="file"
-                                id="cardformFile">
-                            <button type="button" class="w-20 bg-red-400 text-white rounded-lg delete_card">
-                                삭제
-                            </button>
-                        </div>
+                        <input type="text"
+                            class="block p-2 w-4/5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs mx-auto"
+                            name="hy_sms" placeholder="" value="{{get_hy_info.hy_sms}}">
+                        <span>※ 미입력시 기본 대표번호로 등록됩니다!!!.</span>
+                    </td>
+                </tr>
 
+                <tr>
+                    <th class="border bg-slate-100 border-slate-300 py-1 text-center">명함이미지</th>
+                    <td class="border border-slate-300 py-1 text-center">
+                        <input type="hidden" name="hy_card_image" value="{{get_hy_info.hy_card_image}}">
+                        <input name="card_img"
+                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            type="file" id="cardformFile">
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_card_image %}
                             <img src="{{get_hy_info.hy_card_image}}" alt="" class="mx-auto show_card_image">
+                            <button type="button" value="cardimg"
+                                class="deleteimg mt-2 py-1 px-5 bg-red-400 active:bg-red-500 rounded-md text-white">
+                                이미지 삭제
+                            </button>
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_card_image">
                         </div>
@@ -241,13 +275,19 @@
                 <tr>
                     <th class="border bg-slate-100 border-slate-300 py-1 text-center">메인이미지</th>
                     <td class="border border-slate-300 py-1 text-center">
-                        <input type="hidden" name="main_img_file_name" value="{{get_hy_info.hy_main_image}}">
-                        <input name="main_img" class="form-control block w-2/4 py-1.5 mx-auto text-xs" type="file"
-                            id="mainFormFile">
+                        <input type="hidden" name="hy_main_image" class="hy_main_image_hidden"
+                            value="{{get_hy_info.hy_main_image}}">
+                        <input name="main_img"
+                            class="form-control block w-2/4 py-1.5 mx-auto text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            type="file" id="mainFormFile">
 
                         <div class="text-center max-w-xs mx-auto mt-4">
                             {% if get_hy_info.hy_main_image %}
                             <img src="{{get_hy_info.hy_main_image}}" alt="" class="mx-auto show_main_image">
+                            <button type="button" value="mainimg"
+                                class="deleteimg mt-2 py-1 px-5 bg-red-400 active:bg-red-500 rounded-md text-white">
+                                이미지 삭제
+                            </button>
                             {% endif %}
                             <img src="" alt="" class="mx-auto preview_main_image">
                         </div>
@@ -324,6 +364,63 @@
 
 <script>
 
+    const getFeaturesSize = document.querySelector('input[name="hy_font_size"]').value;
+
+    const hy_features_area = document.querySelector('.hy_features_area')
+    hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+
+    $('.features_font_size').click(function () {
+        let getFeaturesSize = document.querySelector('input[name="hy_font_size"]').value;
+        const hy_features_area = document.querySelector('.hy_features_area')
+        if (this.value == 'plus') {
+            getFeaturesSize = parseInt(getFeaturesSize) + 1
+            document.querySelector('input[name="hy_font_size"]').value = getFeaturesSize
+            hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+            console.log(getFeaturesSize);
+        } else {
+            getFeaturesSize = parseInt(getFeaturesSize) - 1
+            document.querySelector('input[name="hy_font_size"]').value = getFeaturesSize
+            hy_features_area.style.fontSize = `${parseInt(getFeaturesSize)}px`
+        }
+    })
+
+    $('.deleteimg').click(async function () {
+        console.log(this.value);
+        if (this.value == 'mainimg') {
+            const mainImgFileName = document.querySelector('input[name=hy_main_image]').value;
+            const hyId = document.querySelector('input[name=hy_id]').value;
+            try {
+                const res = await axios.post('/crm/side/delete_img', {
+                    type : this.value,
+                    hyId,
+                    mainImgFileName
+                })
+                console.log(res.data);
+                if (res.data.status) {
+                    location.reload();
+                }
+            } catch (error) {
+            }
+        } else {
+            const cardImgFileName = document.querySelector('input[name=hy_card_image]').value;
+            const hyId = document.querySelector('input[name=hy_id]').value;
+            try {
+                const res = await axios.post('/crm/side/delete_img', {
+                    type : this.value,
+                    hyId,
+                    cardImgFileName
+                })
+                console.log(res.data);
+                if (res.data.status) {
+                    location.reload();
+                }
+            } catch (error) {
+            }
+        }
+    })
+
+
+
     var el = document.getElementById('items');
     var sortable = Sortable.create(el, {
         delay: 0, // 클릭이 밀리는 것을 방지하기 위해 약간의 지연 시간을 추가합니다.
@@ -349,21 +446,7 @@
     });
 
 
-    $('.delete_card').click(async function () {
-        const cardImgFileName = document.querySelector('input[name=card_img_file_name]').value;
-        const hyId = document.querySelector('input[name=hy_id]').value;
-        try {
-            const res = await axios.post('/crm/side/delete_card_img', {
-                hyId,
-                cardImgFileName
-            })
-            console.log(res.data);
-            if (res.data.status) {
-                location.reload();
-            }
-        } catch (error) {
-        }
-    })
+
 
 
     $('.filter_sitelist_act').click(async function () {
@@ -647,36 +730,48 @@
                             }
                         };
 
-                        const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
-                        console.log(getVal);
+                        try {
+                            const res = await axios.post('/crm/side/upload_img', imgForm, config);
+                            console.log(res.data);
 
-                        if (work == 'list') {
-                            const nowImageListVal = document.querySelector('input[name=hy_image_list]');
-                            let nowImageList = nowImageListVal.value.split(',');
+                            if (work == 'list') {
+                                const nowImageListVal = document.querySelector('input[name=hy_image_list]');
+                                let nowImageList = nowImageListVal.value.split(',');
 
-                            if (nowImageList[0]) {
-                                nowImageList.push(getVal.data.getUploadImgUrl)
+                                if (nowImageList[0]) {
+                                    nowImageList.push(res.data.getUploadImgUrl)
+                                } else {
+                                    nowImageList = [res.data.getUploadImgUrl]
+                                }
+
+                                const nowImageStr = nowImageList.join(',');
+                                nowImageListVal.value = nowImageStr;
+
+
+                                sortWrapLoop(nowImageList);
                             } else {
-                                nowImageList = [getVal.data.getUploadImgUrl]
+                                if (type == 'main') {
+                                    console.log('여기서 메인 이미지를 리턴 받을거야!!');
+                                    console.log(res.data.getUploadImgUrl);
+                                    while (true) {
+                                        const mainImgFileName = document.querySelector('.hy_main_image_hidden');
+                                        console.log(mainImgFileName);
+                                        mainImgFileName.value = res.data.getUploadImgUrl
+
+                                        if (mainImgFileName.value == res.data.getUploadImgUrl) {
+                                            break;
+                                        }
+                                    }
+
+                                } else if (type == 'card') {
+                                    console.log('여기서 카드 이미지를 리턴 받을거야!!');
+                                    console.log(res.data.getUploadImgUrl);
+                                    const mainImgFileName = document.querySelector('input[name=hy_card_image]');
+                                    mainImgFileName.value = res.data.getUploadImgUrl
+                                }
                             }
+                        } catch (error) {
 
-                            const nowImageStr = nowImageList.join(',');
-                            nowImageListVal.value = nowImageStr;
-
-
-                            sortWrapLoop(nowImageList);
-                        } else {
-                            if (type == 'main') {
-                                console.log('여기서 메인 이미지를 리턴 받을거야!!');
-                                console.log(getVal.data.getUploadImgUrl);
-                                const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
-                                mainImgFileName.value = getVal.data.getUploadImgUrl
-                            } else if (type == 'card') {
-                                console.log('여기서 카드 이미지를 리턴 받을거야!!');
-                                console.log(getVal.data.getUploadImgUrl);
-                                const mainImgFileName = document.querySelector('input[name=card_img_file_name]');
-                                mainImgFileName.value = getVal.data.getUploadImgUrl
-                            }
                         }
 
 
@@ -713,17 +808,17 @@
                     console.log(`value : ${pair}`);
                 }
 
-                const getVal = await axios.post('/crm/side/upload_img', imgForm, config);
-                console.log(getVal);
+                const res = await axios.post('/crm/side/upload_img', imgForm, config);
+                console.log(res.data);
 
                 if (work == 'list') {
                     const nowImageListVal = document.querySelector('input[name=hy_image_list]');
                     let nowImageList = nowImageListVal.value.split(',');
 
                     if (nowImageList[0]) {
-                        nowImageList.push(getVal.data.getUploadImgUrl)
+                        nowImageList.push(res.data.getUploadImgUrl)
                     } else {
-                        nowImageList = [getVal.data.getUploadImgUrl]
+                        nowImageList = [res.data.getUploadImgUrl]
                     }
 
                     const nowImageStr = nowImageList.join(',');
@@ -735,14 +830,22 @@
 
                     if (type == 'main') {
                         console.log('여기서 메인 이미지를 리턴 받을거야!!');
-                        console.log(getVal.data.getUploadImgUrl);
-                        const mainImgFileName = document.querySelector('input[name=main_img_file_name]');
-                        mainImgFileName.value = getVal.data.getUploadImgUrl
+                        console.log(res.data.getUploadImgUrl);
+                        while (true) {
+                            const mainImgFileName = document.querySelector('.hy_main_image_hidden');
+                            console.log(mainImgFileName);
+                            mainImgFileName.value = res.data.getUploadImgUrl
+
+                            if (mainImgFileName.value == res.data.getUploadImgUrl) {
+                                break;
+                            }
+                        }
+
                     } else if (type == 'card') {
                         console.log('여기서 카드 이미지를 리턴 받을거야!!');
-                        console.log(getVal.data.getUploadImgUrl);
-                        const mainImgFileName = document.querySelector('input[name=card_img_file_name]');
-                        mainImgFileName.value = getVal.data.getUploadImgUrl
+                        console.log(res.data.getUploadImgUrl);
+                        const mainImgFileName = document.querySelector('input[name=hy_card_image]');
+                        mainImgFileName.value = res.data.getUploadImgUrl
                     }
 
                 }

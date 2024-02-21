@@ -30,7 +30,16 @@
             <input type="date" class="border rounded-lg py-1 px-2 text-sm" name="ed" value="{{ all_data.ed }}">
 
 
-            <select name="est" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg">
+            <label class="relative">
+                <input type="text"
+                    class="filter_value border py-1 px-1 rounded-md text-sm focus:ring-1 focus:ring-orange-600"
+                    placeholder="1차 검색">
+                <span class="absolute top-0.5 right-2 cursor-pointer z-50 filter_list">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </span>
+            </label>
+
+            <select name="est" id="" class="est_select py-1 pr-14 text-sm border border-blue-500 rounded-lg">
                 <option value="">현장 선택</option>
                 {% for estate in all_data.estate_list %}
                 <option value="{{estate}}" {% if all_data.est==estate %} selected {% endif %}>{{estate}}</option>
@@ -179,6 +188,28 @@
 </div>
 
 <script>
+    $('.filter_list').click(async function () {
+        let site_list = []
+        const filterValue = document.querySelector('.filter_value').value;
+        const res = await axios.post('/crm/estate_work_list_filter', { filterValue })
+        if (res.data.status) {
+            site_list = res.data.site_list;
+            console.log(site_list);
+            $('.est_select').empty();
+            $('.est_select').append(`<option value="">현장 선택</option>`);
+
+            for (let i = 0; i < site_list.length; i++) {
+                const estStr = site_list[i];
+                const template = `<option value="${estStr}" >${estStr}</option>`
+                $('.est_select').append(template);
+            }
+
+        } else {
+            alert('에러가 발생했습니다.')
+        }
+
+    })
+    
     $('.chkdelete').click(function (e) {
 
         if (!confirm('삭제하시겠습니까? 삭제된 DB는 복구가 불가합니다.')) {
