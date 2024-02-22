@@ -140,9 +140,10 @@ router.post('/delete_img', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const delPath = `subuploads\\img\\${body.getFolder}\\${body.getImgName}`
+    console.log(delPath);
     try {
         await fs.unlink(delPath, (err) => {
-
+            console.error(err.message);
         })
     } catch (error) {
         status = false

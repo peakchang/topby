@@ -58,6 +58,8 @@ setUpNunjucks();
 
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
+
+  // 요 헬멧을 쓰면 내 파일 (특히 이미지)가 타 사이트에서 링크로 사용 불가함!!!
   // app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
   // app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
   app.use(hpp());
