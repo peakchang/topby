@@ -105,7 +105,7 @@ router.post('/img_upload', img_upload.single('onimg'), (req, res, next) => {
         const lastFolderArr = req.file.destination.split('/');
         const lastFolder = lastFolderArr[lastFolderArr.length - 1];
         var origin = req.get('host');
-        baseUrl = 'http://' + origin + '/subimg/' + lastFolder + '/' + req.file.filename;
+        baseUrl = 'https://' + origin + '/subimg/' + lastFolder + '/' + req.file.filename;
         saveUrl = req.file.path
 
         console.log(baseUrl);
