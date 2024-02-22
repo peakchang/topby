@@ -2,6 +2,8 @@ const express = require('express');
 const moment = require('moment');
 const fs = require('fs')
 const multer = require('multer');
+const sql_con = require('../../db_lib');
+const { getQueryStr } = require('../../db_lib/back_lib.js');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -23,9 +25,49 @@ let img_upload = multer({
     // limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-router.get('/', (req, res, next) => {
+
+router.post('/subview', async (req, res, next) => {
+    console.log('여기는 들어와??');
     let status = true;
-    res.json({ status })
+    const subDomainName = req.body.subDomainName
+    let subView = "";
+    console.log(subDomainName);
+    try {
+        const getSubDomainQuery = "SELECT * FROM land WHERE ld_domain = ?";
+        console.log(getSubDomainQuery);
+        const getSubDomainCon = await sql_con.promise().query(getSubDomainQuery, [subDomainName]);
+        console.log(getSubDomainCon);
+        subView = getSubDomainCon[0][0]
+    } catch (error) {
+
+    }
+
+    console.log(subView);
+
+    console.log(subView);
+
+    res.json({ status, subDomainName, subView })
+})
+
+
+
+router.post('/load_land_modify', async (req, res, next) => {
+    let status = true;
+    const getId = req.body.getId;
+    console.log(getId);
+    console.log('서브도메인 여기는 들어오는거지?!?!?!');
+    let land_modify_val = {}
+    try {
+        const loadLandModifyQuery = "SELECT * FROM land WHERE ld_domain = ?"
+        const loadLandModify = await sql_con.promise().query(loadLandModifyQuery, [getId]);
+        land_modify_val = loadLandModify[0][0]
+        console.log(land_modify_val);
+    } catch (err) {
+        console.error(err.message);
+        status = false;
+    }
+
+    res.json({ status, land_modify_val })
 })
 
 
@@ -34,37 +76,21 @@ router.post('/upload_data', async (req, res, next) => {
     let body = req.body.allData;
     console.log(body);
 
-    const ld_id = body['ld_id'];
-    const type = body['type'];
-    delete body['ld_id'];
-    delete body['type'];
-    
-    if (type == "upload") {
-        try {
-            const queryData = getQueryStr(body, 'insert', 'ld_created_at');
-            const insertLandQuery = `INSERT INTO land (${queryData.str}) VALUES (${queryData.question})`
-            console.log(insertLandQuery);
-            console.log(queryData.values);
-            await sql_con.promise().query(insertLandQuery, queryData.values);
-        } catch (err) {
-            console.error(err.message);
-            status = false;
-        }
-    } else {
-        delete body['ld_domain'];
-        delete body['ld_created_at'];
+    const ld_domain = body['ld_domain'];
+    delete body['ld_domain'];
+    delete body['ld_created_at'];
 
-        try {
-            const queryData = getQueryStr(body, 'update', 'ld_created_at');
-            console.log(queryData);
-            queryData.values.push(ld_id);;
-            const updateLandQuery = `UPDATE land SET ${queryData.str} WHERE ld_id = ?`;
-            await sql_con.promise().query(updateLandQuery, queryData.values);
-        } catch (err) {
-            console.error(err.message);
-            status = false;
-        }
+    try {
+        const queryData = getQueryStr(body, 'update');
+        console.log(queryData);
+        queryData.values.push(ld_domain);;
+        const updateLandQuery = `UPDATE land SET ${queryData.str} WHERE ld_domain = ?`;
+        await sql_con.promise().query(updateLandQuery, queryData.values);
+    } catch (err) {
+        console.error(err.message);
+        status = false;
     }
+
     res.json({ status })
 })
 
@@ -82,11 +108,53 @@ router.post('/img_upload', img_upload.single('onimg'), (req, res, next) => {
         baseUrl = 'http://' + origin + '/subimg/' + lastFolder + '/' + req.file.filename;
         saveUrl = req.file.path
 
+        console.log(baseUrl);
+        console.log(saveUrl);
+
     } catch (error) {
         status = false;
     }
 
     res.json({ status, baseUrl, saveUrl })
+})
+router.post('/delete_logo', async (req, res, next) => {
+
+    let status = true;
+    const delPath = req.body.logoUrlPath;
+    const ldId = req.body.ld_id;
+    try {
+        await fs.unlink(delPath, (err) => {
+            console.log(err);
+        })
+        const deleteLogoQuery = "UPDATE land SET ld_logo = '' WHERE ld_id = ?";
+        await sql_con.promise().query(deleteLogoQuery, [ldId]);
+    } catch (error) {
+        status = false
+        console.error(error);
+    }
+    res.json({ status })
+})
+
+
+router.post('/delete_img', async (req, res, next) => {
+    let status = true;
+    const body = req.body;
+    const delPath = `subuploads\\img\\${body.getFolder}\\${body.getImgName}`
+    try {
+        await fs.unlink(delPath, (err) => {
+
+        })
+    } catch (error) {
+        status = false
+        console.error(error);
+    }
+    res.json({ status })
+})
+
+
+router.get('/', (req, res, next) => {
+    let status = true;
+    res.json({ status })
 })
 
 
