@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=3060 pm2 start server.js -i 0",
+    "start": "cross-env NODE_ENV=production PORT=3060 pm2 start server.js -i 0 --name topby",
     "dev": "postcss public/tw_ready.css -o public/tailwind.css && nodemon server"
   },
   "author": "PCY",
