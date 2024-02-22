@@ -58,11 +58,13 @@ setUpNunjucks();
 
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
-  app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+  // app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+  // app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
   app.use(hpp());
 } else {
   app.use(morgan('dev'));
 }
+
 
 
 
@@ -111,12 +113,6 @@ let corsOptions = {
 }
 
 app.use(cors(corsOptions));
-
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  })
-);
 
 
 
