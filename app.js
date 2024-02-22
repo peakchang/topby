@@ -31,7 +31,7 @@ const passportConfig = require('./passport');
 const siteRouter = require('./routes/site');
 const nworkRouter = require('./routes/nwork');
 const teleRouter = require('./routes/telework');
-
+const helmet = require("helmet");
 const minisiteRouter = require('./routes/crm_minisite')
 
 const subdomainRouter = require('./routes/sub_domain/subdomain');
@@ -113,6 +113,12 @@ let corsOptions = {
 }
 
 app.use(cors(corsOptions));
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 
 
 
