@@ -10,8 +10,6 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const dateFilter = require('nunjucks-date-filter');
 const cors = require('cors');
-
-const helmet = require('helmet');
 const hpp = require('hpp');
 
 dotenv.config();
@@ -59,11 +57,11 @@ function setUpNunjucks(expressApp) {
 setUpNunjucks();
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(morgan('combined'));
-    app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
-    app.use(hpp());
+  app.use(morgan('combined'));
+  app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+  app.use(hpp());
 } else {
-    app.use(morgan('dev'));
+  app.use(morgan('dev'));
 }
 
 
@@ -75,7 +73,7 @@ app.use('/subimg', express.static(path.join(__dirname, 'subuploads/img')));
 app.use('/lib', express.static(path.join(__dirname, 'db_lib')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/file',express.static(__dirname + '/file'));
+app.use('/file', express.static(__dirname + '/file'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -87,19 +85,19 @@ if (process.env.NODE_ENV === 'production') {
   var https_status = false
 }
 const sessionOption = {
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
-    cookie: {
-        httpOnly: true,
-        secure: https_status,
-        maxAge: 60 * 1000 * 120,
-    },
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: https_status,
+    maxAge: 60 * 1000 * 120,
+  },
 };
 
 if (process.env.NODE_ENV === 'production') {
-    sessionOption.proxy = true;
-    sessionOption.cookie.secure = true;
+  sessionOption.proxy = true;
+  sessionOption.cookie.secure = true;
 }
 
 app.use(session(sessionOption));
@@ -141,25 +139,25 @@ app.use('/api/subdomain', subdomainRouter);
 app.use('/favicon.ico', (req, res) => res.status(204));
 
 app.use((req, res, next) => {
-    const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
-    error.status = 404;
-    next(error);
-  });
-  
-  app.use((err, req, res, next) => {
-    console.log('------------------------------');
-    console.error(err);
-    res.locals.message = err.message;
-    res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-    res.status(err.status || 500);
+  const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  error.status = 404;
+  next(error);
+});
 
-    console.log(err.status);
-    if(err.code == 'ER_NO_SUCH_TABLE'){
-      var errData = '테이블이 존재하지 않습니다. 테이블을 추가해주세요'
-    }else if(err.status == 404){
-      var errData = '페이지가 존재하지 않습니다. 주소를 확인해주세요'
-    }
-    res.render('error', { errData });
-  });
+app.use((err, req, res, next) => {
+  console.log('------------------------------');
+  console.error(err);
+  res.locals.message = err.message;
+  res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+  res.status(err.status || 500);
 
-  module.exports = app;
+  console.log(err.status);
+  if (err.code == 'ER_NO_SUCH_TABLE') {
+    var errData = '테이블이 존재하지 않습니다. 테이블을 추가해주세요'
+  } else if (err.status == 404) {
+    var errData = '페이지가 존재하지 않습니다. 주소를 확인해주세요'
+  }
+  res.render('error', { errData });
+});
+
+module.exports = app;
