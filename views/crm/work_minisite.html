@@ -46,6 +46,7 @@
 
             <th class="border py-1.5">사이트 이름 (서브도메인)</th>
             <th class="border py-1.5">관리</th>
+            <th class="border py-1.5">현장</th>
         </tr>
 
         {% for land in land_list %}
@@ -65,6 +66,49 @@
                     관리 바로가기
                 </button>
             </td>
+
+            <td class="border py-1.5">
+
+                {% if land.ld_site %}
+                <div>
+                    <span class="mr-2">{{land.ld_site}}</span>
+                    <button class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                        변경
+                    </button>
+                </div>
+                {% else %}
+                <div>
+                    <span class="mr-2">사이트를 선택해주세요</span>
+                    <button class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                        선택
+                    </button>
+                </div>
+                {% endif %}
+
+
+                <div class="mt-2 change_site_area hidden">
+                    <div class="mb-2">
+                        <input type="text" class="border py-1 px-2 text-sm filter_value rounded-md">
+                        <button
+                            class="bg-blue-500 active:bg-blue-600 text-sm py-1 px-3 rounded-md text-white filter_site">1차
+                            검색</button>
+                    </div>
+                    <div>
+                        <select name="" id="" class="get_site_select border py-1 px-3 text-sm rounded-md">
+                            <option value="">선택하세요</option>
+                            {% for site in site_list %}
+                            <option value="{{site.sl_site_name}}">{{site.sl_site_name}}</option>
+                            {% endfor %}
+                        </select>
+                        <button
+                            class="bg-blue-500 active:bg-blue-600 text-sm py-1 px-3 rounded-md text-white update_land_site"
+                            value="{{land.ld_id}}">
+                            반영
+                        </button>
+                    </div>
+                </div>
+
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -72,6 +116,78 @@
 
 
 <script>
+
+    $('.change_site').click(function () {
+        let changeSiteArea = document.querySelector('.change_site_area')
+        if (changeSiteArea.classList.contains('hidden')) {
+            changeSiteArea.classList.remove('hidden')
+        } else {
+            changeSiteArea.classList.add('hidden')
+        }
+
+        console.log(changeSiteArea.classList);
+    })
+
+    $('.update_land_site').click(async function () {
+        console.log(this.value);
+        const selectedVal = this.previousElementSibling.value
+        if (!selectedVal) {
+            alert('현장이 선택되지 않았습니다.')
+            return
+        }
+
+        try {
+            const res = await axios.post('/crm/minisite/update_land_site', { selectedVal, getId: this.value })
+            if (res.data.status) {
+                alert('반영 되었습니다.')
+                location.reload();
+            }
+        } catch (error) {
+
+        }
+    })
+
+    $('.filter_site').click(async function () {
+        console.log();
+
+        const filterValue = document.querySelector('.filter_value').value
+        if (!filterValue) {
+            alert('검색어를 입력해주세요')
+            return
+        }
+
+        let filter_site_list = [];
+        try {
+            const res = await axios.post('/crm/minisite/filter_site', { filterValue })
+            console.log(res.data);
+            if (res.data.status) {
+                if (res.data.filter_site_list.length == 0) {
+                    alert('검색된 항목이 없습니다')
+                } else {
+                    filter_site_list = res.data.filter_site_list
+
+                    $('.get_site_select').empty();
+
+                    const optTemplate = `<option>선택하세요</option>`
+                    $('.get_site_select').append(optTemplate);
+
+                    for (let i = 0; i < filter_site_list.length; i++) {
+                        const element = filter_site_list[i];
+                        const optTemplate = `<option value="${element['sl_site_name']}">${element['sl_site_name']}</option>`
+                        $('.get_site_select').append(optTemplate);
+                    }
+                }
+            } else {
+                alert()
+            }
+
+        } catch (err) {
+            console.error(err.message);
+        }
+
+
+
+    })
 
     function goToSite(siteName) {
         const currentDomain = window.location.origin;

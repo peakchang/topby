@@ -4,6 +4,7 @@ const fs = require('fs')
 const multer = require('multer');
 const sql_con = require('../../db_lib');
 const { getQueryStr } = require('../../db_lib/back_lib.js');
+const { log } = require('winston');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -25,26 +26,31 @@ let img_upload = multer({
     // limits: { fileSize: 10 * 1024 * 1024 },
 });
 
+router.post('/get_menu', async (req, res, next) => {
+    let status = true;
+    const subDomainName = req.body.subDomainName
+    let menuList = "";
+    try {
+        const getSubDomainQuery = "SELECT ld_menu FROM land WHERE ld_domain = ?";
+        const getSubDomainCon = await sql_con.promise().query(getSubDomainQuery, [subDomainName]);
+        menuList = getSubDomainCon[0][0]['ld_menu']
+    } catch (error) {
+
+    }
+    res.json({ status, menuList })
+})
 
 router.post('/subview', async (req, res, next) => {
-    console.log('여기는 들어와??');
     let status = true;
     const subDomainName = req.body.subDomainName
     let subView = "";
-    console.log(subDomainName);
     try {
         const getSubDomainQuery = "SELECT * FROM land WHERE ld_domain = ?";
-        console.log(getSubDomainQuery);
         const getSubDomainCon = await sql_con.promise().query(getSubDomainQuery, [subDomainName]);
-        console.log(getSubDomainCon);
         subView = getSubDomainCon[0][0]
     } catch (error) {
 
     }
-
-    console.log(subView);
-
-    console.log(subView);
 
     res.json({ status, subDomainName, subView })
 })
@@ -54,14 +60,11 @@ router.post('/subview', async (req, res, next) => {
 router.post('/load_land_modify', async (req, res, next) => {
     let status = true;
     const getId = req.body.getId;
-    console.log(getId);
-    console.log('서브도메인 여기는 들어오는거지?!?!?!');
     let land_modify_val = {}
     try {
         const loadLandModifyQuery = "SELECT * FROM land WHERE ld_domain = ?"
         const loadLandModify = await sql_con.promise().query(loadLandModifyQuery, [getId]);
         land_modify_val = loadLandModify[0][0]
-        console.log(land_modify_val);
     } catch (err) {
         console.error(err.message);
         status = false;
@@ -74,7 +77,6 @@ router.post('/load_land_modify', async (req, res, next) => {
 router.post('/upload_data', async (req, res, next) => {
     let status = true;
     let body = req.body.allData;
-    console.log(body);
 
     const ld_domain = body['ld_domain'];
     delete body['ld_domain'];
@@ -82,7 +84,6 @@ router.post('/upload_data', async (req, res, next) => {
 
     try {
         const queryData = getQueryStr(body, 'update');
-        console.log(queryData);
         queryData.values.push(ld_domain);;
         const updateLandQuery = `UPDATE land SET ${queryData.str} WHERE ld_domain = ?`;
         await sql_con.promise().query(updateLandQuery, queryData.values);
@@ -96,21 +97,15 @@ router.post('/upload_data', async (req, res, next) => {
 
 router.post('/img_upload', img_upload.single('onimg'), (req, res, next) => {
     let status = true;
-    console.log('여기 들어오는지만 먼저 보자아~~~~~~~~~~~~~~');
     let baseUrl
     let saveUrl
 
     try {
-        console.log(req.file);
         const lastFolderArr = req.file.destination.split('/');
         const lastFolder = lastFolderArr[lastFolderArr.length - 1];
         var origin = req.get('host');
-        console.log(req.protocol);
         baseUrl = req.protocol + '://' + origin + '/subimg/' + lastFolder + '/' + req.file.filename;
         saveUrl = req.file.path
-
-        console.log(baseUrl);
-        console.log(saveUrl);
 
     } catch (error) {
         status = false;
@@ -125,7 +120,6 @@ router.post('/delete_logo', async (req, res, next) => {
     const ldId = req.body.ld_id;
     try {
         await fs.unlink(delPath, (err) => {
-            console.log(err);
         })
         const deleteLogoQuery = "UPDATE land SET ld_logo = '' WHERE ld_id = ?";
         await sql_con.promise().query(deleteLogoQuery, [ldId]);
@@ -141,7 +135,6 @@ router.post('/delete_phimg', async (req, res, next) => {
     let status = true;
     const delPath = req.body.phimgUrlPath;
     const ldId = req.body.ld_id;
-    console.log(delPath);
     try {
         await fs.unlink(delPath, (err) => {
         })
@@ -159,7 +152,6 @@ router.post('/delete_img', async (req, res, next) => {
     let status = true;
     const body = req.body;
     const delPath = `subuploads/img/${body.getFolder}/${body.getImgName}`
-    console.log(delPath);
     try {
         await fs.unlink(delPath, (err) => {
             console.error(err.message);
