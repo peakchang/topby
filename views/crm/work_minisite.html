@@ -72,14 +72,14 @@
                 {% if land.ld_site %}
                 <div>
                     <span class="mr-2">{{land.ld_site}}</span>
-                    <button class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                    <button value="{{loop.index0}}" class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
                         변경
                     </button>
                 </div>
                 {% else %}
                 <div>
                     <span class="mr-2">사이트를 선택해주세요</span>
-                    <button class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                    <button value="{{loop.index0}}" class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
                         선택
                     </button>
                 </div>
@@ -118,7 +118,11 @@
 <script>
 
     $('.change_site').click(function () {
-        let changeSiteArea = document.querySelector('.change_site_area')
+        console.log('일단 여기는 맞잖아~');
+        console.log(this.value);
+        let changeSiteAreaList = document.querySelectorAll('.change_site_area')
+        console.log(changeSiteAreaList);
+        changeSiteArea = changeSiteAreaList[this.value]
         if (changeSiteArea.classList.contains('hidden')) {
             changeSiteArea.classList.remove('hidden')
         } else {
