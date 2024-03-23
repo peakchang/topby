@@ -3,8 +3,7 @@ const moment = require('moment');
 const fs = require('fs')
 const multer = require('multer');
 const sql_con = require('../../db_lib');
-const { getQueryStr } = require('../../db_lib/back_lib.js');
-const { log } = require('winston');
+const { getQueryStr, aligoKakaoNotification_formanager } = require('../../db_lib/back_lib.js');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -147,6 +146,23 @@ router.post('/delete_phimg', async (req, res, next) => {
     res.json({ status })
 })
 
+router.post('/delete_popupimg', async (req, res, next) => {
+
+    let status = true;
+    const delPath = req.body.phimgUrlPath;
+    const ldId = req.body.ld_id;
+    try {
+        await fs.unlink(delPath, (err) => {
+        })
+        const deletePopupimgQuery = "UPDATE land SET ld_popup_img = '' WHERE ld_id = ?";
+        await sql_con.promise().query(deletePopupimgQuery, [ldId]);
+    } catch (error) {
+        status = false
+        console.error(error);
+    }
+    res.json({ status })
+})
+
 
 router.post('/delete_img', async (req, res, next) => {
     let status = true;
@@ -159,6 +175,55 @@ router.post('/delete_img', async (req, res, next) => {
     } catch (error) {
         status = false
         console.error(error);
+    }
+    res.json({ status })
+})
+
+router.post('/update_customer', async (req, res, next) => {
+    let status = true;
+    console.log('update_customer!!!!!!!!!!!!!!!!!');
+    const body = req.body;
+    console.log(body);
+    try {
+        // DB 입력하기~~~
+        const insertCustomerQuery = "INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone) VALUES (?,?,?,?,?)";
+        await sql_con.promise().query(insertCustomerQuery, [body.siteName, "분양", "DB", body.name, body.phone]);
+
+        // 매니저들에게 카톡 발송~~
+        const getManagerListQuery = `SELECT * FROM users WHERE manage_estate LIKE "%${body.siteName}%"`;
+        const getManagerList = await sql_con.promise().query(getManagerListQuery);
+        const manager_list = getManagerList[0];
+        if (manager_list && manager_list.length > 0) {
+            for (let i = 0; i < manager_list.length; i++) {
+                const manager = manager_list[i];
+                let customerInfo = {
+                    ciPhone: manager['user_phone'],
+                    ciSite: body.siteName,
+                    ciName: body.name,
+                    ciReceiver: body.phone
+                }
+                aligoKakaoNotification_formanager(req, customerInfo)
+            }
+        }
+
+        // 고객에게 카톡 발송~~~
+        const getSiteInfoQuery = "SELECT * FROM site_list WHERE sl_site_name = ?";
+        const getSiteInfo = await sql_con.promise().query(getSiteInfoQuery, [body.siteName]);
+        const site_info = getSiteInfo[0][0]
+        if (site_info) {
+            let sendMessageObj = {
+                receiver : body.phone,
+                customerName : body.name,
+                company : "탑분양",
+                siteRealName : site_info['sl_site_realname'],
+                smsContent : site_info['sl_sms_content'],
+            }
+            aligoKakaoNotification_detail(req, sendMessageObj)
+        }
+
+
+    } catch (error) {
+        status = false;
     }
     res.json({ status })
 })

@@ -320,3 +320,40 @@ exports.tableSetting = async () => {
     // ALTER TABLE application_form CHANGE id af_id INT;
     // ALTER TABLE application_form CHANGE created_at af_created_at DATETIME;
 };
+
+
+/*
+
+CREATE TABLE IF NOT EXISTS land(
+    ld_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ld_domain VARCHAR(50) UNIQUE,
+    ld_site VARCHAR(100),
+    ld_menu VARCHAR(255),
+    ld_name VARCHAR(100),
+    ld_description VARCHAR(255),
+    ld_add_scripts TEXT,
+    ld_logo VARCHAR(100),
+    ld_ph_img VARCHAR(100),
+    ld_bgcolor VARCHAR(50),
+    ld_txtcolor VARCHAR(50),
+    ld_manager_email VARCHAR(100),
+    ld_phone_num VARCHAR(100),
+    ld_sms_num VARCHAR(100),
+    ld_kakao VARCHAR(255),
+    ld_banner_img TEXT,
+    ld_main_img TEXT,
+    ld_pg0 TEXT,
+    ld_pg1 TEXT,
+    ld_pg2 TEXT,
+    ld_pg3 TEXT,
+    ld_pg4 TEXT,
+    ld_created_at DATETIME
+);
+
+ALTER TABLE land ADD COLUMN ld_sms_clickcount INT DEFAULT 0 AFTER ld_pg4;
+ALTER TABLE land ADD COLUMN ld_call_clickcount INT DEFAULT 0 AFTER ld_pg4;
+ALTER TABLE land ADD COLUMN ld_visit_count INT DEFAULT 0 AFTER ld_pg4;
+ALTER TABLE land ADD COLUMN ld_db_location VARCHAR(10) AFTER ld_pg4;
+ALTER TABLE land ADD COLUMN ld_popup_img VARCHAR(255) AFTER ld_pg4;
+
+*/
