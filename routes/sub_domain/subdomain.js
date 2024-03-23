@@ -215,6 +215,8 @@ router.post('/update_customer', async (req, res, next) => {
         const getSiteInfoQuery = "SELECT * FROM site_list WHERE sl_site_name = ?";
         const getSiteInfo = await sql_con.promise().query(getSiteInfoQuery, [body.siteName]);
         const site_info = getSiteInfo[0][0]
+        console.log("get~~~~~~~~~~~ site~~~~~~~~~~ info~~~~~~~~~~~~");
+        console.log(site_info);
         if (site_info) {
             let sendMessageObj = {
                 receiver: body.phone,
