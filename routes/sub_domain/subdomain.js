@@ -223,6 +223,7 @@ router.post('/update_customer', async (req, res, next) => {
                 siteRealName: site_info['sl_site_realname'],
                 smsContent: site_info['sl_sms_content'],
             }
+            console.log(sendMessageObj);
             aligoKakaoNotification_detail(req, sendMessageObj)
         }
     } catch (error) {
