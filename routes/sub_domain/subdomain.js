@@ -189,6 +189,11 @@ router.post('/update_customer', async (req, res, next) => {
         const insertCustomerQuery = "INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone) VALUES (?,?,?,?,?)";
         await sql_con.promise().query(insertCustomerQuery, [body.siteName, "분양", "DB", body.name, body.phone]);
 
+    } catch (error) {
+        status = false;
+    }
+
+    try {
         // 매니저들에게 카톡 발송~~
         const getManagerListQuery = `SELECT * FROM users WHERE manage_estate LIKE "%${body.siteName}%"`;
         const getManagerList = await sql_con.promise().query(getManagerListQuery);
@@ -212,18 +217,16 @@ router.post('/update_customer', async (req, res, next) => {
         const site_info = getSiteInfo[0][0]
         if (site_info) {
             let sendMessageObj = {
-                receiver : body.phone,
-                customerName : body.name,
-                company : "탑분양",
-                siteRealName : site_info['sl_site_realname'],
-                smsContent : site_info['sl_sms_content'],
+                receiver: body.phone,
+                customerName: body.name,
+                company: "탑분양",
+                siteRealName: site_info['sl_site_realname'],
+                smsContent: site_info['sl_sms_content'],
             }
             aligoKakaoNotification_detail(req, sendMessageObj)
         }
-
-
     } catch (error) {
-        status = false;
+
     }
     res.json({ status })
 })
