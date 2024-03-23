@@ -3,7 +3,7 @@ const moment = require('moment');
 const fs = require('fs')
 const multer = require('multer');
 const sql_con = require('../../db_lib');
-const { getQueryStr, aligoKakaoNotification_formanager } = require('../../db_lib/back_lib.js');
+const { getQueryStr, aligoKakaoNotification_formanager, aligoKakaoNotification_detail } = require('../../db_lib/back_lib.js');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -54,6 +54,23 @@ router.post('/subview', async (req, res, next) => {
     res.json({ status, subDomainName, subView })
 })
 
+
+router.post('/update_visit_count', async (req, res, next) => {
+    let status = true;
+
+    const body = req.body;
+    console.log(body);
+
+    console.log('일단 여기 들어와여~~~');
+    const ldVisitCount = body.ld_visit_count + 1;
+    try {
+        const getVisitCountQuery = "UPDATE land SET ld_visit_count = ? WHERE ld_id = ?";
+        await sql_con.promise().query(getVisitCountQuery, [ldVisitCount, body.ld_id]);
+    } catch (error) {
+        
+    }
+    res.json({ status })
+})
 
 
 router.post('/load_land_modify', async (req, res, next) => {
@@ -184,10 +201,11 @@ router.post('/update_customer', async (req, res, next) => {
     console.log('update_customer!!!!!!!!!!!!!!!!!');
     const body = req.body;
     console.log(body);
+    const now = moment().format('YY/MM/DD HH:mm:ss');
     try {
         // DB 입력하기~~~
-        const insertCustomerQuery = "INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone) VALUES (?,?,?,?,?)";
-        await sql_con.promise().query(insertCustomerQuery, [body.siteName, "분양", "DB", body.name, body.phone]);
+        const insertCustomerQuery = "INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_created_at) VALUES (?,?,?,?,?,?)";
+        await sql_con.promise().query(insertCustomerQuery, [body.siteName, "분양", "DB", body.name, body.phone, now]);
 
     } catch (error) {
         status = false;

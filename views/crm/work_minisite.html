@@ -74,14 +74,16 @@
                 {% if land.ld_site %}
                 <div>
                     <span class="mr-2">{{land.ld_site}}</span>
-                    <button value="{{loop.index0}}" class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                    <button value="{{loop.index0}}"
+                        class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
                         변경
                     </button>
                 </div>
                 {% else %}
                 <div>
                     <span class="mr-2">사이트를 선택해주세요</span>
-                    <button value="{{loop.index0}}" class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
+                    <button value="{{loop.index0}}"
+                        class="bg-red-400 active:bg-red-500 text-sm py-1 px-3 rounded-md text-white change_site">
                         선택
                     </button>
                 </div>
@@ -91,9 +93,10 @@
                 <div class="mt-2 change_site_area hidden">
                     <div class="mb-2">
                         <input type="text" class="border py-1 px-2 text-sm filter_value rounded-md">
-                        <button
-                            class="bg-blue-500 active:bg-blue-600 text-sm py-1 px-3 rounded-md text-white filter_site">1차
-                            검색</button>
+                        <button value="{{loop.index0}}"
+                            class="bg-blue-500 active:bg-blue-600 text-sm py-1 px-3 rounded-md text-white filter_site">
+                            1차 검색
+                        </button>
                     </div>
                     <div>
                         <select name="" id="" class="get_site_select border py-1 px-3 text-sm rounded-md">
@@ -154,9 +157,10 @@
     })
 
     $('.filter_site').click(async function () {
-        console.log();
+        console.log(this.value);
 
-        const filterValue = document.querySelector('.filter_value').value
+        const filterValueList = document.querySelectorAll('.filter_value')
+        const filterValue = filterValueList[this.value].value
         if (!filterValue) {
             alert('검색어를 입력해주세요')
             return
@@ -165,22 +169,20 @@
         let filter_site_list = [];
         try {
             const res = await axios.post('/crm/minisite/filter_site', { filterValue })
-            console.log(res.data);
             if (res.data.status) {
                 if (res.data.filter_site_list.length == 0) {
                     alert('검색된 항목이 없습니다')
                 } else {
                     filter_site_list = res.data.filter_site_list
-
-                    $('.get_site_select').empty();
-
+                    const getSiteSelectList = document.querySelectorAll('.get_site_select')
+                    const getSiteSelect = getSiteSelectList[this.value]
+                    $(getSiteSelect).empty();
                     const optTemplate = `<option>선택하세요</option>`
-                    $('.get_site_select').append(optTemplate);
-
+                    $(getSiteSelect).append(optTemplate);
                     for (let i = 0; i < filter_site_list.length; i++) {
                         const element = filter_site_list[i];
                         const optTemplate = `<option value="${element['sl_site_name']}">${element['sl_site_name']}</option>`
-                        $('.get_site_select').append(optTemplate);
+                        $(getSiteSelect).append(optTemplate);
                     }
                 }
             } else {
