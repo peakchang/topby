@@ -37,8 +37,8 @@
     </table>
 </div>
 
-<div class="p-3">
-    <table class="w-full text-center">
+<div class="p-3 text-sm">
+    <table class="w-full text-center text-sm">
         <tr>
             <th class="border py-1.5 w-12">
                 <input type="checkbox" name="" id="">
@@ -48,6 +48,7 @@
             <th class="border py-1.5">서브도메인</th>
             <th class="border py-1.5">관리</th>
             <th class="border py-1.5">현장</th>
+            <th class="border py-1.5">조회수</th>
         </tr>
 
         {% for land in land_list %}
@@ -113,6 +114,10 @@
                     </div>
                 </div>
 
+            </td>
+
+            <td class="border py-1.5 text-center">
+                {{land.ld_visit_count}}
             </td>
         </tr>
         {% endfor %}
