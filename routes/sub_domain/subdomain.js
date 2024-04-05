@@ -44,11 +44,6 @@ router.post('/subview', async (req, res, next) => {
     const subDomainName = req.body.subDomainName
     let subView = "";
     try {
-        const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        
-        console.log('going to chkeck~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-        console.log('방문자의 IP 주소:', ipAddress);
-
         const getSubDomainQuery = "SELECT * FROM land WHERE ld_domain = ?";
         const getSubDomainCon = await sql_con.promise().query(getSubDomainQuery, [subDomainName]);
         subView = getSubDomainCon[0][0]
@@ -60,20 +55,41 @@ router.post('/subview', async (req, res, next) => {
 })
 
 
+// 카운트로 쓰려고 했는데 걍 안씀
 router.post('/update_visit_count', async (req, res, next) => {
     let status = true;
 
     const body = req.body;
     console.log(body);
 
-    console.log('일단 여기 들어와여~~~');
-    const ldVisitCount = body.ld_visit_count + 1;
-    try {
-        const getVisitCountQuery = "UPDATE land SET ld_visit_count = ? WHERE ld_id = ?";
-        await sql_con.promise().query(getVisitCountQuery, [ldVisitCount, body.ld_id]);
-    } catch (error) {
+
+
+    if (ipAddress != process.env.SERVER_IP) {
+        const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        console.log('going to chkeck~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+        console.log('방문자의 IP 주소:', ipAddress);
+        const userAgent = req.get('user-agent');
+        console.log(userAgent);
         
+        const ldVisitCount = body.ld_visit_count + 1;
+        try {
+            const now = moment().format('YYYY-MM-DD HH:mm:ss');
+            const insertVisitList = "INSERT INTO subdomain_visit (sv_domain, sv_ip, sv_ua, sv_referrer, sv_created_at) VALUES (?,?,?,?,?)";
+            await sql_con.promise().query(insertVisitList, [body.ld_domain, ipAddress, userAgent, body.referrer, now]);
+
+            const getVisitCountQuery = "UPDATE land SET ld_visit_count = ? WHERE ld_id = ?";
+            await sql_con.promise().query(getVisitCountQuery, [ldVisitCount, body.ld_id]);
+        } catch (error) {
+            status = false;
+        }
+
     }
+
+
+
+
+
+
     res.json({ status })
 })
 

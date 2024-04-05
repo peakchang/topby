@@ -360,4 +360,15 @@ ALTER TABLE land ADD COLUMN ld_visit_count INT DEFAULT 0 AFTER ld_pg4;
 ALTER TABLE land ADD COLUMN ld_db_location VARCHAR(10) AFTER ld_pg4;
 ALTER TABLE land ADD COLUMN ld_popup_img VARCHAR(255) AFTER ld_pg4;
 
+
+
+CREATE TABLE IF NOT EXISTS subdomain_visit(
+    sv_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    sv_domain VARCHAR(50),
+    sv_ip VARCHAR(100),
+    sv_ua VARCHAR(255),
+    sv_referrer VARCHAR(255),
+    sv_created_at DATETIME
+);
+
 */
