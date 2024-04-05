@@ -44,6 +44,11 @@ router.post('/subview', async (req, res, next) => {
     const subDomainName = req.body.subDomainName
     let subView = "";
     try {
+        const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        
+        console.log('going to chkeck~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+        console.log('방문자의 IP 주소:', ipAddress);
+
         const getSubDomainQuery = "SELECT * FROM land WHERE ld_domain = ?";
         const getSubDomainCon = await sql_con.promise().query(getSubDomainQuery, [subDomainName]);
         subView = getSubDomainCon[0][0]

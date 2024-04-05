@@ -347,6 +347,10 @@ CREATE TABLE IF NOT EXISTS land(
     ld_pg2 TEXT,
     ld_pg3 TEXT,
     ld_pg4 TEXT,
+    ld_popup_img VARCHAR(255),
+    ld_db_location VARCHAR(10),
+    ld_visit_count INT DEFAULT 0,
+    ld_sms_clickcount INT DEFAULT 0,
     ld_created_at DATETIME
 );
 
