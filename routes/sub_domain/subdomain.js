@@ -62,15 +62,16 @@ router.post('/update_visit_count', async (req, res, next) => {
     const body = req.body;
     console.log(body);
 
+    console.log(process.env.SERVER_IP);
 
-
+    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log('going to chkeck~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log('방문자의 IP 주소:', ipAddress);
     if (ipAddress != process.env.SERVER_IP) {
-        const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        console.log('going to chkeck~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!');
-        console.log('방문자의 IP 주소:', ipAddress);
+
         const userAgent = req.get('user-agent');
         console.log(userAgent);
-        
+
         const ldVisitCount = body.ld_visit_count + 1;
         try {
             const now = moment().format('YYYY-MM-DD HH:mm:ss');
