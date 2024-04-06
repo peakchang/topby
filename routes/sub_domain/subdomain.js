@@ -25,6 +25,25 @@ let img_upload = multer({
     // limits: { fileSize: 10 * 1024 * 1024 },
 });
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 여기는 visit!!!!!!!!!!!!!!!
+
+router.post('/get_visit_list', async (req, res, next) => {
+    let status = true;
+    console.log(req.body.getId);
+    let visit_list = [];
+    try {
+        const getVisitListQuery = "SELECT * FROM subdomain_visit WHERE sv_domain = ? ORDER BY sv_id DESC"
+        const getVisitList = await sql_con.promise().query(getVisitListQuery, [req.body.getId]);
+        visit_list = getVisitList[0];
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status, visit_list })
+})
+
+
+
 router.post('/get_menu', async (req, res, next) => {
     let status = true;
     const subDomainName = req.body.subDomainName

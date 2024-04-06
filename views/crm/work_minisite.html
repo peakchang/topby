@@ -59,14 +59,19 @@
             <td class="border py-1.5">{{ land.ld_name }}</td>
             <td class="border py-1.5">{{ land.ld_domain }}</td>
             <td class="border py-1.5">
-                <button class="text-sm text-white bg-blue-500 active:bg-blue-600 py-1 px-3 rounded-md"
+                <button class="text-xs text-white bg-blue-500 active:bg-blue-600 py-1 px-3 rounded-md"
                     onclick="goToSite('{{ land.ld_domain }}')">
                     사이트 바로가기
                 </button>
 
-                <button class="text-sm text-white bg-pink-500 active:bg-pink-600 py-1 px-3 rounded-md"
+                <button class="text-xs text-white bg-pink-500 active:bg-pink-600 py-1 px-3 rounded-md"
                     onclick="goToSiteSet('{{ land.ld_domain }}')">
                     관리 바로가기
+                </button>
+
+                <button class="text-xs text-white bg-green-600 active:bg-green-700 py-1 px-3 rounded-md"
+                    onclick="goToSiteVisit('{{ land.ld_domain }}')">
+                    방문자수 바로가기
                 </button>
             </td>
 
@@ -217,6 +222,16 @@
         let hostArr = currentDomain.split('//')
         console.log(siteName);
         const goToLink = `${hostArr[0]}//${siteName}.${hostArr[1]}/setting`;
+        console.log(goToLink);
+        var newWindow = window.open(goToLink, '_blank');
+        newWindow.focus();
+    }
+
+    function goToSiteVisit(siteName) {
+        const currentDomain = window.location.origin;
+        let hostArr = currentDomain.split('//')
+        console.log(siteName);
+        const goToLink = `${hostArr[0]}//${siteName}.${hostArr[1]}/visit`;
         console.log(goToLink);
         var newWindow = window.open(goToLink, '_blank');
         newWindow.focus();
