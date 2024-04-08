@@ -49,6 +49,8 @@
             <th class="border py-1.5">관리</th>
             <th class="border py-1.5">현장</th>
             <th class="border py-1.5">조회수</th>
+            <th class="border py-1.5">콜카운트</th>
+            <th class="border py-1.5">문자카운트</th>
         </tr>
 
         {% for land in land_list %}
@@ -123,6 +125,12 @@
 
             <td class="border py-1.5 text-center">
                 {{land.ld_visit_count}}
+            </td>
+            <td class="border py-1.5 text-center">
+                {{land.ld_call_clickcount}}
+            </td>
+            <td class="border py-1.5 text-center">
+                {{land.ld_sms_clickcount}}
             </td>
         </tr>
         {% endfor %}
