@@ -58,6 +58,34 @@ router.post('/get_menu', async (req, res, next) => {
     res.json({ status, menuList })
 })
 
+router.post('/add_call_count', async (req, res, next) => {
+    let status = true;
+    const callCount = req.body.callCount + 1
+    const ld_id = req.body.ld_id;
+    try {
+        const updateCallCountQuery = "UPDATE land SET ld_call_clickcount = ? WHERE ld_id = ?";
+        await sql_con.promise().query(updateCallCountQuery, [callCount, ld_id]);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
+router.post('/add_sms_count', async (req, res, next) => {
+    let status = true;
+    const smsCount = req.body.smsCount + 1
+    const ld_id = req.body.ld_id;
+    try {
+        const updateSmsCountQuery = "UPDATE land SET ld_sms_clickcount = ? WHERE ld_id = ?";
+        await sql_con.promise().query(updateSmsCountQuery, [smsCount, ld_id]);
+    } catch (error) {
+        status = false;
+    }
+
+    res.json({ status })
+})
+
 router.post('/subview', async (req, res, next) => {
     let status = true;
     const subDomainName = req.body.subDomainName
