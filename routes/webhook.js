@@ -238,7 +238,7 @@ router.post('/', async (req, res) => {
                 sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
                 sendMessageObj['receiver'] = baseData.db_phone
                 sendMessageObj['company'] = '탑분양정보'
-                // aligoKakaoNotification_detail(req, sendMessageObj)
+                aligoKakaoNotification_detail(req, sendMessageObj)
             }
 
             
