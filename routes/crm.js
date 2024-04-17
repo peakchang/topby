@@ -21,8 +21,64 @@ const { type } = require('os');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
+const ExcelJS = require('exceljs');
+
 const ncp = require('ncp').ncp;
 ncp.limit = 16;
+
+router.get('/download', async (req, res) => {
+
+    const query = req.query;
+    console.log(query);
+    const startDay = query.sd;
+    const endDay = query.ed;
+    let downloadData = []
+
+    let addQuery = ""
+    if(startDay || endDay){
+        addQuery = `WHERE af_created_at BETWEEN '${startDay}' AND '${endDay}'`
+    }
+    try {
+        const getDownloadDataQuery = `SELECT * FROM application_form ${addQuery} ORDER BY af_id DESC`
+        console.log(getDownloadDataQuery);
+        const getDownloadData = await sql_con.promise().query(getDownloadDataQuery);
+        downloadData = getDownloadData[0]
+    } catch (error) {
+        
+    }
+
+    console.log(downloadData);
+
+    const dataFromDB = [
+        { name: 'John', age: 30, email: 'john@example.com' },
+        { name: 'Jane', age: 25, email: 'jane@example.com' },
+        // 여기에 데이터베이스에서 가져온 실제 데이터를 사용합니다.
+    ];
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+
+    // 열 제목 추가
+    worksheet.columns = [
+        { header: '접수번호', key: 'af_id', width: 10 },
+        { header: '고객명', key: 'af_mb_name', width: 40 },
+        { header: '전화번호', key: 'af_mb_phone', width: 30 },
+        { header: '현장', key: 'af_form_name', width: 30 },
+        { header: '상태', key: 'af_mb_status', width: 10 },
+        { header: '접수 시간', key: 'af_created_at', width: 20 },
+    ];
+
+    // 데이터 추가
+    downloadData.forEach(row => {
+        worksheet.addRow(row);
+    });
+
+    // 파일 생성 및 전송
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=db_data.xlsx`);
+    await workbook.xlsx.write(res);
+    res.end();
+});
 
 router.use('/site', async (req, res, next) => {
     console.log(req.method);
