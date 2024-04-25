@@ -1,0 +1,634 @@
+{% extends 'blog/main/base.html' %}
+
+{% block blog_main_content %}
+
+<style>
+    #editor {
+        height: 500px;
+    }
+
+    body {
+        font-family: 'SUIT', sans-serif;
+    }
+
+    .ql-snow .ql-editor img {
+        margin: 0 auto;
+        max-width: 85% !important;
+    }
+
+    .ql-editor .ql-video {
+        min-width: 500px;
+        min-height: 285px;
+    }
+
+    .video-tooltip {
+        padding: 10px;
+        position: absolute;
+        top: 0px;
+        left: 44%;
+        border: 1px solid #eaeaea;
+        display: none;
+    }
+</style>
+
+
+
+<div class="container max-w-4xl">
+    <form id="editor_form">
+        <input type="hidden" name="editor_content" class="editor_content">
+        <div class="mb-2 mt-5">
+            <input type="text" name="editor_subject" class="editor_subject w-full border p-2.5 text-sm">
+        </div>
+        <div id="editor"></div>
+        <div class="text-center mt-3">
+            <button class="upload_btn bg-blue-700 text-white py-1 px-5 rounded-lg mr-3" type="submit">업로드</button>
+            <button class="test_btn">test</button>
+        </div>
+    </form>
+</div>
+
+<!-- Initialize Quill editor -->
+<script>
+
+    let loding = false;
+
+    const imgExtList = [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "bmp",
+        "webp",
+        "tiff",
+        "tif",
+        "JPEG",
+        "PNG",
+        "GIF",
+        "BMP",
+        "WEBP",
+        "TIFF",
+    ];
+    const imgChangeExtList = ["jpg", "jpeg", "png", "bmp", "tiff"];
+
+    var BlockEmbed = Quill.import("blots/block");
+    var Link = Quill.import("formats/link");
+
+    class Video extends BlockEmbed {
+        static create(value) {
+            let node = super.create(value);
+            node.setAttribute("frameborder", "0");
+            node.setAttribute("allowfullscreen", true);
+            if (!value.includes("youtube")) {
+                node.setAttribute("sandbox", ""); // 씨발!!!! 드디어 찾았다!!!!!!!!!!!
+            }
+            node.classList.add("ql-align-center");
+            node.setAttribute("src", this.sanitize(value));
+            return node;
+        }
+
+        static sanitize(url) {
+            return Link.sanitize(url);
+        }
+
+        static value(domNode) {
+            return domNode.getAttribute("src");
+        }
+    }
+    Video.blotName = "video";
+    Video.className = "ql-video";
+    Video.tagName = "IFRAME";
+
+    Quill.register({ "formats/video": Video });
+
+    var quill = new Quill('#editor', {
+        modules: {
+            toolbar: {
+                container: [
+                    [{ header: [1, 2, false] }],
+                    ["bold", "italic", "underline"],
+                    [
+                        {
+                            color: [
+                                "#000000",
+                                "#e60000",
+                                "#ff9900",
+                                "#ffff00",
+                                "#008a00",
+                                "#0066cc",
+                                "#9933ff",
+                                "#ffffff",
+                                "#facccc",
+                                "#ffebcc",
+                                "#ffffcc",
+                                "#cce8cc",
+                                "#cce0f5",
+                                "#ebd6ff",
+                                "#bbbbbb",
+                                "#f06666",
+                                "#ffc266",
+                                "#ffff66",
+                                "#66b966",
+                                "#66a3e0",
+                                "#c285ff",
+                                "#888888",
+                                "#a10000",
+                                "#b26b00",
+                                "#b2b200",
+                                "#006100",
+                                "#0047b2",
+                                "#6b24b2",
+                                "#444444",
+                                "#5c0000",
+                                "#663d00",
+                                "#666600",
+                                "#003700",
+                                "#002966",
+                                "#3d1466",
+                                "custom-color",
+                            ],
+                        },
+                    ],
+
+                    [
+                        { align: "" },
+                        { align: "center" },
+                        { align: "right" },
+                        { align: "justify" },
+                    ],
+                    // [{ list: "ordered" }, { list: "bullet" }],
+                    ["link","image", "video", "code-block"],
+                ],
+                handlers: {
+                    image: imageHandler,
+                    video: videoHandler,
+                },
+            },
+        },
+        theme: 'snow',
+        placeholder: "내용을 입력하세요",
+    });
+
+
+
+
+    async function imageHandler() {
+        let getImgUrl = ''
+        let contentArr = []
+
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", ".png,.jpg,.jpeg,.tiff,.webp,.gif");
+        input.click();
+
+
+        input.onchange = async (e) => {
+            loding = true;
+            const maxWidth = 1200;
+            const img_file = e.target.files[0];
+
+            console.log(img_file.name.split("."));
+            const img_name = img_file.name.split(".");
+            const img_ext = img_name[img_name.length - 1];
+
+            if (!imgExtList.includes(img_ext)) {
+                alert("이미지 형식이 아닙니다.");
+                loding = false;
+                return false;
+            }
+
+            if (imgChangeExtList.includes(img_ext)) {
+                const reader = new FileReader();
+                reader.readAsDataURL(img_file);
+
+                reader.onload = function (r) {
+                    const img = new Image();
+                    img.src = r.target.result;
+
+                    img.onload = async function (e) {
+                        if (img.width >= maxWidth) {
+                            var share = img.width / maxWidth;
+                            var setHeight = Math.floor(img.height / share);
+                            var setWidth = maxWidth;
+                        } else {
+                            var setWidth = img.width;
+                            var setHeight = img.height;
+                        }
+
+                        var canvas = document.createElement("canvas");
+                        canvas.width = setWidth;
+                        canvas.height = setHeight;
+                        canvas.display = "inline-block";
+                        canvas
+                            .getContext("2d")
+                            .drawImage(img, 0, 0, setWidth, setHeight);
+
+                        var getReImgUrl = canvas.toDataURL("image/webp");
+
+                        const resultImage = dataURItoBlob(getReImgUrl);
+
+                        let imgForm = new FormData();
+
+                        const timestamp = new Date().getTime();
+                        const fileName = `${timestamp}${Math.random()
+                            .toString(36)
+                            .substring(2, 11)}.webp`;
+
+                        imgForm.append("editorimg", resultImage, fileName);
+
+                        // 컨텐츠 리스트에 이미지 링크 넣기
+
+                        try {
+                            getImgUrl = await axios.post(
+                                `/editor/img_upload`,
+                                imgForm,
+                                {
+                                    headers: {
+                                        "Content-Type":
+                                            "multipart/form-data",
+                                    },
+                                }
+                            );
+                        } catch (error) {
+                            alert("에러가 발생했습니다. 다시 시도해주세요");
+                            loding = false;
+                            return false;
+                        }
+
+                        const range = quill.getSelection();
+
+                        quill.insertEmbed(
+                            range.index,
+                            "image",
+                            getImgUrl.data.baseUrl
+                        );
+
+                        contentArr.push(getImgUrl.data.saveUrl);
+                        contentArr = [...contentArr];
+                        console.log(contentArr);
+
+                        loding = false;
+                        quill.insertText(range.index + 1, "\n\n");
+                        quill.setSelection(range.index + 3);
+
+                        // let timeoutId;
+                        // timeoutId = setTimeout(() => {
+                        //     console.log('커서 가장 아래로!');
+
+                        //     const editorContentWrap =
+                        //         editor.querySelector(".ql-editor");
+                        //     editorContentWrap.scrollTop =
+                        //         editorContentWrap.scrollHeight;
+                        // }, 100);
+                    };
+                };
+            } else {
+                let imgForm = new FormData();
+
+                const timestamp = new Date().getTime();
+                const fileName = `${timestamp}${Math.random()
+                    .toString(36)
+                    .substring(2, 11)}.webp`;
+
+                imgForm.append("editorimg", img_file, fileName);
+
+                // 컨텐츠 리스트에 이미지 링크 넣기
+
+                try {
+                    getImgUrl = await axios.post(
+                        `/editor/img_upload`,
+                        imgForm,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        }
+                    );
+                } catch (error) {
+                    alert("에러가 발생했습니다. 다시 시도해주세요");
+                    loding = false;
+                    return false;
+                }
+
+                const range = quill.getSelection();
+
+                quill.insertEmbed(
+                    range.index,
+                    "image",
+                    getImgUrl.data.baseUrl
+                );
+
+                contentArr.push(getImgUrl.data.saveUrl);
+                contentArr = [...contentArr];
+                console.log(contentArr);
+
+                loding = false;
+                quill.insertText(range.index + 1, "\n\n");
+                quill.setSelection(range.index + 3);
+
+                // let timeoutId;
+                // timeoutId = setTimeout(() => {
+                //     console.log('커서 가장 아래로!');
+                //     const editorContentWrap =
+                //         editor.querySelector(".ql-editor");
+                //     editorContentWrap.scrollTop =
+                //         editorContentWrap.scrollHeight;
+                // }, 100);
+                console.log('?!?!?!?!?!??!?!?!?!?!?!?!');
+            }
+        }
+    }
+
+    // 비디오 핸들러 켜져 있을시 외부 클릭하면 꺼지는 이벤트에 등록된 함수,
+    function closeVideoTooltip(e) {
+
+        try {
+            // 먼저 해당 툴팁 선택
+            const videoBtn = e.target.closest(".ql-video");
+            if (videoBtn) {
+                return;
+            }
+
+            // 조건에 따라 툴팁 닫기
+            if (
+                !e.target.classList.contains("in-video") &&
+                !e.target.classList.contains(videoBtn)
+            ) {
+                const videoTooltip =
+                    document.querySelector(".video-tooltip");
+                videoTooltip.style.display = "none";
+            }
+
+            // 유튜브 동영상 업로드 버튼 클릭시 액션
+            if (e.target.classList.contains("youtube-upload")) {
+                youtubeUpload(nowRange);
+            }
+
+            // 다이렉트 동영상 업로드 버튼 클릭시 액션
+            if (e.target.classList.contains("direct-video-upload")) {
+                directVideoUpload(nowRange);
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    // 비디오 툴팁 디자인 함수
+    function createVideoTooltip() {
+
+        const qlContainer = document.querySelector(".ql-container");
+        const newDiv = document.createElement("div");
+
+        newDiv.classList.add(
+            "video-tooltip",
+            "shadow-lg",
+            "in-video",
+            "bg-white"
+        );
+
+        const videoInput = document.createElement("input");
+        videoInput.placeholder = "유튜브 링크 입력";
+        videoInput.classList.add(
+            "border",
+            "border-gray-300",
+            "rounded-lg",
+            "px-2",
+            "py-1",
+            "in-video",
+            "youtube-input"
+        );
+        const ytbUpbtn = document.createElement("button");
+        ytbUpbtn.type = "button";
+        ytbUpbtn.classList.add(
+            "ml-1",
+            "bg-blue-500",
+            "text-white",
+            "py-1",
+            "px-2",
+            "rounded-md",
+            "youtube-upload",
+            "in-video"
+        );
+        ytbUpbtn.innerText = "등록하기";
+
+        const directDiv = document.createElement("div");
+        directDiv.classList.add("mt-2", "text-center");
+        const directUpbtn = document.createElement("button");
+        directUpbtn.type = "button";
+        directUpbtn.classList.add(
+            "w-full",
+            "bg-gray-400",
+            "py-1",
+            "text-white",
+            "rounded-lg",
+            "in-video",
+            "direct-video-upload"
+        );
+        directUpbtn.innerText = "직접 올리기";
+        const infoDiv = document.createElement("div");
+        infoDiv.classList.add("text-xs", "mt-1", "in-video");
+        infoDiv.innerText = "10MB 미만 / mp4 영상만 업로드 가능";
+
+        directDiv.appendChild(directUpbtn);
+        directDiv.appendChild(infoDiv);
+
+        newDiv.appendChild(videoInput);
+        newDiv.appendChild(ytbUpbtn);
+        newDiv.appendChild(directDiv);
+        // newDiv.appendChild(newText);
+        qlContainer.appendChild(newDiv);
+    }
+
+    createVideoTooltip();
+
+    // 비디오 버튼을 클릭하면 툴팁 나오게 하기
+    function videoHandler() {
+        const range = quill.getSelection();
+        nowRange = range.index;
+
+        const videoTooltip = document.querySelector(".video-tooltip");
+        if (
+            !videoTooltip.style.display ||
+            videoTooltip.style.display == "none"
+        ) {
+            videoTooltip.style.display = "block";
+        } else {
+            videoTooltip.style.display = "none";
+        }
+    }
+
+    // 유튜브 업로드 버튼 클릭시 실행되는 함수
+    async function youtubeUpload(editorIdx) {
+        const youtubeInput = document.querySelector(".youtube-input");
+        if (!youtubeInput.value) {
+            alert("유튜브 링크가 없습니다. 링크를 확인해주세요");
+            return false;
+        } else if (!isYouTubeURL(youtubeInput.value)) {
+            alert(
+                '잘못된 형식입니다. 유튜브 영상 하단 "공유"버튼의 링크를 복사해서 붙여넣어주세요'
+            );
+            return false;
+        }
+
+        const youtubeId = extractVideoID(youtubeInput.value);
+        const youtubeLink = `https://www.youtube.com/embed/${youtubeId}`;
+
+        quill.insertEmbed(nowRange, "video", youtubeLink);
+        quill.insertText(nowRange + 1, "\n");
+        quill.setSelection(nowRange + 2);
+        const videoTooltip = document.querySelector(".video-tooltip");
+        videoTooltip.style.display = "none";
+        youtubeInput.value = "";
+
+        // let timeoutId;
+        // timeoutId = setTimeout(() => {
+        //     console.log('커서 가장 아래로!');
+        //     const editorContentWrap = editor.querySelector(".ql-editor");
+        //     editorContentWrap.scrollTop = editorContentWrap.scrollHeight;
+        // }, 100);
+    }
+
+    // 다이렉트 비디오 업로드 버튼 클릭시 함수
+    async function directVideoUpload(editorIdx) {
+        let contentArr = []
+        // input file tag 생성
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", ".mp4");
+        input.click();
+        input.onchange = async (e) => {
+            if (e.target.files[0].size > 10000000) {
+                alert(
+                    "파일 사이즈가 너무 큽니다. 10MB 미만 파일만 업로드 가능합니다."
+                );
+                return false;
+            }
+            let formData = new FormData();
+            const config = {
+                header: { "content-type": "multipart/form-data" },
+            };
+            const timestamp = new Date().getTime();
+            const fileName = `${timestamp}${Math.random()
+                .toString(36)
+                .substring(2, 11)}.mp4`;
+            formData.append("videofile", e.target.files[0], fileName);
+            const getFile = await axios.post(
+                `/editor/video_upload`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            contentArr.push(getFile.data.saveUrl);
+            contentArr = [...contentArr];
+            console.log(contentArr);
+
+            quill.insertEmbed(nowRange, "video", getFile.data.baseUrl);
+
+            quill.insertText(nowRange + 1, "\n");
+
+            quill.setSelection(nowRange + 2);
+
+            const videoTooltip = document.querySelector(".video-tooltip");
+            videoTooltip.style.display = "none";
+
+            // let timeoutId;
+            // timeoutId = setTimeout(() => {
+            //     console.log('커서 가장 아래로!');
+            //     const editorContentWrap = editor.querySelector(".ql-editor");
+            //     editorContentWrap.scrollTop = editorContentWrap.scrollHeight;
+            // }, 100);
+        };
+    }
+
+    // 유튜브 링크 검증 (영상 및 공유버튼 링크 형식이 맞는지)
+    function isYouTubeURL(url) {
+        var regex = /^https:\/\/youtu\.be\/.+$/;
+        return regex.test(url);
+    }
+
+    // 유튜브 링크에서 아이디 추출함수
+    function extractVideoID(url) {
+        var regex = /\/([^/]+)$/; // 슬래시(/)로 시작하고, 슬래시(/)로 끝나지 않는 가장 마지막 부분을 찾는 정규식
+        var match = url.match(regex); // 정규식과 일치하는 부분을 반환
+
+        if (match && match.length > 1) {
+            return match[1]; // 일치하는 부분 중 첫 번째 그룹을 반환 (마지막 부분)
+        }
+
+        return null; // 일치하는 부분이 없는 경우 null 반환
+    }
+
+
+    // 미사용
+    const dataURItoBlob = (dataURI) => {
+        const bytes =
+            dataURI.split(",")[0].indexOf("base64") >= 0
+                ? atob(dataURI.split(",")[1])
+                : unescape(dataURI.split(",")[1]);
+        const mime = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const max = bytes.length;
+        const ia = new Uint8Array(max);
+        for (let i = 0; i < max; i++) ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], { type: mime });
+    };
+
+
+
+
+
+    document.addEventListener("click", closeVideoTooltip);
+    const qlContainer = document.querySelector(".ql-container");
+    qlContainer.style.height = '500px';
+
+    const qlAlignList = document.querySelectorAll(".ql-align");
+    for (let i = 0; i < qlAlignList.length; i++) {
+        const element = qlAlignList[i];
+        if (element.value == "center") {
+            element.click();
+        }
+    }
+
+
+
+    $('.test_btn').click(function (e) {
+        e.preventDefault();
+        console.log('asdjfliajsdlifjalsijfd');
+        console.log(quill.root.innerHTML);
+        const range = quill.getSelection();
+        console.log(range);
+    })
+
+    $('#editor_form').submit(async function (e) {
+        e.preventDefault();
+
+        const subject = document.querySelector('.editor_subject').value;
+        if (!subject || !quill.root.innerHTML) {
+            alert('내용을 입력해야 업로드 가능합니다.')
+            return false;
+        }
+        console.log(quill.root.innerHTML);
+        try {
+
+            const res = await axios.post('/blog/content_upload', {
+                subject,
+                content: quill.root.innerHTML
+            })
+
+            if (res.data.status) {
+                alert('글이 업로드 되었습니다.');
+                location.replace('/blog')
+            } else {
+                alert(res.data.message)
+            }
+        } catch (error) {
+            console.error(error.message);
+            alert('에러 발생! 다시 시도해주세요!')
+
+        }
+
+    })
+
+</script>
+{% endblock %}

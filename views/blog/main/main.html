@@ -1,0 +1,51 @@
+{% extends 'blog/main/base.html' %}
+
+{% block blog_main_content %}
+
+<style>
+    body {
+        font-family: 'SUIT', sans-serif;
+    }
+</style>
+
+<div class="container max-w-3xl ">
+
+    <div class="mt-7 mb-3 text-center font-semibold text-2xl">
+        <img src="/blog_header.jpg" alt="" class="max-w-sm mx-auto">
+        탑분양 블로그
+    </div>
+    <div class="text-right">
+        <a href="/blog/write"><button class="bg-sky-700 text-white px-3 py-1 text-sm rounded-lg">글작성</button></a>
+
+    </div>
+
+    <ul class="mb-10">
+        {% for post in post_list %}
+        <a href="/blog/{{post.bl_id}}">
+            <li class="shadow-md p-3 mb-1 rounded-lg flex gap-3">
+                <div class="max-w-[150px] max-h-20 overflow-hidden rounded-md flex justify-center items-center">
+                    <img src="{{post.main_img}}" alt="" class="">
+                </div>
+                <div class="py-2 overflow-hidden">
+                    <div class="truncate">
+                        {{ post.bl_subject }}
+                    </div>
+                    <div class="text-sm">
+                        작성일자 : {{ post.date_str }}
+                    </div>
+                </div>
+            </li>
+        </a>
+        {% endfor %}
+    </ul>
+
+
+    <div class="text-center">
+        <h1>리치분양 블로그</h1>
+    </div>
+
+
+
+</div>
+
+{% endblock %}

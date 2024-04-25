@@ -371,4 +371,13 @@ CREATE TABLE IF NOT EXISTS subdomain_visit(
     sv_created_at DATETIME
 );
 
+
+ALTER TABLE form_status ADD COLUMN fs_personal_officer VARCHAR(10);
+ALTER TABLE form_status ADD COLUMN fs_callnumber VARCHAR(50);
+ALTER TABLE form_status ADD COLUMN fs_owner VARCHAR(50);
+ALTER TABLE form_status ADD COLUMN fs_address VARCHAR(255);
+ALTER TABLE form_status ADD COLUMN fs_business_num VARCHAR(50);
+ALTER TABLE form_status ADD COLUMN fs_email VARCHAR(50);
+ALTER TABLE form_status ADD COLUMN fs_report_number VARCHAR(50);
+ALTER TABLE form_status ADD COLUMN fs_company VARCHAR(50);
 */

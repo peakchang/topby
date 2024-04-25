@@ -156,22 +156,19 @@ router.use('/test', (req, res, next) => {
 })
 
 
+router.use('/load_footer', async (req, res, next) => {
+    let status = true;
+    console.log(status);
+    res.json({ status })
+})
+
+
 
 router.get('/', async (req, res, next) => {
 
-    var testString = "+8210.2222.3333"
-    var result = testString.replace('+82', '').replace(/[^0-9]/g, "");
-    if (result.charAt(0) != '0') {
-        result = `0${result}`
-    }
-    console.log(result);
+    let footer_info = {}
 
-    const p = 'The quick brown fox jumps over the lazy dog. If the dog reacted, was it really lazy?';
 
-    console.log(p.replace('dog', 'monkey'));
-
-    console.log(req.headers['user-agent']);
-    console.log(req.get('Referrer'));
     if (req.get('Referrer')) {
         var prePath = req.get('Referrer')
     } else {
@@ -181,8 +178,6 @@ router.get('/', async (req, res, next) => {
 
     var now = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
     var nowDate = moment(Date.now()).format('YYYY-MM-DD');
-
-
 
     const visitSearchSql = `SELECT * FROM visit_chk WHERE DATE(vc_created_at) = ?`;
     const visitSearchToday = await sql_con.promise().query(visitSearchSql, [nowDate])
@@ -205,7 +200,15 @@ router.get('/', async (req, res, next) => {
         userInfo = {}
     }
 
-    res.render('topby/topby_main', { userInfo });
+    try {
+        const getFooterInfoQuery = "SELECT * FROM form_status WHERE fs_id = 1";
+        const getFooterInfo = await sql_con.promise().query(getFooterInfoQuery)
+        footer_info = getFooterInfo[0][0];
+    } catch (error) {
+
+    }
+
+    res.render('topby/topby_main', { userInfo, footer_info });
 })
 
 

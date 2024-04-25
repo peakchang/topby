@@ -1,0 +1,79 @@
+{% extends 'blog/view/base.html' %}
+
+{% block blog_view_content %}
+
+
+<style>
+    body {
+        font-family: 'SUIT', sans-serif;
+    }
+
+    .ql-editor img {
+        margin: 0 auto;
+        max-width: 85% !important;
+    }
+
+    .ql-editor .ql-video {
+        min-width: 500px;
+        min-height: 285px;
+    }
+</style>
+
+
+
+<div class="container max-w-3xl mt-5 mb-10">
+    <div>
+        <h1>{{view_data.bl_subject}}</h1>
+    </div>
+    <div class="text-xs text-right">
+        <span class="mr-1">작성시간 : {{view_data.date_str}}</span>
+        <a href="/blog">
+            <button class="bg-blue-700 py-1 px-2.5 rounded-lg text-white mr-1">블로그 홈</button>
+        </a>
+        
+        <button class="bg-green-700 py-1 px-2.5 rounded-lg text-white mr-1 goback">뒤로가기</button>
+        {% if user_data.rate == 5 %}
+        <button class="bg-red-700 py-1 px-2.5 rounded-lg text-white mr-1 deletepost">삭제하기</button>
+        {% endif %}
+
+    </div>
+    <hr class="my-2">
+    <div class="ql-editor" style="height: auto;">
+        {{view_data.bl_content | safe}}
+    </div>
+    <hr class="my-2">
+
+    <ul>
+        {% for post in post_list %}
+        <a href="/blog/{{post.bl_id}}">
+            <li class="shadow-md p-3 mb-1 rounded-lg flex gap-3">
+                <div class="max-w-[150px] max-h-20 overflow-hidden rounded-md flex justify-center items-center">
+                    <img src="{{post.main_img}}" alt="" class="">
+                </div>
+                <div class="py-2 overflow-hidden">
+                    <div class="truncate">
+                        {{ post.bl_subject }}
+                    </div>
+                    <div class="text-sm">
+                        작성일자 : {{ post.date_str }}
+                    </div>
+                </div>
+            </li>
+        </a>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-10"></div>
+</div>
+<script>
+
+    $('.goback').click(function () {
+        history.back();
+    })
+
+    $('.deletepost').click(function () {
+        console.log('432ir3i49 i34f93i49f3i4');
+    })
+
+</script>
+{% endblock %}

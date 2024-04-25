@@ -32,6 +32,10 @@ const teleRouter = require('./routes/telework');
 const helmet = require("helmet");
 const minisiteRouter = require('./routes/crm_minisite')
 
+
+const blogRouter = require('./routes/blog');
+const editorRouter = require('./routes/editor');
+
 const subdomainRouter = require('./routes/sub_domain/subdomain');
 
 
@@ -75,6 +79,9 @@ app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET }));
 app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use('/subimg', express.static(path.join(__dirname, 'subuploads/img')));
 app.use('/lib', express.static(path.join(__dirname, 'db_lib')));
+
+app.use('/editor', express.static(path.join(__dirname, 'public/uploads/editor')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/file', express.static(__dirname + '/file'));
@@ -131,6 +138,9 @@ app.use('/side', sideRouter);
 app.use('/site', siteRouter);
 app.use('/nwork', nworkRouter);
 app.use('/telework', teleRouter);
+
+app.use('/blog', blogRouter);
+app.use('/editor', editorRouter);
 
 app.use('/api/subdomain', subdomainRouter);
 

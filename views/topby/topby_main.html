@@ -63,6 +63,7 @@
 <div id="fullpage">
 
     <div class="section first_page pb-0" id="first_page">
+        <p>{{footer_info.fs_personal_officer}}</p>
         <p class="subject_text gm_bold leading-normal text-xl md:text-2xl xl:text-4xl pb-20 xl:pb-24 text-white">
         </p>
 
@@ -293,12 +294,37 @@
         </div> -->
 
         <div class="suit_font text-center mt-5 text-xs md:text-base">
-            <span class="inline-block mr-4">개인정보책임자 : 김연지</span>
-            <span class="inline-block mr-4">대표 : 박창현</span>
-            <span class="inline-block mr-4">회사명 : 애드피크</span>
-            <span class="inline-block mr-4">주소 : 서울특별시 구로구 부광로88, B동 1010층 (항동 SK V1 센터)</span>
-            <span class="inline-block mr-4">사업자번호 : 240-06-01900</span>
-            <span class="inline-block mr-4">전화 : 1644-9714</span>
+            {% if footer_info.fs_personal_officer %}
+            <span class="inline-block mr-4">개인정보책임자 : {{footer_info.fs_personal_officer}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_owner %}
+            <span class="inline-block mr-4">대표 : {{footer_info.fs_owner}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_company %}
+            <span class="inline-block mr-4">회사명 : {{footer_info.fs_company}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_address %}
+            <span class="inline-block mr-4">주소 : {{footer_info.fs_address}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_email %}
+            <span class="inline-block mr-4">이메일 : {{footer_info.fs_email}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_business_num %}
+            <span class="inline-block mr-4">사업자번호 : {{footer_info.fs_business_num}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_callnumber %}
+            <span class="inline-block mr-4">전화 : {{footer_info.fs_callnumber}}</span>
+            {% endif %}
+
+            {% if footer_info.fs_report_number %}
+            <span class="inline-block mr-4">통신판매업신고번호 : {{footer_info.fs_report_number}}</span>
+            {% endif %}
 
             <!-- <span class="inline-block mr-4">대표 : 박창용 </span>
             <span class="inline-block mr-4">회사명 : 피크 </span>

@@ -35,7 +35,7 @@ router.get('/download', async (req, res) => {
     let downloadData = []
 
     let addQuery = ""
-    if(startDay || endDay){
+    if (startDay || endDay) {
         addQuery = `WHERE af_created_at BETWEEN '${startDay}' AND '${endDay}'`
     }
     try {
@@ -44,7 +44,7 @@ router.get('/download', async (req, res) => {
         const getDownloadData = await sql_con.promise().query(getDownloadDataQuery);
         downloadData = getDownloadData[0]
     } catch (error) {
-        
+
     }
 
     console.log(downloadData);
@@ -702,18 +702,20 @@ router.use('/test_axios', async (req, res, next) => {
 
 router.use('/', chkRateMaster, async (req, res, next) => {
     if (req.method == 'POST') {
+
+        console.log(req.body);
         // 검증
         const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
         if (chkData[0] == '') {
             const marketerList = 'FB,' + req.body.marketer_list
-            let insertArr = [req.body.estate_status, req.body.estate_status_color, marketerList];
-            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_marketer_list) VALUES (?,?,?);`;
+            let insertArr = [req.body.estate_status, req.body.estate_status_color, marketerList, req.body.fs_personal_officer, req.body.fs_callnumber, req.body.fs_owner, req.body.fs_address, req.body.fs_business_num, req.body.fs_email, req.body.fs_report_number, req.body.fs_company];
+            let insertSql = `INSERT INTO form_status (fs_estate_status,fs_estate_status_color, fs_marketer_list, fs_personal_officer,fs_callnumber,fs_owner,fs_address,fs_business_num,fs_email,fs_report_number,fs_company) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
             await sql_con.promise().query(insertSql, insertArr);
         } else {
             const marketerList = 'FB,' + req.body.marketer_list
-            let updatetArr = [req.body.estate_status, req.body.estate_status_color, marketerList];
-            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_marketer_list=? WHERE fs_id=1`;
+            let updatetArr = [req.body.estate_status, req.body.estate_status_color, marketerList, req.body.fs_personal_officer, req.body.fs_callnumber, req.body.fs_owner, req.body.fs_address, req.body.fs_business_num, req.body.fs_email, req.body.fs_report_number, req.body.fs_company];
+            let updateSql = `UPDATE form_status SET fs_estate_status=?,fs_estate_status_color=?, fs_marketer_list=?, fs_personal_officer=?,fs_callnumber=?,fs_owner=?,fs_address=?,fs_business_num=?,fs_email=?,fs_report_number=?,fs_company=? WHERE fs_id=1`;
             await sql_con.promise().query(updateSql, updatetArr);
         }
     }

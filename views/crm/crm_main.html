@@ -76,6 +76,88 @@
                             </div>
                         </td>
                     </tr>
+
+
+                </table>
+
+
+                <div class="mt-4 mb-2 suit-font">※ 푸터 정보</div>
+                <table class="border-collapse border border-slate-400 w-full text-xs">
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">개인정보 책임자</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_personal_officer"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_personal_officer }}">
+                            </div>
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center">전화</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_callnumber"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_callnumber }}">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">대표</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_owner"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_owner }}">
+                            </div>
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center">주소</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_address"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_address }}">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">사업자번호</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_business_num"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_business_num }}">
+                            </div>
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center">이메일</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_email"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_email }}">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="border border-slate-300 py-2 text-center">통신판매업신고번호</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_report_number"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_report_number }}">
+                            </div>
+                        </td>
+                        <td class="border border-slate-300 py-2 text-center">회사명</td>
+                        <td class="border border-slate-300 py-2 text-center px-3">
+                            <div class="flex">
+                                <input type="text" name="fs_company"
+                                    class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs"
+                                    value="{{ result.fs_company }}">
+                            </div>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
@@ -182,9 +264,9 @@
     })
 
     $('.update_site,.delete_site').click(function (e) {
-        if(this.value == 'site_delete'){
+        if (this.value == 'site_delete') {
             var chkGo = confirm('삭제한 내용은 복구할수 없습니다. 진행하시겠습니까?')
-            if(!chkGo){
+            if (!chkGo) {
                 return false
             }
         }
