@@ -49,6 +49,9 @@ router.get('/:id', async (req, res, next) => {
     let getId = req.params.id
     let user_data = req.user
     let post_list = []
+
+    let footer_info = {}
+
     const siteUrl = 'https://' + req.get('host') + req.originalUrl;
     const siteUrlOrigin = 'https://' + req.get('host')
 
@@ -98,6 +101,10 @@ router.get('/:id', async (req, res, next) => {
             const textOnly = post_list[i]['bl_content'].replace(/<[^>]+>/g, ' ');
             post_list[i]['content_txt'] = textOnly.replace(/\s+/g, ' ');
         }
+
+        const getFooterInfoQuery = "SELECT * FROM form_status WHERE fs_id = 1";
+        const getFooterInfo = await sql_con.promise().query(getFooterInfoQuery)
+        footer_info = getFooterInfo[0][0];
         console.log('에러 없어~');
     } catch (error) {
         console.log('에러 있어?');
@@ -108,7 +115,7 @@ router.get('/:id', async (req, res, next) => {
 
 
 
-    res.render('blog/view/main', { view_data, user_data, post_list, siteUrl, siteUrlOrigin })
+    res.render('blog/view/main', { view_data, user_data, post_list, siteUrl, siteUrlOrigin, footer_info })
 });
 
 router.get('/', async (req, res, next) => {
@@ -120,6 +127,7 @@ router.get('/', async (req, res, next) => {
     let status = true;
     let message = ""
     let post_list = []
+    let footer_info = {}
 
     let user_data = req.user
 
@@ -141,6 +149,10 @@ router.get('/', async (req, res, next) => {
             const textOnly = post_list[i]['bl_content'].replace(/<[^>]+>/g, ' ');
             post_list[i]['content_txt'] = textOnly.replace(/\s+/g, ' ');
         }
+
+        const getFooterInfoQuery = "SELECT * FROM form_status WHERE fs_id = 1";
+        const getFooterInfo = await sql_con.promise().query(getFooterInfoQuery)
+        footer_info = getFooterInfo[0][0];
         console.log(post_list);
     } catch (error) {
         console.error(error.message);
@@ -150,7 +162,7 @@ router.get('/', async (req, res, next) => {
 
 
 
-    res.render('blog/main/main', { post_list, user_data, siteUrl, siteUrlOrigin })
+    res.render('blog/main/main', { post_list, user_data, siteUrl, siteUrlOrigin, footer_info })
 });
 
 

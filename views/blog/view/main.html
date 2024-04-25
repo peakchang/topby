@@ -62,8 +62,47 @@
         </a>
         {% endfor %}
     </ul>
+    <div class="suit_font text-center mt-4 text-xs md:text-sm">
+        {% if footer_info.fs_personal_officer %}
+        <span class="inline-block mr-4">개인정보책임자 : {{footer_info.fs_personal_officer}}</span>
+        {% endif %}
 
-    <div class="mt-10"></div>
+        {% if footer_info.fs_owner %}
+        <span class="inline-block mr-4">대표 : {{footer_info.fs_owner}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_company %}
+        <span class="inline-block mr-4">회사명 : {{footer_info.fs_company}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_address %}
+        <span class="inline-block mr-4">주소 : {{footer_info.fs_address}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_email %}
+        <span class="inline-block mr-4">이메일 : {{footer_info.fs_email}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_business_num %}
+        <span class="inline-block mr-4">사업자번호 : {{footer_info.fs_business_num}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_callnumber %}
+        <span class="inline-block mr-4">전화 : {{footer_info.fs_callnumber}}</span>
+        {% endif %}
+
+        {% if footer_info.fs_report_number %}
+        <span class="inline-block mr-4">통신판매업신고번호 : {{footer_info.fs_report_number}}</span>
+        {% endif %}
+
+        <!-- <span class="inline-block mr-4">대표 : 박창용 </span>
+        <span class="inline-block mr-4">회사명 : 피크 </span>
+        <span class="inline-block mr-4">주소 : 경기도 부천시 중동로 71번길 39, 902호 </span>
+        <span class="inline-block mr-4">사업자번호 : 509-63-00569 </span>
+        <span class="inline-block mr-4">이메일 : adpeak@naver.com </span>
+        <span class="inline-block mr-4">통신판매업신고번호 : 2022-경기부천-0266 </span>
+        <span class="inline-block mr-4">전화 : 1644-9714</span> -->
+    </div>
 </div>
 <script>
 
