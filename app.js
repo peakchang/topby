@@ -36,6 +36,8 @@ const minisiteRouter = require('./routes/crm_minisite')
 const blogRouter = require('./routes/blog');
 const editorRouter = require('./routes/editor');
 
+const zapierRouter = require('./routes/zapier');
+
 const subdomainRouter = require('./routes/sub_domain/subdomain');
 
 
@@ -141,6 +143,8 @@ app.use('/telework', teleRouter);
 
 app.use('/blog', blogRouter);
 app.use('/editor', editorRouter);
+
+app.use('/zapier', zapierRouter);
 
 app.use('/api/subdomain', subdomainRouter);
 
