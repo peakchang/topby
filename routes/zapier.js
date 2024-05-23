@@ -23,6 +23,16 @@ router.get('/', (req, res) => {
 router.post('/', async (req, res) => {
     let status = true;
     console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    console.log('zapier 들어옴!!!!');
+    log
     console.log(req.body);
 
     const body = req.body;
@@ -114,7 +124,7 @@ router.post('/', async (req, res) => {
         }
 
         // 최고관리자에게 이메일 발송
-        const mailSubject = `(리치분양 접수) ${reFormName} 고객명 ${body['raw__full_name']} 접수되었습니다.`;
+        const mailSubject = `(탑분양 접수) ${reFormName} 고객명 ${body['raw__full_name']} 접수되었습니다.`;
         const mailContent = `현장: ${reFormName} / 이름 : ${body['raw__full_name']} / 전화번호 : ${get_phone} ${addEtcMessage}`;
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
@@ -132,7 +142,7 @@ router.post('/', async (req, res) => {
 
         const receiverStr = `${get_phone} ${addEtcMessage}`
         for (let oo = 0; oo < findUser.length; oo++) {
-            var customerInfo = { ciName: body['raw__full_name'], ciCompany: '리치분양', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+            var customerInfo = { ciName: body['raw__full_name'], ciCompany: '탑분양', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
             console.log(customerInfo);
             if (oo == 0) {
@@ -156,7 +166,7 @@ router.post('/', async (req, res) => {
                 const detailSendContent = {
                     receiver: get_phone,
                     ciName: body['raw__full_name'],
-                    ciCompany: "리치분양",
+                    ciCompany: "탑분양",
                     ciSite: sendRealSiteName,
                     smsContent: sendContent
                 }
