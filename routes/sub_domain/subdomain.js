@@ -132,12 +132,6 @@ router.post('/update_visit_count', async (req, res, next) => {
         }
 
     }
-
-
-
-
-
-
     res.json({ status })
 })
 
