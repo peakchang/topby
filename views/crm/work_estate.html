@@ -66,7 +66,8 @@
                 상태변경</button>
             {% endif %}
 
-            <a href="/crm/download{{add_query}}" class="ml-2 text-sm py-1 px-4 bg-blue-400 active:bg-blue-500 text-white rounded-lg">
+            <a href="/crm/download{{add_query}}"
+                class="ml-2 text-sm py-1 px-4 bg-blue-400 active:bg-blue-500 text-white rounded-lg">
                 DB 엑셀 다운로드
             </a>
 
@@ -117,8 +118,9 @@
                         <td class="border border-slate-300 py-2 text-center px-3">
                             {{ data.af_mb_status }}
                         </td>
-                        <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.af_created_at |
-                            date("YY/MM/DD HH:mm:ss") }}</td>
+                        <td class="border border-slate-300 py-2 text-center px-3 created_time">
+                            {{ data.time_str }}
+                        </td>
                     </tr>
                     {% endfor %}
 
@@ -213,7 +215,7 @@
         }
 
     })
-    
+
     $('.chkdelete').click(function (e) {
 
         if (!confirm('삭제하시겠습니까? 삭제된 DB는 복구가 불가합니다.')) {

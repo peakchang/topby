@@ -19,7 +19,8 @@
 <div class="container">
     <form>
         <div class="my-4">
-            <input type="date" class="border rounded-lg py-1 px-2 text-sm now_date mb-2" name="sd" value="{{ all_data.sd }}">
+            <input type="date" class="border rounded-lg py-1 px-2 text-sm now_date mb-2" name="sd"
+                value="{{ all_data.sd }}">
             ~
             <input type="date" class="border rounded-lg py-1 px-2 text-sm mb-2" name="ed" value="{{ all_data.ed }}">
 
@@ -38,13 +39,15 @@
             </select>
 
             <select name="sc" id="" class="py-1 pr-14 text-sm border border-blue-500 rounded-lg mb-2">
-                <option value="30" {% if all_data.sc == 30 %}selected{% endif %}>30</option>
-                <option value="50" {% if all_data.sc == 50 %}selected{% endif %}>50</option>
-                <option value="100" {% if all_data.sc == 100 %}selected{% endif %}>100</option>
+                <option value="30" {% if all_data.sc==30 %}selected{% endif %}>30</option>
+                <option value="50" {% if all_data.sc==50 %}selected{% endif %}>50</option>
+                <option value="100" {% if all_data.sc==100 %}selected{% endif %}>100</option>
             </select>
 
-            <input type="text" name="nm" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="이름검색" value="{{ all_data.nm }}">
-            <input type="text" name="ph" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2" placeholder="전화번호검색" value="{{ all_data.ph }}">
+            <input type="text" name="nm" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2"
+                placeholder="이름검색" value="{{ all_data.nm }}">
+            <input type="text" name="ph" class="py-1 text-sm pl-1 border border-blue-500 rounded-lg w-28 mb-2"
+                placeholder="전화번호검색" value="{{ all_data.ph }}">
             <button type="submit" class="ml-2 text-sm py-1 px-4 bg-gray-700 text-white rounded-lg">검색</button>
 
         </div>
@@ -62,11 +65,13 @@
                     </tr>
 
                     {% for data in all_data.wdata %}
-                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}"{% endif %}>
+                    <tr class="dblist" {% if data.status_color %}style="background-color:{{data.status_color}}" {% endif
+                        %}>
                         <input type="hidden" name="" value="{{ data.af_id }}">
                         <td class="border border-slate-300 py-2 text-center">{{ data.chkCount }}</td>
                         <td class="border border-slate-300 py-2 text-center">
-                            <span class=" cursor-pointer mb_detail inline-block" style="max-width: 200px;">{{ data.af_mb_name }}</span>
+                            <span class=" cursor-pointer mb_detail inline-block" style="max-width: 200px;">{{
+                                data.af_mb_name }}</span>
                         </td>
                         <td class="border border-slate-300 py-2 text-center">{{ data.af_mb_phone_chk }} </td>
                         <td class="border border-slate-300 py-2 text-center px-3">
@@ -91,88 +96,88 @@
 
                             <div class="">
                                 {% if data.main_memo %}
-                                
+
                                 {% for memo_data in data.main_memo %}
                                 <div>
                                     {{ memo_data }}
                                 </div>
                                 {% endfor %}
-                                </div>
-                                {% endif %}
+                            </div>
+                            {% endif %}
 
 
-                                <!-- <button type="button"
+                            <!-- <button type="button"
                                     class="open_memo ml-1 text-sm px-4 bg-green-500 hover:bg-green-700 text-white rounded mt-1">메모 목록</button> -->
-                            </div>
-                        </td>
-                        <td class="border border-slate-300 py-2 text-center">
-                            <div class="flex justify-center">
-                                <select name="" id="" class="border border-gray-200 px-1 rounded">
-                                    <option value="">상태선택</option>
-                                    {% for status in all_data.status_list %}
-                                    <option value="{{ status }}" {% if status==data.af_mb_status %} selected {% endif
-                                        %}>{{ status }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button type="button"
-                                    class="ml-1 text-sm px-1 bg-blue-500 hover:bg-blue-700 text-white rounded change_status">적용</button>
-                            </div>
-                        </td>
-                        <td class="border border-slate-300 py-2 text-center px-3 created_time">{{ data.af_created_at |
-                            date("YY/MM/DD HH:mm:ss") }}</td>
-                    </tr>
-                    {% endfor %}
-
-
-                </table>
             </div>
+            </td>
+            <td class="border border-slate-300 py-2 text-center">
+                <div class="flex justify-center">
+                    <select name="" id="" class="border border-gray-200 px-1 rounded">
+                        <option value="">상태선택</option>
+                        {% for status in all_data.status_list %}
+                        <option value="{{ status }}" {% if status==data.af_mb_status %} selected {% endif %}>{{ status
+                            }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button"
+                        class="ml-1 text-sm px-1 bg-blue-500 hover:bg-blue-700 text-white rounded change_status">적용</button>
+                </div>
+            </td>
+            <td class="border border-slate-300 py-2 text-center px-3 created_time">
+                {{ data.time_str }}</td>
+            </tr>
+            {% endfor %}
 
 
-            <nav aria-label="Page navigation example" class="text-center mt-4">
-                <ul class="inline-flex items-center -space-x-px mx-auto">
-                    <li>
-                        <button type="button"
-                            class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 move_page prev">
-                            <span class="sr-only">Previous</span>
-                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </li>
-
-                    {% for i in range(all_data.pagingStartCount, all_data.pagingEndCount) %}
-                    {% if i == all_data.nowCount %}
-                    <li><button type="submit" name="pnum" value="{{i}}"
-                            class="py-2 px-3 leading-tight text-gray-500 bg-blue-300 border border-gray-300">{{i}}</button>
-                    </li>
-                    {% else %}
-                    <li><button type="submit" name="pnum" value="{{i}}"
-                            class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300">{{i}}</button>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-
-
-
-                    <li>
-                        <button type="button"
-                            class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 move_page next">
-                            <span class="sr-only">Next</span>
-                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </li>
-                </ul>
-            </nav>
+            </table>
         </div>
-    </form>
+
+
+        <nav aria-label="Page navigation example" class="text-center mt-4">
+            <ul class="inline-flex items-center -space-x-px mx-auto">
+                <li>
+                    <button type="button"
+                        class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 move_page prev">
+                        <span class="sr-only">Previous</span>
+                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </li>
+
+                {% for i in range(all_data.pagingStartCount, all_data.pagingEndCount) %}
+                {% if i == all_data.nowCount %}
+                <li><button type="submit" name="pnum" value="{{i}}"
+                        class="py-2 px-3 leading-tight text-gray-500 bg-blue-300 border border-gray-300">{{i}}</button>
+                </li>
+                {% else %}
+                <li><button type="submit" name="pnum" value="{{i}}"
+                        class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300">{{i}}</button>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+
+
+                <li>
+                    <button type="button"
+                        class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 move_page next">
+                        <span class="sr-only">Next</span>
+                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+</div>
+</form>
 </div>
 <script>
 
@@ -220,15 +225,15 @@
         console.log(ph_val);
     })
 
-    $('.change_status').click(function(e){
+    $('.change_status').click(function (e) {
         console.log(this.parentNode.parentNode.parentNode.firstElementChild.value);
         const idVal = this.parentNode.parentNode.parentNode.firstElementChild.value
         const statusSelVal = this.previousElementSibling.options[this.previousElementSibling.selectedIndex].value
-        if(!statusSelVal){
+        if (!statusSelVal) {
             alert('선택된 값이 없습니다!')
             return false
         }
-        axios.post('/crm/use_axios', { idVal , statusSelVal }).then((res) => {
+        axios.post('/crm/use_axios', { idVal, statusSelVal }).then((res) => {
             console.log(res);
             location.reload()
         }).catch((err) => {

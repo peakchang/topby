@@ -56,6 +56,7 @@ function setUpNunjucks(expressApp) {
     autoescape: true,
     express: app,
     watch: true,
+    timezone: 'Asia/Seoul'
   });
   nunjucks_env.addFilter('date', dateFilter);
 }

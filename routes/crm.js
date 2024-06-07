@@ -29,7 +29,6 @@ ncp.limit = 16;
 router.get('/download', async (req, res) => {
 
     const query = req.query;
-    console.log(query);
     const startDay = query.sd;
     const endDay = query.ed;
     let downloadData = []
@@ -40,15 +39,11 @@ router.get('/download', async (req, res) => {
     }
     try {
         const getDownloadDataQuery = `SELECT * FROM application_form ${addQuery} ORDER BY af_id DESC`
-        console.log(getDownloadDataQuery);
         const getDownloadData = await sql_con.promise().query(getDownloadDataQuery);
         downloadData = getDownloadData[0]
     } catch (error) {
 
     }
-
-    console.log(downloadData);
-
     const dataFromDB = [
         { name: 'John', age: 30, email: 'john@example.com' },
         { name: 'Jane', age: 25, email: 'jane@example.com' },
@@ -81,10 +76,7 @@ router.get('/download', async (req, res) => {
 });
 
 router.use('/site', async (req, res, next) => {
-    console.log(req.method);
     if (req.method == "POST") {
-        console.log(typeof (req.body.site_id));
-        console.log(req.body.site_id);
         if (typeof (req.body.site_id) == "string") {
             const deleteSiteListSql = "DELETE FROM site_list WHERE sl_id = ?";
             await sql_con.promise().query(deleteSiteListSql, [req.body.site_id]);
@@ -99,13 +91,11 @@ router.use('/site', async (req, res, next) => {
     const onSiteListSql = "SELECT * FROM site_list ORDER BY sl_id DESC";
     const onSiteList = await sql_con.promise().query(onSiteListSql);
     const on_site_list = onSiteList[0]
-    console.log(on_site_list);
     res.render('crm/work_site', { on_site_list })
 })
 
 router.use('/site_sms_load', async (req, res, next) => {
     let status = true;
-    console.log('일단 들어와쏘~~~');
     let sms_content = ""
     try {
         const getSmsContentLoadQuery = "SELECT sl_sms_content FROM site_list WHERE sl_id = ?";
@@ -114,7 +104,6 @@ router.use('/site_sms_load', async (req, res, next) => {
     } catch (error) {
 
     }
-    console.log(sms_content);
     res.json({ status, sms_content })
 })
 
@@ -393,6 +382,11 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
             siteList.push(getSiteListFor.sl_site_name)
         }
 
+        for (let i = 0; i < all_data.wdata.length; i++) {
+            const timeStr = moment(all_data.wdata[i]['af_created_at']).format('YYYY-MM-DD HH:mm:ss');
+            all_data.wdata[i]['time_str'] = timeStr;
+        }
+
 
 
         all_data.estate_list = siteList;
@@ -403,9 +397,11 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
         all_data.ed = endDay
         add_query = req.url;
 
+
+
         res.render('crm/work_estate', { all_data, add_query });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.render('crm/work_estate', {});
     }
 
@@ -413,22 +409,18 @@ router.use('/estate_work', chkRateMaster, async (req, res, next) => {
 
 router.use('/estate_work_list_filter', async (req, res, next) => {
     let status = true;
-    console.log('gogogogo');
     const filterValue = req.body.filterValue;
-    console.log(filterValue);
     let site_list = [];
     try {
         const getFilterEstateListQuery = `SELECT sl_site_name FROM site_list WHERE sl_site_name LIKE '%${filterValue}%'`
         const getFilterEstateList = await sql_con.promise().query(getFilterEstateListQuery)
         const siteList = getFilterEstateList[0]
-        console.log(siteList);
         for (let i = 0; i < siteList.length; i++) {
             site_list.push(siteList[i]['sl_site_name'])
         }
     } catch (error) {
         console.error(error.message);
     }
-    console.log(site_list);
     res.json({ status, site_list })
 })
 
@@ -440,8 +432,6 @@ router.use('/estate_work_list_filter', async (req, res, next) => {
 router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
     try {
-        console.log(req.user.rate);
-
         if (req.user.rate < 5) {
             const getUserEstateSql = `SELECT * FROM users WHERE id= ?;`;
             const getUserEstateTemp = await sql_con.promise().query(getUserEstateSql, [req.user.id]);
@@ -461,8 +451,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             }
         }
 
-        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 11111');
-
         if (req.query.sc) {
             var pageCount = parseInt(req.query.sc);
         } else {
@@ -480,11 +468,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var sdCountQ = ``;
             var sdSearchQ = ``;
         }
-
-        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 22222');
-
-
-
 
         var getEst = '';
 
@@ -522,8 +505,6 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                 return
             }
         }
-
-        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 33333');
 
         if (req.query.status) {
             if (getEst || startDay) {
@@ -563,20 +544,11 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
             var getPhone = '';
         }
 
-        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 44444');
-
-
-
         // const allCountSql = `SELECT COUNT(DISTINCT af_mb_phone) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
         // const allCountSql = `SELECT COUNT(*) FROM application_form WHERE af_form_type_in='분양' ${getEst} ${getStatus};`;
         const allCountSql = `SELECT COUNT(*) FROM application_form ${sdCountQ} ${getEst} ${getStatus} ${getName} ${getPhone};`;
-        console.log(allCountSql);
         const allCountQuery = await sql_con.promise().query(allCountSql)
         const allCount = Object.values(allCountQuery[0][0])[0]
-
-        console.log('error check~~~~~~~~~~~~~~~~~~~~~~~ 55555');
-
-
 
         if (req.user.rate < 5) {
             if (req.query.est) {
@@ -601,10 +573,8 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
 
         var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ${getName} ${getPhone} ORDER BY a.af_id DESC`;
 
-        console.log(setDbSql);
         var all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
-
-        // console.log(all_data['wdata']);
+        
         for await (const data of all_data.wdata) {
             const addMemoSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_created_at DESC LIMIT 3;`
             const addMemo = await sql_con.promise().query(addMemoSql, [data.af_id])
@@ -614,6 +584,14 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
                     data['main_memo'].push(addMemo[0][i].mo_memo)
                 }
             }
+
+            // const timeStr = moment(data.af_created_at).format('YYYY-MM-DD HH:mm:ss');
+            // all_data.wdata[idx]['time_str'] = timeStr;
+        }
+
+        for (let i = 0; i < all_data.wdata.length; i++) {
+            const timeStr = moment(all_data.wdata[i]['af_created_at']).format('YYYY-MM-DD HH:mm:ss');
+            all_data.wdata[i]['time_str'] = timeStr;
         }
 
         all_data.estate_list = getUserEstateList;
@@ -625,8 +603,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         all_data.nm = req.query.nm
         all_data.ph = req.query.ph
     } catch (error) {
-        console.log('발생한 에러를 표시합니다.');
-        console.log(error);
+        console.error(error);
         all_data = []
     }
 
@@ -702,8 +679,6 @@ router.use('/test_axios', async (req, res, next) => {
 
 router.use('/', chkRateMaster, async (req, res, next) => {
     if (req.method == 'POST') {
-
-        console.log(req.body);
         // 검증
         const chkSql = `SELECT * FROM form_status WHERE fs_id=1;`;
         const chkData = await sql_con.promise().query(chkSql)
