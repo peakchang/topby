@@ -1,7 +1,6 @@
-<head>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% extends "topby/topby_base.html" %}
 
+{% block topby_content %}
 
 <div class="px-1 hidden md:block">
     <div class="relative bg-black">
@@ -46,6 +45,44 @@
             </video>
         </div>
     </div>
+
+    <div class="pc_swiper">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_1.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_2.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_3.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_4.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_5.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_6.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_7.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_8.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_9.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_10.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
     <img src="/renewal_1/pc/img_6.jpg" alt="" class="mx-auto">
     <img src="/renewal_1/pc/img_7.jpg" alt="" class="mx-auto">
 </div>
@@ -82,15 +119,83 @@
             </video>
         </div>
     </div>
+
+    <div class="m_swiper">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_1.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_2.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_3.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_4.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_5.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_6.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_7.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_8.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_9.jpg" alt="">
+            </div>
+            <div class="swiper-slide">
+                <img src="/renewal_1/swipe_katalk/kakao_10.jpg" alt="">
+            </div>
+        </div>
+    </div>
     <img src="/renewal_1/m/img_6.jpg" alt="" class="mx-auto">
     <img src="/renewal_1/m/img_7.jpg" alt="" class="mx-auto">
+
+
+
+
+
 </div>
 
 
 
 
-
 <script>
+
+    const swiperMobile = new Swiper('.m_swiper', {
+        // Optional parameters
+        autoHeight: true,
+        loop: true,
+        slidesPerView: 2,
+        spaceBetween: 10,
+        autoplay: {
+            delay: 1500,
+            disableOnInteraction: false,
+        },
+
+    });
+
+    const swiperPc = new Swiper('.pc_swiper', {
+        // Optional parameters
+        autoHeight: true,
+        loop: true,
+        slidesPerView: 4,
+        spaceBetween: 20,
+        autoplay: {
+            delay: 1500,
+            disableOnInteraction: false,
+        },
+
+    });
+
 
     window.addEventListener('resize', function () {
         var pc_image1 = document.getElementById('image1');
@@ -200,7 +305,16 @@
 </script>
 
 
+
+
 <style>
+    .m_swiper {
+        padding: 10px 0 10px 0;
+    }
+    .pc_swiper {
+        padding: 30px 0 30px 0;
+    }
+
     .containers {
         position: relative;
         display: flex;
@@ -227,3 +341,6 @@
         height: auto;
     }
 </style>
+
+
+{% endblock %}
