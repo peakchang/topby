@@ -1,0 +1,92 @@
+{% block content %}
+
+
+
+<!-- axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="ft">
+  <div class="container mb-5">
+    <div class="row">
+
+      <div class="col-12 col-lg-4 ft_logo_in">
+        <div class="ft_logo_img">
+          <img src="/img/topby_base/logo.png" alt="">
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-8 mt-4">
+
+        <!-- <span>통신판매업신고번호 : 부천 2021-4849494 </span> -->
+        <span>개인정보 보호책임자 : <span class="fs_personal_officer"></span> </span>
+
+        <!-- <span>대표 : 박창현 </span>
+        <span>회사명 : 애드피크 </span>
+        <span>주소 : 경기도 부천시 경인로 37, 301호 (송내동 신진빌딩) </span>
+        <span>사업자번호 : 240-06-01900 </span>
+        <span>통신판매업신고번호 : 2022-서울구로-2077 </span> -->
+        <span>전화 : <span class="fs_callnumber"></span></span>
+
+        <span>대표 : <span class="fs_owner"></span></span>
+        <span>회사명 : <span class="fs_company"></span></span>
+        <span>주소 : <span class="fs_address"></span></span>
+        <span>사업자번호 : <span class="fs_business_num"></span></span>
+        <span>이메일 : <span class="fs_email"></span></span>
+        <span>통신판매업신고번호 : <span class="fs_report_number"></span></span>
+
+
+        {% if userInfo.user.rate > 3 %}
+        <span><a class="nav-link" href="/crm">CRM 바로가기</a></span>
+        {% else %}
+        <span><a class="nav-link" href="/crm/estate_manager">CRM 바로가기</a></span>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+
+  $(document).ready(async function () {
+    console.log("ready!");
+
+    try {
+      const res = await axios.get('/load_footer')
+      if (res.data.status) {
+        console.log('?AS?DF?Asdf');
+        $('fs_personal_officer').text(res.data.footer_info.fs_personal_officer)
+      }
+    } catch (error) {
+
+    }
+
+
+  });
+
+  window.fbAsyncInit = function () {
+    FB.init({
+      appId: '487172759963733',
+      xfbml: true,
+      version: 'v14.0'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+</body>
+
+</html>
+
+
+{% endblock %}

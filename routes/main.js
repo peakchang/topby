@@ -115,7 +115,8 @@ router.use('/testpp', async (req, res, next) => {
 })
 
 router.use('/testmain', (req, res, next) => {
-    res.render('topby/top_main_test')
+    console.log(';lasjfdliajsdlifjalisjdf');
+    res.render('renewal/topby_main')
 })
 
 router.use('/jschk', async (req, res, next) => {
