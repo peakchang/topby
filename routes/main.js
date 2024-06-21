@@ -205,11 +205,12 @@ router.get('/', async (req, res, next) => {
         const getFooterInfoQuery = "SELECT * FROM form_status WHERE fs_id = 1";
         const getFooterInfo = await sql_con.promise().query(getFooterInfoQuery)
         footer_info = getFooterInfo[0][0];
+        console.log(footer_info);
     } catch (error) {
 
     }
 
-    res.render('topby/topby_main', { userInfo, footer_info });
+    res.render('renewal/topby_main', { userInfo, footer_info });
 })
 
 
