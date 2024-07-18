@@ -26,7 +26,7 @@ router.post('/chk_ex_file', async (req, res, next) => {
     let chkDbBool = true; // DB가 있으면 true, 없으면 false;
     const body = req.body;
     try {
-        const chkDbQuery = `SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name = '%${body.form_name}%'`;
+        const chkDbQuery = `SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name LIKE '%${body.form_name}%'`;
         const chkDb = await sql_con.promise().query(chkDbQuery, [body.ph_num])
         if (!chkDb[0][0]) {
             chkDbBool = false;
