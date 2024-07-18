@@ -21,6 +21,24 @@ router.use((req, res, next) => {
 });
 
 
+router.post('/chk_ex_file', async (req, res, next) => {
+    let status = true;
+    let chkDbBool = true; // DB가 있으면 true, 없으면 false;
+    const body = req.body;
+    try {
+        const chkDbQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name = ?";
+        const chkDb = await sql_con.promise().query(chkDbQuery, [body.ph_num, body.form_name])
+        if (!chkDb[0][0]) {
+            chkDbBool = false;
+        }
+    } catch (error) {
+        status = false;
+    }
+    return res.json({ status, chkDbBool })
+});
+
+
+
 router.get('/testxml', (req, res, next) => {
 
     var obj = {
