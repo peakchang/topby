@@ -62,7 +62,7 @@ router.post('/send_kakao_and_dbinput', async (req, res, next) => {
 
             var customerInfo = { ciPhone: managerPhone, ciSite: location, ciName: '추가DB', ciReceiver: userData }
             console.log(customerInfo);
-            // aligoKakaoNotification_formanager_clean(req, customerInfo)
+            aligoKakaoNotification_formanager_clean(req, customerInfo)
         } catch (error) {
             console.error(error.message);
         }
