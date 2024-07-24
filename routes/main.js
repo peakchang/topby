@@ -22,10 +22,45 @@ router.use((req, res, next) => {
 
 router.post('/send_kakao_and_dbinput', async (req, res, next) => {
     let status = true;
-    const allData = req.body.all_data;
-    console.log(allData);
 
-    // var customerInfo = { ciPhone: findUser[oo].user_phone, ciSite: getSiteInfo.sl_site_name, ciName: '추가DB', ciReceiver: receiverStr }
+    const allData = JSON.parse(req.body.all_data_json);
+
+
+
+    for (let i = 0; i < allData.length; i++) {
+        const inData = allData[i];
+        const location = inData.location;
+        let userData = "\n"
+        let managerPhone = ""
+
+        for (let j = 0; j < inData.data.length; j++) {
+            const userDataInfo = inData.data[j];
+            let etc1Data = ""
+            if (userDataInfo['etc1'] && userDataInfo['etc1'] != 'None') {
+                etc1Data = ` / ${userDataInfo['etc1']}`
+            }
+            let etc2Data = ""
+            if (userDataInfo['etc2'] && userDataInfo['etc2'] != 'None') {
+                etc2Data = ` / ${userDataInfo['etc2']}`
+            }
+            const userDataInfoStr = `${userDataInfo['name']} / ${userDataInfo['phone']} ${etc1Data} ${etc2Data}`
+            userData = userData + userDataInfoStr + '\n'
+        }
+
+
+        try {
+            const getManagerPhoneQuery = `SELECT * FROM users WHERE manage_estate LIKE '%${location}%'`;
+            const getManagerPhone = await sql_con.promise().query(getManagerPhoneQuery)
+            managerPhone = getManagerPhone[0][0]['user_phone']
+
+            var customerInfo = { ciPhone: managerPhone, ciSite: location, ciName: '추가DB', ciReceiver: userData }
+            console.log(customerInfo);
+            aligoKakaoNotification_formanager_clean(req, customerInfo)
+        } catch (error) {
+            console.error(error.message);
+        }
+
+    }
 
     return res.json({ status })
 });
