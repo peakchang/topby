@@ -7,7 +7,7 @@ var requestIp = require('request-ip');
 const fs = require('fs')
 
 const aligoapi = require('aligoapi')
-const { aligoKakaoNotification } = require('../db_lib/back_lib')
+const { aligoKakaoNotification, aligoKakaoNotification_formanager_clean } = require('../db_lib/back_lib')
 const app_root_path = require('app-root-path').path;
 
 const moment = require('moment');
@@ -18,6 +18,16 @@ moment.tz.setDefault("Asia/Seoul");
 router.use((req, res, next) => {
     res.locals.user = req.user;
     next();
+});
+
+router.post('/send_kakao_and_dbinput', async (req, res, next) => {
+    let status = true;
+    const allData = req.body.all_data;
+    console.log(allData);
+
+    var customerInfo = { ciPhone: findUser[oo].user_phone, ciSite: getSiteInfo.sl_site_name, ciName: '추가DB', ciReceiver: receiverStr }
+
+    return res.json({ status })
 });
 
 
