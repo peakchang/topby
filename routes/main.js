@@ -25,7 +25,7 @@ router.post('/send_kakao_and_dbinput', async (req, res, next) => {
     const allData = req.body.all_data;
     console.log(allData);
 
-    var customerInfo = { ciPhone: findUser[oo].user_phone, ciSite: getSiteInfo.sl_site_name, ciName: '추가DB', ciReceiver: receiverStr }
+    // var customerInfo = { ciPhone: findUser[oo].user_phone, ciSite: getSiteInfo.sl_site_name, ciName: '추가DB', ciReceiver: receiverStr }
 
     return res.json({ status })
 });
