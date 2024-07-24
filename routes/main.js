@@ -45,6 +45,13 @@ router.post('/send_kakao_and_dbinput', async (req, res, next) => {
             }
             const userDataInfoStr = `${userDataInfo['name']} / ${userDataInfo['phone']} ${etc1Data} ${etc2Data}`
             userData = userData + userDataInfoStr + '\n'
+
+            try {
+                const insertDbQuery = "INSERT INTO application_form (af_form_name,af_form_type_in,af_mb_name,af_mb_phone) VALUES (?,?,?,?)";
+                await sql_con.promise().query(insertDbQuery, [location, 'fb', userDataInfo['name'], userDataInfo['phone']])
+            } catch (error) {
+                console.error(error.message);
+            }
         }
 
 
@@ -55,7 +62,7 @@ router.post('/send_kakao_and_dbinput', async (req, res, next) => {
 
             var customerInfo = { ciPhone: managerPhone, ciSite: location, ciName: '추가DB', ciReceiver: userData }
             console.log(customerInfo);
-            aligoKakaoNotification_formanager_clean(req, customerInfo)
+            // aligoKakaoNotification_formanager_clean(req, customerInfo)
         } catch (error) {
             console.error(error.message);
         }
