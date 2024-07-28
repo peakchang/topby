@@ -457,9 +457,9 @@ ${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
         
-        console.log('kakao send arrived~~!!');
-        console.log(req.body);
-        console.log(AuthData);
+        // console.log('kakao send arrived~~!!');
+        // console.log(req.body);
+        // console.log(AuthData);
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
           // console.log('alligo', r);
           console.log('kakao send is success!!!!!!!!!!!!');

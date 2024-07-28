@@ -214,13 +214,13 @@ router.post('/', async (req, res) => {
         const getSiteInfo = getSiteInfoData[0][0];
 
 
-        console.log(`getSiteInfo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
-        console.log(getSiteInfo);
+        // console.log(`getSiteInfo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
+        // console.log(getSiteInfo);
         let sendMessageObj = {}
 
         try {
             if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
-                console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                // console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
                 sendMessageObj['customerName'] = baseData.db_name
                 sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
                 sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
@@ -234,9 +234,9 @@ router.post('/', async (req, res) => {
             console.error(error.message);
         }
 
-        console.log('////////////////////sendMessageObj////////////////////');
-        console.log(sendMessageObj);
-        console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
+        // console.log('////////////////////sendMessageObj////////////////////');
+        // console.log(sendMessageObj);
+        // console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
@@ -263,7 +263,7 @@ router.post('/', async (req, res) => {
 
         console.log(error);
         const getDataStr = JSON.stringify(req.body)
-        console.log(getDataStr);
+        // console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
 
