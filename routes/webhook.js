@@ -105,33 +105,6 @@ router.post('/', async (req, res) => {
         console.log(baseData);
         console.log('//////////////////////////////////////////');
 
-        if (getFormData.name.includes('rich')) {
-            // console.log('This is Richies place!!');
-
-            axios.post('https://richby.co.kr/webhook/richhook', { baseData, getFormData, leadsId }).then((res) => {
-                // console.log(res.status);
-            }).catch((err) => {
-                console.error(err);
-            })
-
-            console.log('rich by is ok!!');
-
-
-
-            return res.sendStatus(200);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
         let get_created_time = getLeadsData.created_time
         // console.log(getFormData);
 
@@ -143,18 +116,38 @@ router.post('/', async (req, res) => {
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
 
-        // 해당 폼 리스트의
-        const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
-        const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
-        const chkFormInSiteList = chkFormInSiteListData[0][0]
-        if (!chkFormInSiteList) {
-            const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
-            await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
+        let chkFor2WeeksDataBool = true;
+        try {
+
+            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 2 WEEK);"
+            const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone]);
+            if (chkFor2WeeksData[0] > 0) {
+                chkFor2WeeksDataBool = false;
+            }
+        } catch (error) {
+
         }
 
-        const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-        const getStatusText = await mysql_conn.promise().query(getStatusSql)
-        const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+        console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
+
+
+        try {
+            // 해당 폼 리스트의 site 이름 찾아서 있으면 쓰고~ 없으면 만들고~
+            const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
+            const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
+            const chkFormInSiteList = chkFormInSiteListData[0][0]
+            if (!chkFormInSiteList) {
+                const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
+                await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
+            }
+        } catch (error) {
+
+        }
+
+
+        // const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+        // const getStatusText = await mysql_conn.promise().query(getStatusSql)
+        // const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
 
         // 폼 저장하기
@@ -174,15 +167,12 @@ router.post('/', async (req, res) => {
         let getArr;
         let formInertSql = '';
         try {
-
+            //  DB 집어넣기~~~!!
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
 
-            // console.log(formInertSql);
-
             await mysql_conn.promise().query(formInertSql, getArr)
 
-            // console.log('modify success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         } catch (error) {
             // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
@@ -191,14 +181,7 @@ router.post('/', async (req, res) => {
             console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
         }
 
-
-
-
-
-
-
-
-
+        // 발송을 위한 준비!!!!
 
         // 해당 폼네임에 저장된 담당자 리스트 찾기
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
@@ -241,7 +224,7 @@ router.post('/', async (req, res) => {
                 aligoKakaoNotification_detail(req, sendMessageObj)
             }
 
-            
+
         } catch (error) {
             console.error(error.message);
         }
@@ -249,11 +232,6 @@ router.post('/', async (req, res) => {
         console.log('////////////////////sendMessageObj////////////////////');
         console.log(sendMessageObj);
         console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
-
-
-
-
-
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
