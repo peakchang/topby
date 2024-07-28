@@ -130,6 +130,11 @@ router.post('/', async (req, res) => {
 
         console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
+        if(!chkFor2WeeksDataBool){
+            console.log('DB registered within 2 weeks');
+            return res.sendStatus(200);
+        }
+
 
         try {
             // 해당 폼 리스트의 site 이름 찾아서 있으면 쓰고~ 없으면 만들고~
