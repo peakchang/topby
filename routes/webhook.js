@@ -119,7 +119,7 @@ router.post('/', async (req, res) => {
         let chkFor2WeeksDataBool = true;
         try {
 
-            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 2 WEEK);"
+            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 2 WEEK);"
             const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName]);
             if (chkFor2WeeksData[0].length > 0) {
                 chkFor2WeeksDataBool = false;
