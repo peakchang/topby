@@ -117,40 +117,23 @@ router.post('/', async (req, res) => {
 
 
         let chkFor2WeeksDataBool = true;
+        try {
 
-        if (!baseData.db_name.includes('test') && !baseData.db_name.includes('테스트')) {
-            console.log('들어옴??');
-
-            try {
-                const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
-                const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName]);
-                if (chkFor2WeeksData[0].length > 0) {
-                    chkFor2WeeksDataBool = false;
-                }
-            } catch (error) {
-
+            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
+            const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName]);
+            if (chkFor2WeeksData[0].length > 0) {
+                chkFor2WeeksDataBool = false;
             }
-
-            console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
-
-            if (!chkFor2WeeksDataBool) {
-                console.log('DB registered within 2 weeks');
-                return res.sendStatus(200);
-            }
-        } else {
-            console.log('안들어옴?!');
+        } catch (error) {
 
         }
 
+        console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
-
-
-        console.log(`baseData.db_name : ${baseData.db_name}`);
-        console.log(baseData.db_name.includes('test'));
-
-
-
-
+        if(!chkFor2WeeksDataBool){
+            console.log('DB registered within 2 weeks');
+            return res.sendStatus(200);
+        }
 
 
         try {
@@ -166,6 +149,10 @@ router.post('/', async (req, res) => {
 
         }
 
+
+        // const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+        // const getStatusText = await mysql_conn.promise().query(getStatusSql)
+        // const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
 
         // 폼 저장하기
@@ -198,14 +185,6 @@ router.post('/', async (req, res) => {
             await mysql_conn.promise().query(formInertSql, getArr)
             console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
         }
-
-
-        // if (baseData.db_name.includes('test') || baseData.db_name.includes('테스트')) {
-        //     return res.sendStatus(200);
-        // }
-
-
-
 
         // 발송을 위한 준비!!!!
 
