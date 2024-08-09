@@ -200,9 +200,9 @@ router.post('/', async (req, res) => {
         }
 
 
-        if (baseData.db_name.includes('test') || baseData.db_name.includes('테스트')) {
-            return res.sendStatus(200);
-        }
+        // if (baseData.db_name.includes('test') || baseData.db_name.includes('테스트')) {
+        //     return res.sendStatus(200);
+        // }
 
 
 
