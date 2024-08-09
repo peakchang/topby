@@ -561,6 +561,87 @@ ${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.
 
 
 
+exports.aligoKakaoNoti_reserved_katalk = async (req, customerInfo) => {
+
+  console.log(customerInfo);
+  
+  console.log('Kakao Message Send Is Started!!!!!!!!!!!!!!!!');
+  try {
+    const AuthData = {
+      apikey: process.env.ALIGOKEY,
+      // 이곳에 발급받으신 api key를 입력하세요
+      userid: process.env.ALIGOID,
+      // 이곳에 userid를 입력하세요
+    }
+
+    req.body = {
+      type: 'i',  // 유효시간 타입 코드 // y(년), m(월), d(일), h(시), i(분), s(초)
+      time: 1, // 유효시간
+    }
+    // console.log('req.body', req.body)
+
+    const result = await new Promise((resolve, reject) => {
+      if (true) {
+        aligoapi.token(req, AuthData)
+          .then((r) => {
+            // console.log('alligo', r);
+            resolve(r);
+          })
+          .catch((e) => {
+            // console.error('err', e)
+            reject(e)
+          })
+      } else {
+        // console.log(2)
+        resolve(true)
+      }
+    })
+
+    req.body = {
+      senderkey: process.env.ALIGO_SENDERKEY,
+      tpl_code: 'TU_1894',
+      token: result.token,
+      sender: '010-4478-1127',
+      receiver_1: customerInfo.phoneNum,
+      subject_1: '분양정보 신청고객 알림톡',
+      message_1: `${customerInfo.userName} 고객님
+${customerInfo.form} 상담은 잘 받으셨나요?
+
+추가적으로 다양한 부동산 정보
+(줍줍/미분양/청약 등)를
+아래 링크를 통해 알림 받아보세요 : )`,
+    }
+
+    // console.log(req.body);
+
+    let resultSend = await new Promise((resolve, reject) => {
+      if (true) {
+        
+        console.log('kakao send arrived~~!!');
+        aligoapi.alimtalkSend(req, AuthData).then((r) => {
+          // console.log('alligo', r);
+          console.log('kakao send is success!!!!!!!!!!!!');
+          resolve(true);
+        }).catch((e) => {
+          console.error('err', e.message)
+          console.log('kakao send is false T.T');
+          reject(false);
+        })
+      } else {
+        console.log('kakao send is false T.T');
+        // console.log(2)
+        resolve(true)
+      }
+    })
+  } catch (e) {
+    // await db.rollback(connection);
+    // next(e);
+    console.error(e);
+  }
+}
+
+
+
 function phNumBar(value) {
   value = value.replace(/[^0-9]/g, "");
   return value.replace(

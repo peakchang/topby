@@ -41,6 +41,9 @@ const zapierRouter = require('./routes/zapier');
 const subdomainRouter = require('./routes/sub_domain/subdomain');
 
 
+const reserveTalkRouter = require('./routes/reserve_talk.js');
+
+
 const app = express();
 var xhub = require('express-x-hub');
 
@@ -127,6 +130,8 @@ let corsOptions = {
 app.use(cors(corsOptions));
 
 
+
+app.use('/reserve_talk', reserveTalkRouter);
 
 app.use('/', mainRouter);
 
