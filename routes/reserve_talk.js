@@ -26,7 +26,9 @@ router.use('/chk_page', async (req, res, next) => {
         phoneNum: '01021902197', userName: '테스트',
         form: '테스트 폼'
     }
-    aligoKakaoNoti_reserved_katalk(req, customerInfo)
+    const testReturn = aligoKakaoNoti_reserved_katalk(req, customerInfo)
+    console.log(testReturn);
+    
 
 
 
