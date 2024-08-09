@@ -12,42 +12,42 @@ exports.getQueryStr = (data, type, addTimeStr = '') => {
 
   console.log('씨부랄탱.... 함수도 안들어와?!?!?!?');
   let returnData = {
-      str: '',
-      question: '',
-      values: []
+    str: '',
+    question: '',
+    values: []
   }
   if (type == 'insert') {
 
-      for (const key in data) {
-          returnData['str'] = returnData['str'] + `${key},`
-          returnData['question'] = returnData['question'] + `?,`
-          returnData['values'].push(data[key])
-      }
+    for (const key in data) {
+      returnData['str'] = returnData['str'] + `${key},`
+      returnData['question'] = returnData['question'] + `?,`
+      returnData['values'].push(data[key])
+    }
 
-      if (addTimeStr) {
+    if (addTimeStr) {
 
-          const now = moment().format('YYYY-MM-DD HH:mm:ss')
-          returnData['str'] = returnData['str'] + addTimeStr;
-          returnData['question'] = returnData['question'] + '?';
-          returnData['values'].push(now)
-      } else {
-          returnData['str'] = returnData['str'].replace(/,$/, '');
-          returnData['question'] = returnData['question'].replace(/,$/, '');
-      }
+      const now = moment().format('YYYY-MM-DD HH:mm:ss')
+      returnData['str'] = returnData['str'] + addTimeStr;
+      returnData['question'] = returnData['question'] + '?';
+      returnData['values'].push(now)
+    } else {
+      returnData['str'] = returnData['str'].replace(/,$/, '');
+      returnData['question'] = returnData['question'].replace(/,$/, '');
+    }
 
   } else if (type == 'update') {
-      const now = moment().format('YYYY-MM-DD HH:mm:ss')
-      for (const key in data) {
-          returnData['str'] = returnData['str'] + `${key}=?,`
-          returnData['values'].push(data[key])
-      }
+    const now = moment().format('YYYY-MM-DD HH:mm:ss')
+    for (const key in data) {
+      returnData['str'] = returnData['str'] + `${key}=?,`
+      returnData['values'].push(data[key])
+    }
 
-      if (addTimeStr) {
-          returnData['str'] = returnData['str'] + `${addTimeStr} = ?`;
-          returnData['values'].push(now)
-      } else {
-          returnData['str'] = returnData['str'].replace(/,$/, '');
-      }
+    if (addTimeStr) {
+      returnData['str'] = returnData['str'] + `${addTimeStr} = ?`;
+      returnData['values'].push(now)
+    } else {
+      returnData['str'] = returnData['str'].replace(/,$/, '');
+    }
 
   }
 
@@ -220,7 +220,7 @@ exports.getDbData = async (allCount, setDbSql, pnum, pageCount) => {
     } catch (error) {
       data.af_mb_phone_chk = '';
     }
-    
+
     // data.created_at.setHours(data.created_at.getHours()+9);
     pageChkCount--
   }
@@ -456,7 +456,7 @@ ${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
 
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
-        
+
         // console.log('kakao send arrived~~!!');
         // console.log(req.body);
         // console.log(AuthData);
@@ -533,7 +533,7 @@ ${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.
 
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
-        
+
         console.log('kakao send arrived~~!!');
         console.log(req.body);
         console.log(AuthData);
@@ -564,7 +564,7 @@ ${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.
 exports.aligoKakaoNoti_reserved_katalk = async (req, customerInfo) => {
 
   console.log(customerInfo);
-  
+
   console.log('Kakao Message Send Is Started!!!!!!!!!!!!!!!!');
   try {
     const AuthData = {
@@ -610,13 +610,22 @@ ${customerInfo.form} 상담은 잘 받으셨나요?
 추가적으로 다양한 부동산 정보
 (줍줍/미분양/청약 등)를
 아래 링크를 통해 알림 받아보세요 : )`,
+      button_1: {
+        "button": [{
+          "name": '부동산 정보 받으러가기',
+          "linkType": "WL",
+          "linkTypeName": "웹링크",
+          "linkPc": 'https://open.kakao.com/o/gHJyFmpg',
+          "linkMo": 'https://open.kakao.com/o/gHJyFmpg'
+        }]
+      }
     }
 
     // console.log(req.body);
 
     let resultSend = await new Promise((resolve, reject) => {
       if (true) {
-        
+
         console.log('kakao send arrived~~!!');
         aligoapi.alimtalkSend(req, AuthData).then((r) => {
           // console.log('alligo', r);
