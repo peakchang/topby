@@ -610,7 +610,7 @@ ${customerInfo.form} 상담은 잘 받으셨나요?
 추가적으로 다양한 부동산 정보
 (줍줍/미분양/청약 등)를
 아래 링크를 통해 알림 받아보세요 : )`,
-      button_1: '{"button": [{"name": 부동산 정보 받으러가기,"linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : “https://open.kakao.com/o/gHJyFmpg”}]}'
+      button_1: '{button: [{name: 부동산 정보 받으러가기,linkType: "WL",linkTypeName: "웹링크",linkPc:"https://open.kakao.com/o/gHJyFmpg",linkMo : "https://open.kakao.com/o/gHJyFmpg"}]}'
     }
 
     // console.log(req.body);
