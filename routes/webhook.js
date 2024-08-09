@@ -118,30 +118,39 @@ router.post('/', async (req, res) => {
 
         let chkFor2WeeksDataBool = true;
 
-        try {
-            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
-            const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName]);
-            if (chkFor2WeeksData[0].length > 0) {
-                chkFor2WeeksDataBool = false;
+        if (!baseData.db_name.includes('test') && !baseData.db_name.includes('테스트')) {
+            console.log('들어옴??');
+
+            try {
+                const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
+                const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName]);
+                if (chkFor2WeeksData[0].length > 0) {
+                    chkFor2WeeksDataBool = false;
+                }
+            } catch (error) {
+
             }
-        } catch (error) {
+
+            console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
+
+            if (!chkFor2WeeksDataBool) {
+                console.log('DB registered within 2 weeks');
+                return res.sendStatus(200);
+            }
+        } else {
+            console.log('안들어옴?!');
 
         }
 
-        console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
-        if (!chkFor2WeeksDataBool) {
-            console.log('DB registered within 2 weeks');
-            return res.sendStatus(200);
-        }
 
 
         console.log(`baseData.db_name : ${baseData.db_name}`);
         console.log(baseData.db_name.includes('test'));
-        
-        
 
-    
+
+
+
 
 
         try {
@@ -188,6 +197,11 @@ router.post('/', async (req, res) => {
             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
             await mysql_conn.promise().query(formInertSql, getArr)
             console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+        }
+
+
+        if (baseData.db_name.includes('test') || baseData.db_name.includes('테스트')) {
+            return res.sendStatus(200);
         }
 
 
