@@ -59,7 +59,6 @@ router.use('/chk_page', async (req, res, next) => {
         .catch((error) => {
             console.log(error);
             console.log(error.message);
-
         });
 
 
