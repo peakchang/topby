@@ -200,7 +200,7 @@ exports.tableSetting = async () => {
         console.error(err);
     }
 
-    
+
 
 
 
@@ -380,4 +380,14 @@ ALTER TABLE form_status ADD COLUMN fs_business_num VARCHAR(50);
 ALTER TABLE form_status ADD COLUMN fs_email VARCHAR(50);
 ALTER TABLE form_status ADD COLUMN fs_report_number VARCHAR(50);
 ALTER TABLE form_status ADD COLUMN fs_company VARCHAR(50);
+
+
+CREATE TABLE IF NOT EXISTS reserve_send_list(
+        rs_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        rs_name VARCHAR(100),
+        rs_phone VARCHAR(100),
+        rs_form VARCHAR(150),
+        rs_send_status BOOLEAN DEFAULT FALSE,
+        rs_sended_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
 */
