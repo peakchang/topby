@@ -41,7 +41,7 @@ router.use('/', async (req, res, next) => {
             'senderkey': process.env.ALIGO_SENDERKEY,
             'tpl_code': 'TU_1894',
             'sender': '010-4478-1127',
-            'receiver_1': '01021902197',
+            'receiver_1': customerInfo.phoneNum,
             //'recvname_1': '수신자명을 입력합니다',
             'subject_1': '분양정보 신청고객 알림톡',
             'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,

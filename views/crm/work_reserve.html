@@ -53,6 +53,10 @@
     $('.send_katalk').click(async function (e) {
         console.log('gogogogo');
 
+        if (!confirm('확인 누르면 발송됨 진짜 보낼거임?')) {
+            return false;
+        }
+
         try {
             const res = await axios.get('/reserve_talk')
             console.log(res);
