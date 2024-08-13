@@ -84,7 +84,7 @@ router.get('/reserve_talk', chkRateMaster, async (req, res, next) => {
 
     let send_list = [];
     try {
-        const getSendListQuery = "SELECT * FROM reserver_send_list ORDER BY rs_id DESC";
+        const getSendListQuery = "SELECT * FROM reserve_send_list ORDER BY rs_id DESC";
         const getSendList = await sql_con.promise().query(getSendListQuery);
         send_list = getSendList[0]
     } catch (error) {
