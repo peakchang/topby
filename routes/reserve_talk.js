@@ -60,13 +60,10 @@ router.use('/', async (req, res, next) => {
 
     }
 
-    console.log(configArr);
+    const resultArr = fetchData(configArr).then(results => {
+        console.log('All data processed:', results);
+    });
 
-    // const resultArr = fetchData(configArr).then(results => {
-    //     console.log('All data processed:', results);
-    // });
-
-    // console.log(resultArr);
 
 
     return res.json({ status, configArr })
@@ -79,8 +76,6 @@ async function fetchData(configArr) {
     for (const config of configArr) {
         try {
             const response = await axios.request(config.config);
-            console.log(`Success!!!`);
-
             try {
                 const ci = config.customerInfo;
                 const insertSendStatusQuery = "INSERT INTO reserve_send_list (rs_name,rs_phone,rs_form,rs_send_status) VALUES (?,?,?,TRUE)";
