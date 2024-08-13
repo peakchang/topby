@@ -83,8 +83,23 @@ router.get('/download', async (req, res) => {
 router.get('/reserve_talk', chkRateMaster, async (req, res, next) => {
 
     let send_list = [];
+
+    let start_date = req.query.sd;
+    let end_date = req.query.ed;
+
+    const nowDate = moment().format('YYYY-MM-DD');
+    if (!start_date) {
+        start_date = nowDate;
+    }
+    if (!end_date) {
+        end_date = nowDate;
+    }
+
     try {
-        const getSendListQuery = "SELECT * FROM reserve_send_list ORDER BY rs_id DESC";
+        const getSendListQuery = `SELECT * FROM reserve_send_list WHERE rs_sended_at BETWEEN '${start_date} 00:00:00' AND '${end_date} 23:59:59' ORDER BY rs_id DESC`;
+
+        console.log(getSendListQuery);
+        
         const getSendList = await sql_con.promise().query(getSendListQuery);
         send_list = getSendList[0]
     } catch (error) {
@@ -96,7 +111,7 @@ router.get('/reserve_talk', chkRateMaster, async (req, res, next) => {
         send_list[i]['time_str'] = timeStr;
     }
 
-    res.render('crm/work_reserve', { send_list });
+    res.render('crm/work_reserve', { send_list, start_date, end_date });
 })
 
 router.use('/site', async (req, res, next) => {
