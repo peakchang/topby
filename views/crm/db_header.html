@@ -136,6 +136,15 @@
                                 모든데이터
                             </a>
                             {% endif %}
+
+                            {% if user.rate == 5 %}
+                            <a class="nav-link" href="/crm/reserve_talk">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                                </div>
+                                카톡 발송
+                            </a>
+                            {% endif %}
                         </div>
 
                     </div>

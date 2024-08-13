@@ -1,0 +1,33 @@
+{% extends 'crm/db_base.html' %}
+
+{% block dbmanage_content %}
+
+
+<div class="my-5">
+    <button class="send_katalk py-1 px-3 bg-blue-500 active:bg-blue-600 text-white rounded-md text-sm">
+        카톡 발송하기
+    </button>
+</div>
+
+
+<script>
+    $('.send_katalk').click(async function (e) {
+        console.log('gogogogo');
+
+        try {
+            const res = await axios.get('/reserve_talk')
+            console.log(res);
+            
+            if(res.data.status){
+                console.log('체크체크!!!');
+                console.log(res.data);
+                                
+            }
+        } catch (error) {
+
+        }
+
+    })
+</script>
+
+{% endblock %}

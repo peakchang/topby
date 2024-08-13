@@ -75,6 +75,16 @@ router.get('/download', async (req, res) => {
     res.end();
 });
 
+
+
+
+// 카톡 예약 발송 페이지
+
+router.get('/reserve_talk', chkRateMaster, async (req, res, next) => {
+
+    res.render('crm/work_reserve');
+})
+
 router.use('/site', async (req, res, next) => {
     if (req.method == "POST") {
         if (typeof (req.body.site_id) == "string") {
