@@ -10,6 +10,45 @@
 </div>
 
 
+
+<div class="p-3 text-sm">
+    <table class="w-full text-center text-sm">
+        <tr>
+            <th class="border py-1.5 w-12">
+                <input type="checkbox" name="" id="">
+            </th>
+
+            <th class="border py-1.5">이름</th>
+            <th class="border py-1.5">전화번호</th>
+            <th class="border py-1.5">폼</th>
+            <th class="border py-1.5">발송 시간</th>
+        </tr>
+
+        {% for send_data in send_list %}
+
+        <tr>
+            <th class="border py-1.5 w-12">
+                <input type="checkbox" name="" id="">
+            </th>
+
+            <th class="border py-1.5">
+                {{send_data.rs_name}}
+            </th>
+            <th class="border py-1.5">
+                {{send_data.rs_phone}}
+            </th>
+            <th class="border py-1.5">
+                {{send_data.time_str}}
+            </th>
+            <th class="border py-1.5">발송 시간</th>
+        </tr>
+
+
+        {% endfor %}
+    </table>
+</div>
+
+
 <script>
     $('.send_katalk').click(async function (e) {
         console.log('gogogogo');
@@ -17,11 +56,14 @@
         try {
             const res = await axios.get('/reserve_talk')
             console.log(res);
-            
-            if(res.data.status){
+
+            if (res.data.status) {
                 console.log('체크체크!!!');
                 console.log(res.data);
-                                
+
+                alert('카톡 발송 작업이 완료 되었습니다.')
+                location.reload();
+
             }
         } catch (error) {
 
@@ -29,5 +71,6 @@
 
     })
 </script>
+
 
 {% endblock %}

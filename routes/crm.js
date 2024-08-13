@@ -82,7 +82,21 @@ router.get('/download', async (req, res) => {
 
 router.get('/reserve_talk', chkRateMaster, async (req, res, next) => {
 
-    res.render('crm/work_reserve');
+    let send_list = [];
+    try {
+        const getSendListQuery = "SELECT * FROM reserver_send_list ORDER BY rs_id DESC";
+        const getSendList = await sql_con.promise().query(getSendListQuery);
+        send_list = getSendList[0]
+    } catch (error) {
+
+    }
+
+    for (let i = 0; i < send_list.length; i++) {
+        const timeStr = moment(send_list[i]['rs_sended_at']).format('YYYY-MM-DD HH:mm:ss');
+        send_list[i]['time_str'] = timeStr;
+    }
+
+    res.render('crm/work_reserve', { send_list });
 })
 
 router.use('/site', async (req, res, next) => {
@@ -584,7 +598,7 @@ router.use('/estate_manager', chkRateManager, async (req, res, next) => {
         var setDbSql = `SELECT * FROM application_form as a LEFT JOIN (SELECT * FROM memos WHERE mo_id IN (SELECT max(mo_id) FROM memos GROUP BY mo_phone)) as m ON a.af_id = m.mo_depend_id ${sdSearchQ}  ${getEst} ${getStatus} ${getName} ${getPhone} ORDER BY a.af_id DESC`;
 
         var all_data = await getDbData(allCount, setDbSql, req.query.pnum, pageCount, getUserEstateList)
-        
+
         for await (const data of all_data.wdata) {
             const addMemoSql = `SELECT * FROM memos WHERE mo_depend_id = ? ORDER BY mo_created_at DESC LIMIT 3;`
             const addMemo = await sql_con.promise().query(addMemoSql, [data.af_id])
