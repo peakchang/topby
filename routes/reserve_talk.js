@@ -25,7 +25,7 @@ router.use('/', async (req, res, next) => {
         const tempPreviousData = get3weekPrevious[0]
 
 
-        customerInfos = tempPreviousData.filter(item => !item.af_mb_name.includes('test')).map(item => ({ phoneNum: item.af_mb_phone, userName: item.af_mb_name, form: "신청하신 분양 현장" }));
+        customerInfos = tempPreviousData.filter(item => !item.af_mb_name.includes('test') && !item.af_mb_name.includes('테스트')).map(item => ({ phoneNum: item.af_mb_phone, userName: item.af_mb_name, form: "신청하신 분양 현장" }));
 
 
     } catch (error) {
