@@ -55,6 +55,8 @@ router.get('/test_rich_send', async (req, res) => {
     } catch (error) {
 
     }
+
+    res.json({test : 'success!!!'})
 });
 
 router.post('/', async (req, res) => {
