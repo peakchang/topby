@@ -18,7 +18,6 @@ require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
 router.post('/zap/', (req, res) => {
-    console.log(req.body);
     res.send('웹훅 수신!')
 });
 
@@ -51,18 +50,12 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     var getData = req.body
-    // console.log(`The first data we got was?! ${getData}`);
+
 
     try {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
-
-        // console.log(`get leads Id is~~~ : ${leadsId}`);
-
-
         let formId = getData.entry[0].changes[0].value.form_id
-
-        // console.log(`get form Id is~~~ : ${formId}`);
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -75,9 +68,6 @@ router.post('/', async (req, res) => {
 
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
-
-        // console.log(`show LeadsData : ${LeadsData}`);
-        // console.log(`show formData : ${formData}`);
 
         // 테스트로 새로 만들자!!
         const leadsData = getLeadsData.field_data;
@@ -101,9 +91,9 @@ router.post('/', async (req, res) => {
             }
         }
 
-        console.log('//////////////////////////////////////////');
-        console.log(baseData);
-        console.log('//////////////////////////////////////////');
+        // console.log('//////////////////////////////////////////');
+        // console.log(baseData);
+        // console.log('//////////////////////////////////////////');
 
         let get_created_time = getLeadsData.created_time
         // console.log(getFormData);
@@ -128,10 +118,10 @@ router.post('/', async (req, res) => {
 
         }
 
-        console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
+        // console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
         if (!chkFor2WeeksDataBool) {
-            console.log('DB registered within 2 weeks');
+            // console.log('DB registered within 2 weeks');
             return res.sendStatus(200);
         }
 
@@ -245,6 +235,8 @@ router.post('/', async (req, res) => {
         }
 
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
+        console.log(reFormName);
+        
         if (reFormName.includes('rich')) {
             for (let oo = 0; oo < findUser.length; oo++) {
                 var customerInfo = { ciName: baseData.db_name, ciCompany: '리치분양', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
@@ -278,9 +270,8 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
         const getDataStr = JSON.stringify(req.body)
-        // console.log(getDataStr);
         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
 
@@ -294,7 +285,6 @@ router.post('/', async (req, res) => {
 
 
 // router.post('/facebook', async (req, res) => {
-//     console.log('4th chk here!!!');
 //     let getData = req.body
 //     console.log('Facebook request body:', getData);
 //     console.log('request header X-Hub-Signature validated');
