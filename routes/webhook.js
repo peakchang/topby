@@ -56,7 +56,7 @@ router.get('/test_rich_send', async (req, res) => {
 
     }
 
-    res.json({test : 'success!!!'})
+    res.json({ test: 'success!!!' })
 });
 
 router.post('/', async (req, res) => {
@@ -117,12 +117,13 @@ router.post('/', async (req, res) => {
 
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
-        let sendSite = 'adpeak'
-        console.log(get_form_name);
 
+        console.log(get_form_name);
         if (get_form_name.includes('rich')) {
+            console.log(`baseData : ${baseData} // leadsId : ${leadsId}`);
+
             const res = await axios.post('https://richby.co.kr/webhook/richhook', { baseData, leadsId })
-            return res.sendStatus(200);
+            return res.json({ test: true });
         }
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
