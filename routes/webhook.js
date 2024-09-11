@@ -10,7 +10,7 @@ const axios = require('axios');
 var received_updates = [];
 
 
-const { aligoKakaoNotification_detail, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
+const { aligoKakaoNotification_detail, aligoKakaoNotification_formanager_adpeak, aligoKakaoNotification_formanager_rich } = require('../db_lib/back_lib')
 
 const moment = require('moment');
 const { log } = require('console');
@@ -130,7 +130,7 @@ router.post('/', async (req, res) => {
 
         console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
-        if(!chkFor2WeeksDataBool){
+        if (!chkFor2WeeksDataBool) {
             console.log('DB registered within 2 weeks');
             return res.sendStatus(200);
         }
@@ -188,6 +188,34 @@ router.post('/', async (req, res) => {
 
         // 발송을 위한 준비!!!!
 
+        // 사이트 정보 (현장 및 메세지 내용)를 가져와서 고객에게 보내는 부분 (사용 X)
+        // const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
+        // const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
+        // const getSiteInfo = getSiteInfoData[0][0];
+
+        // let sendMessageObj = {}
+
+        // try {
+        //     if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
+        //         // console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        //         sendMessageObj['customerName'] = baseData.db_name
+        //         sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
+        //         sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
+        //         sendMessageObj['receiver'] = baseData.db_phone
+        //         sendMessageObj['company'] = '탑분양정보'
+        //         aligoKakaoNotification_detail(req, sendMessageObj)
+        //     }
+        // } catch (error) {
+        //     console.error(error.message);
+        // }
+
+        // console.log('////////////////////sendMessageObj////////////////////');
+        // console.log(sendMessageObj);
+        // console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
+
+
+
+
         // 해당 폼네임에 저장된 담당자 리스트 찾기
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
         const findUserData = await mysql_conn.promise().query(userFindSql);
@@ -208,35 +236,7 @@ router.post('/', async (req, res) => {
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
 
-        // 매니저한테 알림톡 발송
-        const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
-        const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
-        const getSiteInfo = getSiteInfoData[0][0];
 
-
-        // console.log(`getSiteInfo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
-        // console.log(getSiteInfo);
-        let sendMessageObj = {}
-
-        try {
-            if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
-                // console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                sendMessageObj['customerName'] = baseData.db_name
-                sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
-                sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
-                sendMessageObj['receiver'] = baseData.db_phone
-                sendMessageObj['company'] = '탑분양정보'
-                aligoKakaoNotification_detail(req, sendMessageObj)
-            }
-
-
-        } catch (error) {
-            console.error(error.message);
-        }
-
-        // console.log('////////////////////sendMessageObj////////////////////');
-        // console.log(sendMessageObj);
-        // console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
 
         if (getSiteInfo.sl_site_link) {
             var siteList = getSiteInfo.sl_site_link
@@ -245,18 +245,35 @@ router.post('/', async (req, res) => {
         }
 
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
-        for (let oo = 0; oo < findUser.length; oo++) {
-            var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+        if (reFormName.includes('rich')) {
+            for (let oo = 0; oo < findUser.length; oo++) {
+                var customerInfo = { ciName: baseData.db_name, ciCompany: '리치분양', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
 
-            if (oo == 0) {
-                // aligoKakaoNotification(req, customerInfo)
+                if (oo == 0) {
+                    // aligoKakaoNotification(req, customerInfo)
+                }
+
+                if (customerInfo.ciPhone.includes('010')) {
+                    aligoKakaoNotification_formanager_rich(req, customerInfo)
+                }
             }
+        } else {
+            for (let oo = 0; oo < findUser.length; oo++) {
+                var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
-            if (customerInfo.ciPhone.includes('010')) {
-                aligoKakaoNotification_formanager(req, customerInfo)
+
+                if (oo == 0) {
+                    // aligoKakaoNotification(req, customerInfo)
+                }
+
+                if (customerInfo.ciPhone.includes('010')) {
+                    aligoKakaoNotification_formanager_adpeak(req, customerInfo)
+                }
             }
         }
+
+
         return res.sendStatus(200);
 
     } catch (error) {

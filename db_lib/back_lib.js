@@ -406,7 +406,7 @@ ${customerInfo.ciSite} 관심고객으로 등록해 주셔서 감사드립니다
 }
 
 
-exports.aligoKakaoNotification_formanager = async (req, customerInfo) => {
+exports.aligoKakaoNotification_formanager_adpeak = async (req, customerInfo) => {
 
   console.log('Kakao Message Send Is Started!!!!!!!!!!!!!!!!');
   try {
@@ -443,6 +443,83 @@ exports.aligoKakaoNotification_formanager = async (req, customerInfo) => {
     req.body = {
       senderkey: process.env.ALIGO_SENDERKEY,
       tpl_code: 'TM_5684',
+      token: result.token,
+      sender: '010-4478-1127',
+      receiver_1: customerInfo.ciPhone,
+      subject_1: '분양정보 신청고객 알림톡',
+      message_1: `고객 인입 안내!
+${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
+고객 번호 : ${customerInfo.ciReceiver}`,
+    }
+
+    // console.log(req.body);
+
+    let resultSend = await new Promise((resolve, reject) => {
+      if (true) {
+
+        // console.log('kakao send arrived~~!!');
+        // console.log(req.body);
+        // console.log(AuthData);
+        aligoapi.alimtalkSend(req, AuthData).then((r) => {
+          // console.log('alligo', r);
+          console.log('kakao send is success!!!!!!!!!!!!');
+          resolve(true);
+        }).catch((e) => {
+          console.error('err', e)
+          console.log('kakao send is false T.T');
+          reject(false);
+        })
+      } else {
+        console.log('kakao send is false T.T');
+        // console.log(2)
+        resolve(true)
+      }
+    })
+  } catch (e) {
+    // await db.rollback(connection);
+    // next(e);
+    console.error(e);
+  }
+}
+
+
+exports.aligoKakaoNotification_formanager_rich = async (req, customerInfo) => {
+
+  console.log('Kakao Message Send Is Started!!!!!!!!!!!!!!!!');
+  try {
+    const AuthData = {
+      apikey: process.env.ALIGOKEY,
+      // 이곳에 발급받으신 api key를 입력하세요
+      userid: process.env.ALIGOID,
+      // 이곳에 userid를 입력하세요
+    }
+
+    req.body = {
+      type: 'i',  // 유효시간 타입 코드 // y(년), m(월), d(일), h(시), i(분), s(초)
+      time: 1, // 유효시간
+    }
+    // console.log('req.body', req.body)
+
+    const result = await new Promise((resolve, reject) => {
+      if (true) {
+        aligoapi.token(req, AuthData)
+          .then((r) => {
+            // console.log('alligo', r);
+            resolve(r);
+          })
+          .catch((e) => {
+            // console.error('err', e)
+            reject(e)
+          })
+      } else {
+        // console.log(2)
+        resolve(true)
+      }
+    })
+
+    req.body = {
+      senderkey: process.env.ALIGO_SENDERKEY,
+      tpl_code: 'TO_8207',
       token: result.token,
       sender: '010-4478-1127',
       receiver_1: customerInfo.ciPhone,
