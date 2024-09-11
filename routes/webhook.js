@@ -47,8 +47,9 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/test_rich_send', async (req, res) => {
+    console.log('페이지는 들어오지?!?!');
     try {
-        const res = await axios.get('https://richby/webhook/richhook')
+        const res = await axios.get('https://richby.co.kr/webhook/richhook')
         console.log(res.data);
 
     } catch (error) {
