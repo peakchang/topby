@@ -179,9 +179,9 @@ router.post('/', async (req, res) => {
         // 발송을 위한 준비!!!!
 
         // 사이트 정보 (현장 및 메세지 내용)를 가져와서 고객에게 보내는 부분 (사용 X)
-        // const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
-        // const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
-        // const getSiteInfo = getSiteInfoData[0][0];
+        const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
+        const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
+        const getSiteInfo = getSiteInfoData[0][0];
 
         // let sendMessageObj = {}
 
