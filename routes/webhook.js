@@ -46,12 +46,18 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/test_rich_send', async (req, res) => {
+    try {
+        const res = await axios.get('https://richby/webhook/richhook')
+        console.log(res.data);
 
+    } catch (error) {
+
+    }
+});
 
 router.post('/', async (req, res) => {
     var getData = req.body
-
-
     try {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
