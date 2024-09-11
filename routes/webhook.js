@@ -113,7 +113,8 @@ router.post('/', async (req, res) => {
 
         if (get_form_name.includes('rich')) {
             const res = await axios.post('https://richby/webhook/richhook', { baseData, leadsId })
-            return res.sendStatus(200);
+            console.log(res.data);
+
         }
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
