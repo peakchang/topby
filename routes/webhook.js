@@ -10,7 +10,7 @@ const axios = require('axios');
 var received_updates = [];
 
 
-const { aligoKakaoNotification_detail, aligoKakaoNotification_formanager_adpeak, aligoKakaoNotification_formanager_rich } = require('../db_lib/back_lib')
+const { aligoKakaoNotification_detail, aligoKakaoNotification_formanager } = require('../db_lib/back_lib')
 
 const moment = require('moment');
 const { log } = require('console');
@@ -95,6 +95,11 @@ router.post('/', async (req, res) => {
         // console.log(baseData);
         // console.log('//////////////////////////////////////////');
 
+
+        // 수신 내용이 리치분양일경우 여기서 발송하고 리턴 처리!!
+
+
+
         let get_created_time = getLeadsData.created_time
         // console.log(getFormData);
 
@@ -103,6 +108,13 @@ router.post('/', async (req, res) => {
 
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
+        let sendSite = 'adpeak'
+        console.log(get_form_name);
+
+        if (get_form_name.includes('rich')) {
+            const res = await axios.post('https://richby/webhook/richhook', { baseData, leadsId })
+            return res.sendStatus(200);
+        }
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
 
@@ -236,32 +248,17 @@ router.post('/', async (req, res) => {
 
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
         console.log(reFormName);
-        
-        if (reFormName.includes('rich')) {
-            for (let oo = 0; oo < findUser.length; oo++) {
-                var customerInfo = { ciName: baseData.db_name, ciCompany: '리치분양', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+
+        for (let oo = 0; oo < findUser.length; oo++) {
+            var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
 
-                if (oo == 0) {
-                    // aligoKakaoNotification(req, customerInfo)
-                }
-
-                if (customerInfo.ciPhone.includes('010')) {
-                    aligoKakaoNotification_formanager_rich(req, customerInfo)
-                }
+            if (oo == 0) {
+                // aligoKakaoNotification(req, customerInfo)
             }
-        } else {
-            for (let oo = 0; oo < findUser.length; oo++) {
-                var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
-
-                if (oo == 0) {
-                    // aligoKakaoNotification(req, customerInfo)
-                }
-
-                if (customerInfo.ciPhone.includes('010')) {
-                    aligoKakaoNotification_formanager_adpeak(req, customerInfo)
-                }
+            if (customerInfo.ciPhone.includes('010')) {
+                aligoKakaoNotification_formanager(req, customerInfo)
             }
         }
 
