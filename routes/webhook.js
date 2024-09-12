@@ -77,6 +77,9 @@ router.post('/', async (req, res) => {
             console.log(`leadsId : ${leadsId}`);
             console.log(`formId : ${formId}`);
 
+            console.log(process.env.ACCESS_TOKEN);
+            
+
             nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
             leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
