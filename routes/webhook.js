@@ -76,7 +76,6 @@ router.post('/', async (req, res) => {
 
             console.log(leadsId);
             console.log(formId);
-            
 
             nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -85,11 +84,9 @@ router.post('/', async (req, res) => {
 
             formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
             formData = await doRequest({ uri: formUrl });
-
             
-            
-        } catch (err) {
-            console.error(err.message);
+        } catch (error) {
+            console.error(error.message);
         }
 
 
