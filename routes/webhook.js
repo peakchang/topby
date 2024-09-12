@@ -63,20 +63,37 @@ router.post('/', async (req, res) => {
     var getData = req.body
     try {
 
-        let leadsId = getData.entry[0].changes[0].value.leadgen_id
-        let formId = getData.entry[0].changes[0].value.form_id
+        let leadsId = ""
+        let formId = ""
+        let nowDateTime = ""
+        let leadsUrl = ""
+        let LeadsData = ""
+        let formUrl = ""
+        let formData = ""
+        try {
+            leadsId = getData.entry[0].changes[0].value.leadgen_id
+            formId = getData.entry[0].changes[0].value.form_id
 
-        var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
-        let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-        let LeadsData = await doRequest({ uri: leadsUrl });
+            leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
+            LeadsData = await doRequest({ uri: leadsUrl });
 
-        let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-        let formData = await doRequest({ uri: formUrl });
+            formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
+            formData = await doRequest({ uri: formUrl });
+        } catch (err) {
+            console.error(err.message);
+        }
+
 
 
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
+
+        console.log(getLeadsData);
+        console.log(getFormData);
+
+
 
         // 테스트로 새로 만들자!!
         const leadsData = getLeadsData.field_data;
