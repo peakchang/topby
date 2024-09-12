@@ -82,7 +82,9 @@ router.post('/', async (req, res) => {
             formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
             formData = await doRequest({ uri: formUrl });
         } catch (err) {
-            console.error(err.message);
+            console.log('여기서 에러 나는거야?!?!?!');
+            
+            // console.error(err.message);
         }
 
 
@@ -123,9 +125,6 @@ router.post('/', async (req, res) => {
 
 
         // 수신 내용이 리치분양일경우 여기서 발송하고 리턴 처리!!
-
-
-
         let get_created_time = getLeadsData.created_time
         // console.log(getFormData);
 
@@ -137,6 +136,7 @@ router.post('/', async (req, res) => {
 
         console.log(get_form_name);
         if (get_form_name.includes('rich')) {
+            
             console.log(baseData);
             console.log(`baseData : ${baseData} // leadsId : ${leadsId}`);
             try {
