@@ -74,8 +74,8 @@ router.post('/', async (req, res) => {
             leadsId = getData.entry[0].changes[0].value.leadgen_id
             formId = getData.entry[0].changes[0].value.form_id
 
-            console.log(leadsId);
-            console.log(formId);
+            console.log(`leadsId : ${leadsId}`);
+            console.log(`formId : ${formId}`);
 
             nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
@@ -84,8 +84,14 @@ router.post('/', async (req, res) => {
 
             formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
             formData = await doRequest({ uri: formUrl });
+
+            console.log(LeadsData);
+            console.log(formData);
             
+            
+
         } catch (error) {
+
             console.error(error.message);
         }
 
