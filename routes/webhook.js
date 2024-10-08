@@ -395,6 +395,20 @@ router.post('/', async (req, res) => {
         console.log(reFormName);
 
         for (let oo = 0; oo < findUser.length; oo++) {
+
+            let dbName = baseData.db_name
+            const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/]/g, '');
+            const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
+
+            if(containsKoreanOrEnglish){
+                baseData.db_name = cleanText
+            }else{
+                baseData.db_name = '무명'
+            }
+
+
+
+
             var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
 
