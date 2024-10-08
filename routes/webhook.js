@@ -32,7 +32,8 @@ router.use('/test_kakao_error', async (req, res) => {
     console.log('test_kakao_error 들어옴!!!');
 
 
-    const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
+    // const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
+    const customerInfo = { userName: "테슷흐", form: '테스트 폼~' }
 
     let data = {}
     let config = {}
