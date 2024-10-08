@@ -52,6 +52,9 @@ router.use('/test_kakao_error', async (req, res) => {
             'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
         });
 
+        console.log(data);
+        
+
         config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -59,6 +62,9 @@ router.use('/test_kakao_error', async (req, res) => {
             headers: {},
             data: data
         };
+
+        console.log(config);
+        
 
         const res = await axios.request(config.config);
         console.log(res);
