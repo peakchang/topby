@@ -123,11 +123,11 @@ router.post('/', async (req, res) => {
         let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
 
         console.log(formUrl);
-        
-        
+
+
         let LeadsData = await doRequest({ uri: leadsUrl });
 
-        
+
         let formData = await doRequest({ uri: formUrl });
 
 
@@ -257,11 +257,18 @@ router.post('/', async (req, res) => {
             await mysql_conn.promise().query(formInertSql, getArr)
 
         } catch (error) {
-            // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
-            getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
-            formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
-            await mysql_conn.promise().query(formInertSql, getArr)
-            console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+
+            try {
+                // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+                getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
+                formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+                await mysql_conn.promise().query(formInertSql, getArr)
+                console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+            } catch (error) {
+                console.log('insert db error!!!!!!!!!?!?!?!??!?!?!?!');
+                
+            }
+
         }
 
         // 발송을 위한 준비!!!!
@@ -334,9 +341,9 @@ router.post('/', async (req, res) => {
             }
 
             try {
-                
+
             } catch (error) {
-                
+
             }
 
             if (customerInfo.ciPhone.includes('010')) {
