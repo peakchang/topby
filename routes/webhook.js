@@ -29,40 +29,40 @@ router.post('/zap/', (req, res) => {
 router.use('/test_kakao_error', async (req, res) => {
 
     console.log('test_kakao_error 들어옴!!!');
-    
 
-    // const customerInfo = {userName : "🅔🅞🅝🅖🅜🅘🅝", form : '테스트 폼~'}
 
-    // let data = qs.stringify({
-    //     'apikey': process.env.ALIGOKEY,
-    //     'userid': process.env.ALIGOID,
-    //     'senderkey': process.env.ALIGO_SENDERKEY,
-    //     'tpl_code': 'TU_1894',
-    //     'sender': '010-4478-1127',
-    //     'receiver_1': '010-2190-2197',
-    //     //'recvname_1': '수신자명을 입력합니다',
-    //     'subject_1': '분양정보 신청고객 알림톡',
-    //     'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,
-    //     'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
-    // });
+    const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
 
-    // let config = {
-    //     method: 'post',
-    //     maxBodyLength: Infinity,
-    //     url: 'https://kakaoapi.aligo.in/akv10/alimtalk/send/',
-    //     headers: {},
-    //     data: data
-    // };
+    let data = {}
+    let config = {}
 
-    // try {
-    //     const res = await axios.request(config.config);
-    //     console.log(res);
-        
-    // } catch (error) {
-    //     console.log('테스트 에러~~~~~~~~~~~');
-        
-    // }
+    try {
+        data = qs.stringify({
+            'apikey': process.env.ALIGOKEY,
+            'userid': process.env.ALIGOID,
+            'senderkey': process.env.ALIGO_SENDERKEY,
+            'tpl_code': 'TU_1894',
+            'sender': '010-4478-1127',
+            'receiver_1': '010-2190-2197',
+            //'recvname_1': '수신자명을 입력합니다',
+            'subject_1': '분양정보 신청고객 알림톡',
+            'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,
+            'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
+        });
 
+        config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://kakaoapi.aligo.in/akv10/alimtalk/send/',
+            headers: {},
+            data: data
+        };
+
+        const res = await axios.request(config.config);
+        console.log(res);
+    } catch (error) {
+        console.log('테스트 에러~~~~~~~~~~~');
+    }
 
 
 
@@ -413,7 +413,7 @@ router.post('/', async (req, res) => {
             await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
         } catch (error) {
             console.log('audit_webhookdata error!!!!!!!!!!!');
-            
+
         }
 
 
