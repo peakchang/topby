@@ -478,7 +478,9 @@ ${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
   } catch (e) {
     // await db.rollback(connection);
     // next(e);
-    console.error(e);
+    // console.error(e);
+    console.log('kakao send is error!!!! (in back lib) T.T');
+    
   }
 }
 

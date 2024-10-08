@@ -190,8 +190,6 @@ router.post('/', async (req, res) => {
             } catch (error) {
                 return res.sendStatus(200);
             }
-
-
         }
         var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
 
@@ -335,8 +333,18 @@ router.post('/', async (req, res) => {
                 // aligoKakaoNotification(req, customerInfo)
             }
 
+            try {
+                
+            } catch (error) {
+                
+            }
+
             if (customerInfo.ciPhone.includes('010')) {
-                aligoKakaoNotification_formanager(req, customerInfo)
+                try {
+                    aligoKakaoNotification_formanager(req, customerInfo)
+                } catch (error) {
+                    console.log('kakao send is error!!!! T.T');
+                }
             }
         }
 
