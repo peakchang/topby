@@ -60,7 +60,9 @@ router.use('/test_kakao_error', async (req, res) => {
 
         const res = await axios.request(config.config);
         console.log(res);
-    } catch (error) {
+    } catch (err) {
+        console.error(err.message);
+        
         console.log('테스트 에러~~~~~~~~~~~');
     }
 
