@@ -29,6 +29,13 @@ router.post('/zap/', (req, res) => {
 
 router.use('/test_kakao_error', async (req, res) => {
 
+    const text = "𝓐𝓱𝓷.𝓢𝓮𝓸𝓷𝓗𝓸 𝙎𝙨𝙪_ 🅔🅞🅝🅖🅜🅘🅝";
+
+    // 정규식으로 특수 문자 제거
+    const cleanText = text.replace(/[^\w\s.,]/g, '');
+
+    console.log(cleanText);  // "Ahn.SeonHo Ssu_ "
+
     console.log('test_kakao_error 들어옴!!!');
 
 
@@ -53,7 +60,7 @@ router.use('/test_kakao_error', async (req, res) => {
         });
 
         console.log(data);
-        
+
 
         config = {
             method: 'post',
@@ -64,13 +71,13 @@ router.use('/test_kakao_error', async (req, res) => {
         };
 
         console.log(config);
-        
+
 
         const res = await axios.request(config);
         console.log(res);
     } catch (err) {
         console.error(err.message);
-        
+
         console.log('테스트 에러~~~~~~~~~~~');
     }
 
