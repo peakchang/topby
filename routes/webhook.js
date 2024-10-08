@@ -266,7 +266,7 @@ router.post('/', async (req, res) => {
                 console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
             } catch (error) {
                 console.log('insert db error!!!!!!!!!?!?!?!??!?!?!?!');
-                
+
             }
 
         }
@@ -361,9 +361,16 @@ router.post('/', async (req, res) => {
     } catch (error) {
 
         console.error(error);
-        const getDataStr = JSON.stringify(req.body)
-        const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
-        await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
+
+        try {
+            const getDataStr = JSON.stringify(req.body)
+            const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
+            await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
+        } catch (error) {
+            console.log('audit_webhookdata error!!!!!!!!!!!');
+            
+        }
+
 
         res.sendStatus(200);
     }
