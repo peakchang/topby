@@ -29,57 +29,80 @@ router.post('/zap/', (req, res) => {
 
 router.use('/test_kakao_error', async (req, res) => {
 
-    const text = "𝓐𝓱𝓷.𝓢𝓮𝓸𝓷𝓗𝓸 𝙎𝙨𝙪_ 🅔🅞🅝🅖🅜🅘🅝";
+    const text = "좋아 테스트 𝓐𝓱𝓷.𝓢𝓮𝓸𝓷𝓗𝓸 𝙎𝙨𝙪_ 🅔🅞🅝🅖🅜🅘🅝";
+    // const text = "테스트 이름";
+
+
+    let dbName = text
+    const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
+    const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
+
+    console.log(cleanText);
+    console.log(containsKoreanOrEnglish);
+    
+    
+
+
+    let chkName = ""
+
+    if (containsKoreanOrEnglish) {
+        chkName = cleanText
+    } else {
+        chkName = '무명'
+    }
+
+    console.log(chkName);
+    
 
     // 정규식으로 특수 문자 제거
-    const cleanText = text.replace(/[^\w\s.,]/g, '');
+    // const cleanText = text.replace(/[^\w\s.,]/g, '');
 
-    console.log(cleanText);  // "Ahn.SeonHo Ssu_ "
+    // console.log(cleanText);  // "Ahn.SeonHo Ssu_ "
 
-    console.log('test_kakao_error 들어옴!!!');
-
-
-    const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
-    // const customerInfo = { userName: "테슷흐", form: '테스트 폼~' }
-
-    let data = {}
-    let config = {}
-
-    try {
-        data = qs.stringify({
-            'apikey': process.env.ALIGOKEY,
-            'userid': process.env.ALIGOID,
-            'senderkey': process.env.ALIGO_SENDERKEY,
-            'tpl_code': 'TU_1894',
-            'sender': '010-4478-1127',
-            'receiver_1': '010-2190-2197',
-            //'recvname_1': '수신자명을 입력합니다',
-            'subject_1': '분양정보 신청고객 알림톡',
-            'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,
-            'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
-        });
-
-        console.log(data);
+    // console.log('test_kakao_error 들어옴!!!');
 
 
-        config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'https://kakaoapi.aligo.in/akv10/alimtalk/send/',
-            headers: {},
-            data: data
-        };
+    // const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
+    // // const customerInfo = { userName: "테슷흐", form: '테스트 폼~' }
 
-        console.log(config);
+    // let data = {}
+    // let config = {}
+
+    // try {
+    //     data = qs.stringify({
+    //         'apikey': process.env.ALIGOKEY,
+    //         'userid': process.env.ALIGOID,
+    //         'senderkey': process.env.ALIGO_SENDERKEY,
+    //         'tpl_code': 'TU_1894',
+    //         'sender': '010-4478-1127',
+    //         'receiver_1': '010-2190-2197',
+    //         //'recvname_1': '수신자명을 입력합니다',
+    //         'subject_1': '분양정보 신청고객 알림톡',
+    //         'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,
+    //         'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
+    //     });
+
+    //     console.log(data);
 
 
-        const res = await axios.request(config);
-        console.log(res);
-    } catch (err) {
-        console.error(err.message);
+    //     config = {
+    //         method: 'post',
+    //         maxBodyLength: Infinity,
+    //         url: 'https://kakaoapi.aligo.in/akv10/alimtalk/send/',
+    //         headers: {},
+    //         data: data
+    //     };
 
-        console.log('테스트 에러~~~~~~~~~~~');
-    }
+    //     console.log(config);
+
+
+    //     const res = await axios.request(config);
+    //     console.log(res);
+    // } catch (err) {
+    //     console.error(err.message);
+
+    //     console.log('테스트 에러~~~~~~~~~~~');
+    // }
 
 
 
@@ -397,12 +420,13 @@ router.post('/', async (req, res) => {
         for (let oo = 0; oo < findUser.length; oo++) {
 
             let dbName = baseData.db_name
-            const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/]/g, '');
+            // const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/]/g, '');
+            const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
             const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
 
-            if(containsKoreanOrEnglish){
+            if (containsKoreanOrEnglish) {
                 baseData.db_name = cleanText
-            }else{
+            } else {
                 baseData.db_name = '무명'
             }
 
