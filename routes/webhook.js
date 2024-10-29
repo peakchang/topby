@@ -406,9 +406,8 @@ router.post('/', async (req, res) => {
                 baseData.db_name = '무명'
             }
 
-
-
-
+            console.log(baseData.db_name);
+            
             var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
 
