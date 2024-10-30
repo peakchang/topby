@@ -32,6 +32,7 @@ const teleRouter = require('./routes/telework');
 const helmet = require("helmet");
 const minisiteRouter = require('./routes/crm_minisite')
 
+const dbCountRouter = require('./routes/crm_dbcount.js');
 
 const blogRouter = require('./routes/blog');
 const editorRouter = require('./routes/editor');
@@ -135,6 +136,7 @@ app.use('/reserve_talk', reserveTalkRouter);
 
 app.use('/', mainRouter);
 
+app.use('/crm/dbcount', dbCountRouter);
 app.use('/crm/minisite', minisiteRouter);
 app.use('/crm/side', crmSideRouter);
 app.use('/crm/user', crmUserRouter);
