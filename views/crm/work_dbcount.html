@@ -4,103 +4,197 @@
 
 
 <style>
-.container {
-    height: 100%; /* 부모 요소를 전체 높이로 설정 */
-    overflow: hidden; /* 스크롤을 없앰 */
-}
+    .container {
+        height: 100%;
+        /* 부모 요소를 전체 높이로 설정 */
+        overflow: hidden;
+        /* 스크롤을 없앰 */
+    }
 
-.table-wrapper {
-    overflow-y: auto; /* 세로 스크롤 가능 */
-    overflow-x: auto; /* 수평 스크롤 가능 */
-    max-height: 100%; /* 부모 요소의 높이에 맞추어 설정 */
-    position: relative;
-}
+    .table-wrapper {
+        overflow-y: auto;
+        /* 세로 스크롤 가능 */
+        overflow-x: auto;
+        /* 수평 스크롤 가능 */
+        max-height: 100%;
+        /* 부모 요소의 높이에 맞추어 설정 */
+        position: relative;
+    }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 
-th, td {
-    min-width: 100px; /* 최소 너비 설정 */
-}
+    th,
+    td {
+        min-width: 100px;
+        /* 최소 너비 설정 */
+    }
 
-.sticky-header {
-    position: sticky;
-    top: 0; /* 상단에 고정 */
-    background-color: white; /* 배경색 지정 */
-    z-index: 1; /* 다른 요소 위에 표시되도록 설정 */
-}
+    .sticky-header {
+        position: sticky;
+        top: 0;
+        /* 상단에 고정 */
+        background-color: white;
+        /* 배경색 지정 */
+        z-index: 1;
+        /* 다른 요소 위에 표시되도록 설정 */
+    }
 
-.sticky-left {
-    position: sticky;
-    left: 0; /* 왼쪽에 고정 */
-    background-color: white; /* 배경색 지정 */
-    z-index: 2; /* 다른 요소 위에 표시되도록 설정 */
-}
+    .sticky-left {
+        position: sticky;
+        left: 0;
+        /* 왼쪽에 고정 */
+        background-color: white;
+        /* 배경색 지정 */
+        z-index: 2;
+        /* 다른 요소 위에 표시되도록 설정 */
+    }
 
-.fix_sized{
-    max-height: 700px;
-}
+    .fix_sized {
+        max-height: 700px;
+    }
 </style>
 
+
+
 <div class="container">
-    <div class="table-wrapper">
-        <div class="w-full h-screen max-w-[1024px] overflow-auto mt-3" style="max-height: 700px;">
-            <table class="w-full text-sm text-center" style="table-layout: auto;">
-                <tr>
-                    <th class="border px-2 py-1.5 sticky-header sticky-left" style="white-space: nowrap;">
+    <form action="">
+        <div class="mt-3">
 
-                        현장명
-                    </th>
-                    <th class="border px-2 py-1.5 sticky-header" style="white-space: nowrap;">총계</th>
-                    {% for date in dateArray %}
-                    <th class="border px-2 py-1.5 sticky-header" style="white-space: nowrap;">
-                        {{date}}
-                    </th>
-                    {% endfor %}
-                </tr>
+            <input type="date" name="sd" id="start_date" class="border text-sm rounded-md px-2 py-1">
+            <span>~</span>
+            <input type="date" name="ed" id="end_date" class="border text-sm rounded-md px-2 py-1">
 
-                {% for site_info in site_count_info_list %}
-                <tr>
-                    <td class="border px-2 py-1.5 sticky-left" style="white-space: nowrap;">
-                        {{site_info.form_name}}
-                    </td>
-                    <td class="border px-2 py-1.5" style="white-space: nowrap;">
-                        {{site_info.all_count}}
-                    </td>
+            <input type="text" name="search" id="search"
+                class="border text-sm rounded-md px-2 py-1 focus:outline-none focus:border-blue-500">
 
-
-                    {% for date in dateArray %}
-                    <td class="border " style="white-space: nowrap;">
-                        {% set dateFound = false %}
-                        {% for entry in site_info.db_list %}
-                        {% if entry.date == date %}
-                        {% set dateFound = true %}
-                        {% if entry.count == 0 %}
-                        <div class="px-2 py-1.5 bg-gray-200">
-                            {{entry.count}}
-                        </div>
-                        {% else %}
-                        <div>
-                            {{entry.count}}
-                        </div>
-                        {% endif %}
-                        {% endif %}
-                        {% endfor %}
-
-                        {% if not dateFound %}
-                        <div class="px-2 py-1.5 bg-gray-200">
-                            0
-                        </div>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
+            <button class=" text-white text-sm px-3 py-1 rounded-md bg-blue-500 active:bg-blue-600">
+                검색
+            </button>
         </div>
 
-    </div>
+
+        <div class="table-wrapper">
+            <div class="w-full h-screen max-w-[1024px] overflow-auto mt-3" style="max-height: 650px;">
+                <table class="w-full text-sm text-center" style="table-layout: auto;">
+                    <tr>
+                        <th class="border px-2 py-1.5 sticky-header sticky-left" style="white-space: nowrap;">
+
+                            현장명
+                        </th>
+                        <th class="border px-2 py-1.5 sticky-header" style="white-space: nowrap;">총계</th>
+                        {% for date in dateArray %}
+                        <th class="border px-2 py-1.5 sticky-header" style="white-space: nowrap;">
+                            {{date}}
+                        </th>
+                        {% endfor %}
+                    </tr>
+
+                    {% for site_info in site_count_info_list %}
+                    <tr>
+                        <td class="border px-2 py-1.5 sticky-left" style="white-space: nowrap;">
+                            {{site_info.form_name}}
+                        </td>
+                        <td class="border px-2 py-1.5" style="white-space: nowrap;">
+                            {{site_info.all_count}}
+                        </td>
+
+
+                        {% for date in dateArray %}
+                        <td class="border " style="white-space: nowrap;">
+                            {% set dateFound = false %}
+                            {% for entry in site_info.db_list %}
+                            {% if entry.date == date %}
+                            {% set dateFound = true %}
+                            {% if entry.count == 0 %}
+                            <div class="px-2 py-1.5 bg-gray-200">
+                                {{entry.count}}
+                            </div>
+                            {% else %}
+                            <div>
+                                {{entry.count}}
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if not dateFound %}
+                            <div class="px-2 py-1.5 bg-gray-200">
+                                0
+                            </div>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <nav aria-label="페이지네이션">
+                <ul class="flex items-center justify-center space-x-1">
+                    <li>
+                        <button name="page" value="1" class=" w-7 h-7 border rounded-md">
+                            1
+                        </button>
+                    </li>
+                    <li>
+                        <button name="page" value="1" class=" w-7 h-7 border rounded-md">
+                            1
+                        </button>
+                    </li>
+                    <li>
+                        <button name="page" value="1" class=" w-7 h-7 border rounded-md">
+                            1
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </form>
 </div>
+
+<script>
+    // URLSearchParams를 사용하여 쿼리 매개변수 추출
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // 각 입력 필드에 쿼리 값 설정
+    document.getElementById('start_date').value = urlParams.get('sd') || '';
+    document.getElementById('end_date').value = urlParams.get('ed') || '';
+    document.getElementById('search').value = urlParams.get('search') || '';
+
+
+    document.getElementById('start_date').addEventListener('change', function () {
+        console.log('asdlfjalijsdflijasfd');
+
+        const selectedDate = this.value;
+        if (selectedDate > getTodayDate()) {
+            const urlParams = new URLSearchParams(window.location.search);
+            alert('오늘 날짜보다 뒤로 선택할 수 없습니다.');
+            this.value = urlParams.get('sd') || '';
+        }
+    });
+
+    document.getElementById('end_date').addEventListener('change', function () {
+        const selectedDate = this.value;
+        if (selectedDate > getTodayDate()) {
+            const urlParams = new URLSearchParams(window.location.search);
+            alert('오늘 날짜보다 뒤로 선택할 수 없습니다.');
+            this.value = urlParams.get('ed') || '';
+        }
+    });
+
+
+
+    function getTodayDate() {
+        const today = new Date();
+        return today.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 변환
+    }
+
+</script>
 {% endblock %}
