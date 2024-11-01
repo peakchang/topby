@@ -95,9 +95,9 @@ router.post('/user_manage_update', async (req, res, next) => {
 
 })
 
-
+chkRateMaster
 // chkRateMaster
-router.get('/', chkRateMaster,async (req, res, next) => {
+router.get('/', async (req, res, next) => {
 
     let now_page = parseInt(req.query.nowpage)
     if (!now_page) {
@@ -164,25 +164,8 @@ router.get('/', chkRateMaster,async (req, res, next) => {
 
     console.log(maxPage);
 
-    let pageArr = [];
-    if (maxPage - 5 < 1) {
-        pageArr = []
-        for (let i = 1; i < maxPage + 1; i++) {
-            pageArr.push(i)
-        }
-    } else if (now_page > maxPage - 3) {
-        pageArr = []
-        for (let i = maxPage - 4; i < maxPage + 1; i++) {
-            pageArr.push(i)
-        }
-    } else if (now_page < 3) {
-        pageArr = Array.from({ length: 5 }, (_, index) => index + 1);
-    } else {
-        pageArr = []
-        for (let i = now_page - 2; i < now_page + 3; i++) {
-            pageArr.push(i)
-        }
-    }
+
+    const pageArr = getPaginationArray(now_page, maxPage)
 
     console.log(pageArr);
     // console.log(user_list);
@@ -197,7 +180,34 @@ router.get('/', chkRateMaster,async (req, res, next) => {
         location_list.push(getSiteListFor.sl_site_name)
     }
 
-    res.render('crm/user_manage', { master_load, user_list, location_list, now_page, pageArr, now_rate, search_name, search_id });
+    res.render('crm/user_manage', { master_load, user_list, location_list, now_page, pageArr, now_rate, search_name, search_id, maxPage });
 })
+
+
+function getPaginationArray(currentPage, totalPages) {
+    const maxVisiblePages = 10;
+    let startPage, endPage;
+
+    if (currentPage <= 5) {
+        // 첫 5페이지일 경우
+        startPage = 1;
+        endPage = Math.min(totalPages, maxVisiblePages);
+    } else if (currentPage > totalPages - 5) {
+        // 마지막 5페이지일 경우
+        startPage = Math.max(1, totalPages - maxVisiblePages + 1);
+        endPage = totalPages;
+    } else {
+        // 중간 페이지들
+        startPage = currentPage - 4;
+        endPage = currentPage + 5;
+    }
+
+    const paginationArray = [];
+    for (let i = startPage; i <= endPage; i++) {
+        paginationArray.push(i);
+    }
+
+    return paginationArray;
+}
 
 module.exports = router;

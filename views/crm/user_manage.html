@@ -244,8 +244,15 @@
     </div>
 
     <ul class="flex gap-1 mt-3 justify-center">
+
         <li>
-            <button class="page-btn w-9 h-9 border rounded-sm text-xl" value="1">
+            <button class="page-btn w-8 h-8 text-sm border rounded-md go_to_start" value="1">
+                <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+            </button>
+        </li>
+
+        <li>
+            <button class="page-btn w-8 h-8 text-sm border rounded-md" value="prev">
                 <i class="fa fa-angle-left" aria-hidden="true"></i>
             </button>
         </li>
@@ -253,13 +260,13 @@
         {% for page in pageArr %}
         {% if now_page == page %}
         <li>
-            <button class="page-btn w-9 h-9 border rounded-sm text-sm bg-blue-200" value="{{page}}">
+            <button class="page-btn w-8 h-8 text-sm rounded-md bg-orange-400 text-white" value="{{page}}">
                 {{page}}
             </button>
         </li>
         {% else %}
         <li>
-            <button class="page-btn w-9 h-9 border rounded-sm text-sm" value="{{page}}">
+            <button class="page-btn w-8 h-8 text-sm border rounded-md" value="{{page}}">
                 {{page}}
             </button>
         </li>
@@ -267,12 +274,17 @@
         {% endfor %}
 
         <li>
-            <button class="page-btn w-9 h-9 border rounded-sm text-xl" value="end">
+            <button class="page-btn w-8 h-8 text-sm border rounded-md" value="next">
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
             </button>
         </li>
+
+        <li>
+            <button class="page-btn w-8 h-8 text-sm border rounded-md go_to_last" value="{{maxPage}}">
+                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            </button>
+        </li>
     </ul>
-    asdfasdfafd
 </div>
 
 
@@ -297,7 +309,7 @@
                 userId,
                 checkedStr
             })
-            if(res.data.status){
+            if (res.data.status) {
                 alert('업데이트 완료!')
                 location.reload();
             }
@@ -310,12 +322,34 @@
 
     $('.page-btn').click(function () {
 
-        const nowpageEle = document.querySelector('.nowpage')
-        nowpageEle.value = this.value;
+        console.log(this.value);
 
+        const urlParams = new URLSearchParams(window.location.search);
+        let nowPage = urlParams.get('nowpage')
+        
+        let maxPage = '{{maxPage}}'
+        let resValue = "";
+
+        if (this.value == 'prev') {
+            resValue = nowPage - 1;
+            if (resValue < 1) {
+                alert('첫 페이지 입니다.')
+                return false;
+            }
+        } else if (this.value == 'next') {
+            resValue = nowPage + 1;
+            if (resValue > maxPage) {
+                alert('마지막 페이지 입니다.')
+                return false;
+            }
+        } else {
+            resValue = this.value;
+        }
+
+        const nowpageEle = document.querySelector('.nowpage')
+        nowpageEle.value = resValue;
         const form = document.getElementById("search-form");
         form.submit();
-
     })
 
     $('.close-modal').click(function () {
