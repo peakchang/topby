@@ -95,9 +95,9 @@ router.post('/user_manage_update', async (req, res, next) => {
 
 })
 
-chkRateMaster
+
 // chkRateMaster
-router.get('/', async (req, res, next) => {
+router.get('/', chkRateMaster, async (req, res, next) => {
 
     let now_page = parseInt(req.query.nowpage)
     if (!now_page) {
