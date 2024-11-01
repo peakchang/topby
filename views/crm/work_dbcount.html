@@ -103,8 +103,18 @@
                         <td class="border px-2 py-1.5 sticky-left" style="white-space: nowrap;">
                             {{site_info.form_name}}
                         </td>
-                        <td class="border px-2 py-1.5" style="white-space: nowrap;">
-                            {{site_info.all_count}}
+                        <td class="border " style="white-space: nowrap;">
+
+                            {% if site_info.all_count == 0 %}
+                            <div class="px-2 py-1.5 bg-red-200">
+                                {{site_info.all_count}}
+                            </div>
+                            {% else %}
+                            <div class="px-2 py-1.5">
+                                {{site_info.all_count}}
+                            </div>
+                            {% endif %}
+
                         </td>
 
 
@@ -272,7 +282,7 @@
             alert('첫 페이지 입니다.')
             return false;
         }
-        
+
         // 새로운 page 값으로 URL 업데이트
         urlParams.set('page', page);
         window.location.search = urlParams.toString(); // 쿼리 스트링으로 페이지 이동
@@ -292,7 +302,7 @@
             alert('마지막 페이지 입니다.')
             return false;
         }
-        
+
         // 새로운 page 값으로 URL 업데이트
         urlParams.set('page', page);
         window.location.search = urlParams.toString(); // 쿼리 스트링으로 페이지 이동

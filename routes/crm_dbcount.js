@@ -67,6 +67,8 @@ router.use('/', chkRateMaster, async (req, res, next) => {
             const getSiteDbQuery = `SELECT * FROM application_form WHERE af_form_name = ? ${addFormQuery};`
 
             const [dbRows] = await sql_con.promise().query(getSiteDbQuery, [siteInfo.sl_site_name]);
+
+            
             const result = {
                 form_name: siteInfo['sl_site_name'],
                 all_count: dbRows.length,
@@ -74,6 +76,7 @@ router.use('/', chkRateMaster, async (req, res, next) => {
             };
 
             result.db_list = processDateCounts(dbRows)
+            
             site_count_info_list.push(result);
         }
     } catch (err) {
@@ -109,7 +112,7 @@ function getDateRangeArray(startDate, endDate) {
 }
 
 // 가져온 DB 를 날짜와 갯수를 key로 가진 객체 배열로 만들어주는 함수
-function processDateCounts(data) {
+function processDateCountsPrev(data) {
     const result = {};
 
     data.forEach(item => {
@@ -130,6 +133,30 @@ function processDateCounts(data) {
     return Object.entries(result).map(([date, count]) => ({ date, count }));
 }
 
+
+function processDateCounts(data) {
+    const dateCounts = {};
+  
+    data.forEach(item => {
+      // 날짜를 'YY-MM-DD' 형식으로 변환
+      const date = new Date(item.af_created_at);
+      const formattedDate = `${date.getFullYear().toString().slice(2)}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  
+      // 날짜별로 중복 제거를 위한 Set을 생성하거나 가져옴
+      if (!dateCounts[formattedDate]) {
+        dateCounts[formattedDate] = new Set();
+      }
+  
+      // Set에 af_mb_phone 추가 (중복 제거됨)
+      dateCounts[formattedDate].add(item.af_mb_phone);
+    });
+  
+    // 날짜별로 count를 계산하여 원하는 형식의 배열로 반환
+    return Object.entries(dateCounts).map(([date, phonesSet]) => ({
+      date,
+      count: phonesSet.size
+    }));
+  }
 
 // 페이징 배열 구하는 함수
 
