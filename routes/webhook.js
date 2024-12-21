@@ -29,17 +29,6 @@ var AuthData = {
     // 이곳에 userid를 입력하세요
 }
 
-const send = (req, res, user_info) => {
-    // 메시지 발송하기
-    aligoapi.send(req, AuthData)
-        .then((r) => {
-            res.send(r)
-        })
-        .catch((e) => {
-            res.send(e)
-        })
-}
-
 router.get('/aligo_sms_test', async (req, res) => {
 
     // req.body = {
