@@ -105,8 +105,7 @@ router.use('/test_kakao_error', async (req, res) => {
     const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
     const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
 
-    console.log(cleanText);
-    console.log(containsKoreanOrEnglish);
+
 
 
 
@@ -119,15 +118,12 @@ router.use('/test_kakao_error', async (req, res) => {
         chkName = '무명'
     }
 
-    console.log(chkName);
+ 
 
 
     // 정규식으로 특수 문자 제거
     // const cleanText = text.replace(/[^\w\s.,]/g, '');
 
-    // console.log(cleanText);  // "Ahn.SeonHo Ssu_ "
-
-    // console.log('test_kakao_error 들어옴!!!');
 
 
     // const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
@@ -150,7 +146,7 @@ router.use('/test_kakao_error', async (req, res) => {
     //         'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
     //     });
 
-    //     console.log(data);
+
 
 
     //     config = {
@@ -161,15 +157,13 @@ router.use('/test_kakao_error', async (req, res) => {
     //         data: data
     //     };
 
-    //     console.log(config);
+
 
 
     //     const res = await axios.request(config);
-    //     console.log(res);
+
     // } catch (err) {
     //     console.error(err.message);
-
-    //     console.log('테스트 에러~~~~~~~~~~~');
     // }
 
 
@@ -200,10 +194,8 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/test_rich_send', async (req, res) => {
-    console.log('페이지는 들어오지?!?!');
     try {
         const res = await axios.get('https://richby.co.kr/webhook/richhook')
-        console.log(res.data);
 
     } catch (error) {
 
@@ -227,8 +219,7 @@ router.post('/', async (req, res) => {
         //     leadsId = getData.entry[0].changes[0].value.leadgen_id
         //     formId = getData.entry[0].changes[0].value.form_id
 
-        //     console.log(`leadsId : ${leadsId}`);
-        //     console.log(`formId : ${formId}`);
+
 
         //     console.log(process.env.ACCESS_TOKEN);
 
@@ -237,8 +228,6 @@ router.post('/', async (req, res) => {
 
         //     leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
         //     formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-        //     console.log(leadsUrl);
-        //     console.log(formUrl);
 
         //     LeadsData = await doRequest({ uri: leadsUrl });
 
@@ -248,8 +237,6 @@ router.post('/', async (req, res) => {
 
         //     formData = await doRequest({ uri: formUrl });
 
-        //     console.log(LeadsData);
-        //     console.log(formData);
 
 
 
@@ -315,9 +302,7 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // console.log('//////////////////////////////////////////');
-        // console.log(baseData);
-        // console.log('//////////////////////////////////////////');
+
 
 
         // 수신 내용이 리치분양일경우 여기서 발송하고 리턴 처리!!
@@ -325,7 +310,6 @@ router.post('/', async (req, res) => {
 
 
         let get_created_time = getLeadsData.created_time
-        // console.log(getFormData);
 
         var get_form_name = getFormData.name
         var form_type_in = '분양'
@@ -333,10 +317,7 @@ router.post('/', async (req, res) => {
         var get_form_name = get_form_name.replace('분양', '')
         var get_form_name = get_form_name.replace('투자', '')
 
-        console.log(get_form_name);
         if (get_form_name.includes('rich')) {
-            console.log(baseData);
-            console.log(`baseData : ${baseData} // leadsId : ${leadsId}`);
             try {
                 const result = await axios.post('https://richby.co.kr/webhook/richhook', { baseData, leadsId, getFormData })
                 return res.sendStatus(200);
@@ -358,10 +339,8 @@ router.post('/', async (req, res) => {
 
         }
 
-        // console.log(`chkFor2WeeksDataBool : ${chkFor2WeeksDataBool}`);
 
         if (!chkFor2WeeksDataBool) {
-            // console.log('DB registered within 2 weeks');
             return res.sendStatus(200);
         }
 
@@ -415,9 +394,7 @@ router.post('/', async (req, res) => {
                 getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
                 formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
                 await mysql_conn.promise().query(formInertSql, getArr)
-                console.log('modify fail TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
             } catch (error) {
-                console.log('insert db error!!!!!!!!!?!?!?!??!?!?!?!');
 
             }
 
@@ -514,6 +491,13 @@ router.post('/', async (req, res) => {
 
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
+                console.log('문자 발송 부분!!!');
+                console.log(findUser[oo].user_phone);
+                console.log(getSiteInfo.sl_site_name);
+                console.log(baseData.db_name);
+                console.log(receiverStr);
+                
+                
                 req.body['sender'] = '010-6628-6651'
                 req.body['receiver'] = findUser[oo].user_phone
                 req.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
