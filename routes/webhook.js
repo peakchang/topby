@@ -388,13 +388,20 @@ router.post('/', async (req, res) => {
             reDbName = '무명'
         }
 
+        // 카톡 발송 최종 데이터!!
+        let customerInfo = { ciName: reDbName, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciSiteLink: siteList, ciReceiver: receiverStr }
+
         // 관리자들에게 카톡 or 문자 발송
         for (let oo = 0; oo < findUser.length; oo++) {
 
-            var customerInfo = { ciName: reDbName, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+            const managerPhone = findUser[oo].user_phone
 
             // 담당자 폰 번호에 010이 들어가 있을 경우에만 발송!
-            if (customerInfo.ciPhone.includes('010')) {
+            if (managerPhone.includes('010')) {
+
+                customerInfo['ciPhone'] = managerPhone
+
+
                 // 카톡 발송 부분!!! 잠시 스탑!!!
                 // try {
                 //     aligoKakaoNotification_formanager(req, customerInfo)
@@ -402,44 +409,32 @@ router.post('/', async (req, res) => {
                 //     console.log('kakao send is error!!!! T.T');
                 // }
 
+
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
 
                 const resMessage = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
                 console.log('문자 발송 부분!!!');
-                console.log(`receiver : ${findUser[oo].user_phone}`);
+                console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
                 console.log(`글자 수 : ${resMessage.length}`);
                 console.log(AuthData);
 
-                // req.body['sender'] = '010-6628-6651'
-                // req.body['receiver'] = findUser[oo].user_phone
-                // req.body['msg'] = 
-                // req.body['msg_type'] = 'SMS'
+                req.body = {
+                    sender: '010-6628-6651',
+                    receiver: managerPhone,
+                    msg: resMessage,
+                    msg_type: 'SMS'
+                }
 
-                // try {
-                //     const aligo_res = await aligoapi.send(req, AuthData)
-
-
-                // } catch (err) {
-                //     console.error(err.message);
-
-                // }
+                try {
+                    const aligo_res = await aligoapi.send(req, AuthData)
+                    console.log(aligo_res);
+                    
+                } catch (err) {
+                    console.error(err.message);
+                }
             }
-        }
-
-
-        req.body = {
-            sender: '010-6628-6651',
-            receiver: '010-2190-2197',
-            msg: `테스트 메세지 고고고고!!!`,
-            msg_type: 'SMS'
-        }
-
-        try {
-            const aligo_res = await aligoapi.send(req, AuthData)
-        } catch (err) {
-            console.error(err.message);
         }
 
         return res.sendStatus(200);
