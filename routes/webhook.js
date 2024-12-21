@@ -202,40 +202,28 @@ router.post('/', async (req, res) => {
 
     try {
 
-        // let leadsId = ""
-        // let formId = ""
-        // let nowDateTime = ""
-        // let leadsUrl = ""
-        // let LeadsData = ""
-        // let formUrl = ""
-        // let formData = ""
-        // try {
-        //     leadsId = getData.entry[0].changes[0].value.leadgen_id
-        //     formId = getData.entry[0].changes[0].value.form_id
-        //     nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
-        //     leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-        //     formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-        //     LeadsData = await doRequest({ uri: leadsUrl });
-        //     formData = await doRequest({ uri: formUrl });
-        // } catch (error) {
-        //     console.error(error.message);
-        // }
+        // 핵심 부분!!! 페이스북에서 쏴주는거 제대로 받기!!!
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
-        // console.log(`get leads Id is~~~ : ${leadsId}`);
         let formId = getData.entry[0].changes[0].value.form_id
-        // console.log(`get form Id is~~~ : ${formId}`);
-        var nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
         let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-        // console.log(leadsUrl);
         let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-        // console.log(formUrl);
         let LeadsData = await doRequest({ uri: leadsUrl });
         let formData = await doRequest({ uri: formUrl });
+
+
+        var nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        console.log(getLeadsData);
-        console.log(getFormData);
+        // console.log(getLeadsData);
+        // console.log(getFormData);
+        console.log('1 옵션');
+        console.log(getLeadsData.field_data[0].values);
+        console.log('2 이름');
+        console.log(getLeadsData.field_data[1].values);
+        console.log('3 전번');
+        console.log(getLeadsData.field_data[2].values);
+
 
 
         req.body = {
