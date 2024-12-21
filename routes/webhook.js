@@ -413,7 +413,15 @@ router.post('/', async (req, res) => {
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
 
-                const resMessage = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
+                let siteName = getSiteInfo.sl_site_name
+                if (siteName.length > 10) {
+                    siteName = getLastNChars(siteName, 10)
+                }
+
+                if (reDbName.length > 5) {
+                    reDbName = getFirstNChars(reDbName, 5)
+                }
+                const resMessage = `고객 인입! ${siteName} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
                 console.log('문자 발송 부분!!!');
                 console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
@@ -430,7 +438,7 @@ router.post('/', async (req, res) => {
                 try {
                     const aligo_res = await aligoapi.send(req, AuthData)
                     console.log(aligo_res);
-                    
+
                 } catch (err) {
                     console.error(err.message);
                 }
@@ -441,7 +449,6 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         console.error(error);
-
         try {
             const getDataStr = JSON.stringify(req.body)
             const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
@@ -459,7 +466,15 @@ router.post('/', async (req, res) => {
 
 })
 
+// 뒤에서 n 글자수 가져오는 함수
+function getLastNChars(str, n) {
+    return str.slice(-n);
+}
 
+// 앞에서 n 글자수 가져오는 함수
+function getFirstNChars(str, n) {
+    return str.slice(0, n);
+}
 
 
 
