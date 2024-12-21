@@ -206,6 +206,7 @@ router.get('/test_rich_send', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
+
     req.body['sender'] = '010-3124-1105'
     req.body['receiver'] = '010-2190-2197'
     req.body['msg'] = '테스트 메세지 입니다!!'
@@ -215,7 +216,7 @@ router.post('/', async (req, res) => {
         const res = await aligoapi.send(req, AuthData)
         console.log(res);
     } catch (error) {
-
+        console.error(error.message);
     }
 
 
