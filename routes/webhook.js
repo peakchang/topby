@@ -493,6 +493,8 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
 
+        console.log('에러 여기서 나는거야? 전체 에러?!?!');
+        
         console.error(error);
 
         try {
