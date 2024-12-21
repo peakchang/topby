@@ -468,7 +468,7 @@ function getFirstNChars(str, n) {
 }
 
 function removeSpecialChars(str) {
-    return str.replace(/[^\w\s]/g, ''); // 알파벳, 숫자, 공백을 제외한 모든 문자를 제거
+    return str.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣\w\s]/g, ''); // 한글, 알파벳, 숫자, 공백을 제외한 모든 특수문자 제거
 }
 
 // router.post('/facebook', async (req, res) => {
