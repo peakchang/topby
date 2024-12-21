@@ -118,7 +118,7 @@ router.use('/test_kakao_error', async (req, res) => {
         chkName = '무명'
     }
 
- 
+
 
 
     // 정규식으로 특수 문자 제거
@@ -497,31 +497,26 @@ router.post('/', async (req, res) => {
                 console.log(baseData.db_name);
                 console.log(receiverStr);
                 console.log(AuthData);
-                
-                
-                req.body['sender'] = '010-6628-6651'
-                req.body['receiver'] = findUser[oo].user_phone
-                req.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
+
+                let aligoData = {}
+                aligoData.body['sender'] = '010-6628-6651'
+                aligoData.body['receiver'] = findUser[oo].user_phone
+                aligoData.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
                 고객 번호 : ${receiverStr}`
-                req.body['msg_type'] = 'SMS'
+                aligoData.body['msg_type'] = 'SMS'
 
                 try {
-                    const aligo_res = await aligoapi.send(req, AuthData)
+                    const aligo_res = await aligoapi.send(aligoData, AuthData)
                     console.log(aligo_res);
 
                 } catch (err) {
                     console.log('여기 에러 나는거야?!?!?');
-                    
+
                     console.error(err.message);
 
                 }
             }
-
-
-
         }
-
-
         return res.sendStatus(200);
 
     } catch (error) {
