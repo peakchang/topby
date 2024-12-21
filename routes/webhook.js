@@ -299,12 +299,6 @@ router.post('/', async (req, res) => {
 
         }
 
-
-        // const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-        // const getStatusText = await mysql_conn.promise().query(getStatusSql)
-        // const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
-
-
         // 폼 저장하기!!!!!!!!!!
         // etc 리스트 찾기
         let etcInsertStr = '';
@@ -344,9 +338,6 @@ router.post('/', async (req, res) => {
         const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
-
-
-
 
         // 해당 폼네임에 저장된 담당자 리스트 찾기
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
