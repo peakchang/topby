@@ -307,6 +307,11 @@ router.post('/', async (req, res) => {
         for (let eidx = 1; eidx < 5; eidx++) {
             const forVal = baseData[`etc${eidx}`];
             if (forVal) {
+
+                console.log(forVal);
+                console.log(removeSpecialChars(forVal));
+
+
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
                 etcValuesStr = etcValuesStr + `, '${forVal}'`;
                 addEtcMessage = addEtcMessage + `/기타정보${eidx} : ${removeSpecialChars(forVal)}`
@@ -426,13 +431,13 @@ router.post('/', async (req, res) => {
                     msg_type: 'SMS'
                 }
 
-                try {
-                    const aligo_res = await aligoapi.send(req, AuthData)
-                    console.log(aligo_res);
+                // try {
+                //     const aligo_res = await aligoapi.send(req, AuthData)
+                //     console.log(aligo_res);
 
-                } catch (err) {
-                    console.error(err.message);
-                }
+                // } catch (err) {
+                //     console.error(err.message);
+                // }
             }
         }
 
