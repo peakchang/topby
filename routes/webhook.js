@@ -226,20 +226,7 @@ router.post('/', async (req, res) => {
 
 
 
-        req.body = {
-            sender: '010-6628-6651',
-            receiver: '010-2190-2197',
-            msg: `테스트 메세지 고고고고!!!`,
-            msg_type: 'SMS'
-        }
-
-        try {
-            const aligo_res = await aligoapi.send(req, AuthData)
-            console.log(aligo_res);
-        } catch (err) {
-            console.log('여기 에러 나는거야?!?!?');
-            console.error(err.message);
-        }
+        
 
 
 
@@ -462,7 +449,24 @@ router.post('/', async (req, res) => {
         //             // }
         //         }
         //     }
-        //     return res.sendStatus(200);
+        //     
+
+        req.body = {
+            sender: '010-6628-6651',
+            receiver: '010-2190-2197',
+            msg: `테스트 메세지 고고고고!!!`,
+            msg_type: 'SMS'
+        }
+
+        try {
+            const aligo_res = await aligoapi.send(req, AuthData)
+            console.log(aligo_res);
+        } catch (err) {
+            console.log('여기 에러 나는거야?!?!?');
+            console.error(err.message);
+        }
+
+        return res.sendStatus(200);
 
     } catch (error) {
 
