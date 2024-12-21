@@ -31,58 +31,42 @@ var AuthData = {
 
 router.get('/aligo_sms_test', async (req, res) => {
 
-    // req.body = {
-    /*** 필수값입니다 ***/
-    //   sender: 발신자 전화번호  // (최대 16bytes)
-    //   receiver: 수신자 전화번호 // 컴마()분기 입력으로 최대 1천명
-    //   msg: 메시지 내용	// (1~2,000Byte)
-    /*** 필수값입니다 ***/
-    //   msg_type: SMS(단문), LMS(장문), MMS(그림문자)
-    //   title: 문자제목(LMS, MMS만 허용) // (1~44Byte)
-    //   destination: %고객명% 치환용 입력
-    //   rdate: 예약일(현재일이상) // YYYYMMDD
-    //   rtime: 예약시간-현재시간기준 10분이후 // HHMM
-    //   image: 첨부이미지 // JPEG, PNG, GIF
-    // }
-    // req.body 요청값 예시입니다.
-
-    const sendData = {
-        sender: '01098765432',
-        receiver: '01021902197',
-        msg: '테스트 메세지 입니다.',
-        msg_type: 'SMS'
-    };
+    req.body['sender'] = '010-6628-6651'
+    req.body['receiver'] = "010-2190-2197"
+    req.body['msg'] = `테스트 메세지 고고고고!!!`
+    req.body['msg_type'] = 'SMS'
 
     try {
-        const res = await aligoapi.send(sendData, AuthData)
-        console.log(res);
-    } catch (error) {
-        console.error(error.message);
+        const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
+
+    } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
+
+        console.error(err.message);
 
     }
-
     res.send('gogo')
+});
 
-    //  = {
-    //     /*** 필수값입니다 ***/
-    //     sender: '010-3124-1105',  // (최대 16bytes)
-    //     receiver: '010-2190-2197', // 컴마()분기 입력으로 최대 1천명
-    //     msg: '테스트 메세지 입니다!!',	// (1~2,000Byte)
-    //     /*** 필수값입니다 ***/
-    //     msg_type: 'SMS',
-    //     //   title: 문자제목(LMS, MMS만 허용) // (1~44Byte)
-    //     //   destination: %고객명% 치환용 입력
-    //     //   rdate: 예약일(현재일이상) // YYYYMMDD
-    //     //   rtime: 예약시간-현재시간기준 10분이후 // HHMM
-    //     //   image: 첨부이미지 // JPEG, PNG, GIF
-    // }
-    // aligoapi.send(req, AuthData)
-    //     .then((r) => {
-    //         res.send(r)
-    //     })
-    //     .catch((e) => {
-    //         res.send(e)
-    //     })
+router.post('/aligo_sms_test', async (req, res) => {
+
+    req.body['sender'] = '010-6628-6651'
+    req.body['receiver'] = "010-2190-2197"
+    req.body['msg'] = `테스트 메세지 고고고고!!!`
+    req.body['msg_type'] = 'SMS'
+
+    try {
+        const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
+
+    } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
+
+        console.error(err.message);
+
+    }
+    res.send('gogo')
 });
 
 
@@ -210,17 +194,21 @@ router.get('/test_rich_send', async (req, res) => {
 router.post('/', async (req, res) => {
 
 
-    const sendData = {
-        sender: '01098765432',
-        receiver: '01021902197',
-        msg: '테스트 메세지 입니다.',
-        msg_type: 'SMS'
-    };
-
-    req.body['sender'] = '010-3124-1105'
-    req.body['receiver'] = '010-2190-2197'
-    req.body['msg'] = '테스트 메세지 입니다!!'
+    req.body['sender'] = '010-6628-6651'
+    req.body['receiver'] = "010-2190-2197"
+    req.body['msg'] = `테스트 메세지 고고고고!!!`
     req.body['msg_type'] = 'SMS'
+
+    try {
+        const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
+
+    } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
+
+        console.error(err.message);
+
+    }
 
     try {
         const res = await aligoapi.send(req, AuthData)
