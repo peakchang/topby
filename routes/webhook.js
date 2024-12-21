@@ -205,6 +205,21 @@ router.get('/test_rich_send', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+
+    req.body['sender'] = '010-3124-1105'
+    req.body['receiver'] = '010-2190-2197'
+    req.body['msg'] = '테스트 메세지 입니다!!'
+    req.body['msg_type'] = 'SMS'
+
+    try {
+        const res = await aligoapi.send(req, AuthData)
+        console.log(res);
+    } catch (error) {
+
+    }
+
+
+
     var getData = req.body
     try {
 
@@ -491,30 +506,29 @@ router.post('/', async (req, res) => {
 
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
-                console.log('문자 발송 부분!!!');
-                console.log(findUser[oo].user_phone);
-                console.log(getSiteInfo.sl_site_name);
-                console.log(baseData.db_name);
-                console.log(receiverStr);
-                console.log(AuthData);
+                // console.log('문자 발송 부분!!!');
+                // console.log(findUser[oo].user_phone);
+                // console.log(getSiteInfo.sl_site_name);
+                // console.log(baseData.db_name);
+                // console.log(receiverStr);
+                // console.log(AuthData);
 
-                let aligoData = {}
-                aligoData.body['sender'] = '010-6628-6651'
-                aligoData.body['receiver'] = findUser[oo].user_phone
-                aligoData.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
-                고객 번호 : ${receiverStr}`
-                aligoData.body['msg_type'] = 'SMS'
+                // req.body['sender'] = '010-6628-6651'
+                // req.body['receiver'] = findUser[oo].user_phone
+                // req.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
+                // 고객 번호 : ${receiverStr}`
+                // req.body['msg_type'] = 'SMS'
 
-                try {
-                    const aligo_res = await aligoapi.send(aligoData, AuthData)
-                    console.log(aligo_res);
+                // try {
+                //     const aligo_res = await aligoapi.send(req, AuthData)
+                //     console.log(aligo_res);
 
-                } catch (err) {
-                    console.log('여기 에러 나는거야?!?!?');
+                // } catch (err) {
+                //     console.log('여기 에러 나는거야?!?!?');
 
-                    console.error(err.message);
+                //     console.error(err.message);
 
-                }
+                // }
             }
         }
         return res.sendStatus(200);
