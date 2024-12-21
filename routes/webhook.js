@@ -214,86 +214,47 @@ router.post('/', async (req, res) => {
         console.error(err.message);
     }
 
-    // try {
-    //     const res = await aligoapi.send(req, AuthData)
-    //     console.log(res);
-    // } catch (error) {
-    //     console.error(error.message);
-    // }
-
-
-
-    // var getData = req.body
-    // try {
-
-    //     // let leadsId = ""
-    //     // let formId = ""
-    //     // let nowDateTime = ""
-    //     // let leadsUrl = ""
-    //     // let LeadsData = ""
-    //     // let formUrl = ""
-    //     // let formData = ""
-    //     // try {
-    //     //     leadsId = getData.entry[0].changes[0].value.leadgen_id
-    //     //     formId = getData.entry[0].changes[0].value.form_id
 
 
 
 
+    var getData = req.body
+    try {
 
-    //     //     nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+        // let leadsId = ""
+        // let formId = ""
+        // let nowDateTime = ""
+        // let leadsUrl = ""
+        // let LeadsData = ""
+        // let formUrl = ""
+        // let formData = ""
+        // try {
+        //     leadsId = getData.entry[0].changes[0].value.leadgen_id
+        //     formId = getData.entry[0].changes[0].value.form_id
+        //     nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+        //     leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
+        //     formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
+        //     LeadsData = await doRequest({ uri: leadsUrl });
+        //     formData = await doRequest({ uri: formUrl });
+        // } catch (error) {
+        //     console.error(error.message);
+        // }
+        let leadsId = getData.entry[0].changes[0].value.leadgen_id
+        // console.log(`get leads Id is~~~ : ${leadsId}`);
+        let formId = getData.entry[0].changes[0].value.form_id
+        // console.log(`get form Id is~~~ : ${formId}`);
+        var nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+        let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
+        // console.log(leadsUrl);
+        let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
+        // console.log(formUrl);
+        let LeadsData = await doRequest({ uri: leadsUrl });
+        let formData = await doRequest({ uri: formUrl });
+        let getLeadsData = JSON.parse(LeadsData)
+        let getFormData = JSON.parse(formData)
 
-    //     //     leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-    //     //     formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-
-    //     //     LeadsData = await doRequest({ uri: leadsUrl });
-
-
-
-
-
-    //     //     formData = await doRequest({ uri: formUrl });
-
-
-
-
-    //     // } catch (error) {
-
-    //     //     console.error(error.message);
-    //     // }
-
-    //     let leadsId = getData.entry[0].changes[0].value.leadgen_id
-
-    //     // console.log(`get leads Id is~~~ : ${leadsId}`);
-
-
-    //     let formId = getData.entry[0].changes[0].value.form_id
-
-    //     // console.log(`get form Id is~~~ : ${formId}`);
-
-    //     var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-
-    //     let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
-
-    //     // console.log(leadsUrl);
-
-    //     let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
-
-    //     // console.log(formUrl);
-
-
-    //     let LeadsData = await doRequest({ uri: leadsUrl });
-
-
-    //     let formData = await doRequest({ uri: formUrl });
-
-
-
-    //     let getLeadsData = JSON.parse(LeadsData)
-    //     let getFormData = JSON.parse(formData)
-
-    //     // console.log(getLeadsData);
-    //     // console.log(getFormData);
+        console.log(getLeadsData);
+        console.log(getFormData);
 
 
 
@@ -530,22 +491,22 @@ router.post('/', async (req, res) => {
     //     }
     //     return res.sendStatus(200);
 
-    // } catch (error) {
+    } catch (error) {
 
-    //     console.error(error);
+        console.error(error);
 
-    //     try {
-    //         const getDataStr = JSON.stringify(req.body)
-    //         const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
-    //         await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
-    //     } catch (error) {
-    //         console.log('audit_webhookdata error!!!!!!!!!!!');
+        try {
+            const getDataStr = JSON.stringify(req.body)
+            const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
+            await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
+        } catch (error) {
+            console.log('audit_webhookdata error!!!!!!!!!!!');
 
-    //     }
+        }
 
 
-    //     res.sendStatus(200);
-    // }
+        res.sendStatus(200);
+    }
 
     res.sendStatus(200);
 
