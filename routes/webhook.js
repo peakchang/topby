@@ -340,9 +340,9 @@ router.post('/', async (req, res) => {
         }
 
 
-        if (!chkFor2WeeksDataBool) {
-            return res.sendStatus(200);
-        }
+        // if (!chkFor2WeeksDataBool) {
+        //     return res.sendStatus(200);
+        // }
 
 
         try {
