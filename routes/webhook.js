@@ -412,7 +412,7 @@ router.post('/', async (req, res) => {
                 if (reDbName.length > 5) {
                     reDbName = getFirstNChars(reDbName, 5)
                 }
-                const resMessage = `고객 인입! ${siteName} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
+                const resMessage = `${siteName} 현장 / ${reDbName}님 접수! 번호 : ${receiverStr}`
                 console.log('문자 발송 부분!!!');
                 console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
