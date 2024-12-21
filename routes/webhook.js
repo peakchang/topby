@@ -195,7 +195,7 @@ router.get('/test_rich_send', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    
+
     var getData = req.body
 
     try {
@@ -270,9 +270,10 @@ router.post('/', async (req, res) => {
             const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName, reFormName]);
 
             // 테스트 할때는 잠시 주석!!!
-            // if (chkFor2WeeksData[0].length > 0) {
-            //     return res.sendStatus(200);
-            // }
+            if (chkFor2WeeksData[0].length > 0) {
+                console.log('중복DB 패스!!');
+                return res.sendStatus(200);
+            }
         } catch (error) {
 
         }
