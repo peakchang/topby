@@ -46,15 +46,18 @@ router.get('/aligo_sms_test', async (req, res) => {
     // }
     // req.body 요청값 예시입니다.
 
-    req.body['sender'] = '010-3124-1105'
-    req.body['receiver'] = '010-2190-2197'
-    req.body['msg'] = '테스트 메세지 입니다!!'
-    req.body['msg_type'] = 'SMS'
+    const sendData = {
+        sender: '01098765432',
+        receiver: '01021902197',
+        msg: '테스트 메세지 입니다.',
+        msg_type: 'SMS'
+    };
 
     try {
-        const res = await aligoapi.send(req, AuthData)
+        const res = await aligoapi.send(sendData, AuthData)
         console.log(res);
     } catch (error) {
+        console.error(error.message);
 
     }
 
@@ -206,6 +209,13 @@ router.get('/test_rich_send', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
+
+    const sendData = {
+        sender: '01098765432',
+        receiver: '01021902197',
+        msg: '테스트 메세지 입니다.',
+        msg_type: 'SMS'
+    };
 
     req.body['sender'] = '010-3124-1105'
     req.body['receiver'] = '010-2190-2197'

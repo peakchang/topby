@@ -48,7 +48,7 @@ const reserveTalkRouter = require('./routes/reserve_talk.js');
 const app = express();
 var xhub = require('express-x-hub');
 
-
+app.use(bodyParser.json());
 
 passportConfig(); // 패스포트 설정
 
