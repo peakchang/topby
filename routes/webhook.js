@@ -195,10 +195,8 @@ router.get('/test_rich_send', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-
-
+    
     var getData = req.body
-    console.log(getData);
 
     try {
 
@@ -210,19 +208,12 @@ router.post('/', async (req, res) => {
         let LeadsData = await doRequest({ uri: leadsUrl });
         let formData = await doRequest({ uri: formUrl });
 
-
-
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        // console.log(getLeadsData);
-        // console.log(getFormData);
-        // console.log('1 옵션');
-        // console.log(getLeadsData.field_data[0].values);
-        // console.log('2 이름');
-        // console.log(getLeadsData.field_data[1].values);
-        // console.log('3 전번');
-        // console.log(getLeadsData.field_data[2].values);
+        // console.log(getLeadsData.field_data[0].values); // 1. 옵션
+        // console.log(getLeadsData.field_data[1].values); // 2. 이름
+        // console.log(getLeadsData.field_data[2].values); // 3. 전번
 
 
 
@@ -307,14 +298,9 @@ router.post('/', async (req, res) => {
         for (let eidx = 1; eidx < 5; eidx++) {
             const forVal = baseData[`etc${eidx}`];
             if (forVal) {
-
-                console.log(forVal);
-                console.log(removeSpecialChars(forVal));
-
-
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
                 etcValuesStr = etcValuesStr + `, '${forVal}'`;
-                addEtcMessage = addEtcMessage + `/기타정보${eidx} : ${removeSpecialChars(forVal)}`
+                addEtcMessage = addEtcMessage + `// 기타 정보 ${eidx} : ${forVal}`
             }
         }
         let getArr;
@@ -339,10 +325,18 @@ router.post('/', async (req, res) => {
 
         // 발송을 위한 준비!!!!
 
-        // 사이트 정보 (현장 및 메세지 내용)를 가져와서 고객에게 보내는 부분 (사용 X)
+        // 사이트 정보 (현장 및 메세지 내용)를 가져와서 고객에게 보내는 부분
+
+        let siteList = ""
         const getSiteInfoSql = `SELECT * FROM site_list WHERE sl_site_name = ?`
         const getSiteInfoData = await mysql_conn.promise().query(getSiteInfoSql, [reFormName])
         const getSiteInfo = getSiteInfoData[0][0];
+
+        if (getSiteInfo.sl_site_link) {
+            siteList = getSiteInfo.sl_site_link
+        } else {
+            siteList = '정보없음'
+        }
 
         // 해당 폼네임에 저장된 담당자 리스트 찾기
         const userFindSql = `SELECT * FROM users WHERE manage_estate LIKE '%${reFormName}%';`;
@@ -362,20 +356,10 @@ router.post('/', async (req, res) => {
         mailSender.sendEmail('adpeak@naver.com', mailSubject, mailContent);
         mailSender.sendEmail('changyong112@naver.com', mailSubject, mailContent);
 
-
-
-
-        if (getSiteInfo.sl_site_link) {
-            var siteList = getSiteInfo.sl_site_link
-        } else {
-            var siteList = '정보없음'
-        }
-
+        // 최종 메세지 및 이름 등 정리!!
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
-
         let reDbName = ""
         const dbName = baseData.db_name
-        // const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/]/g, '');
         const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
         const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
         if (containsKoreanOrEnglish) {
@@ -409,35 +393,26 @@ router.post('/', async (req, res) => {
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
 
-                let siteName = getSiteInfo.sl_site_name
-                if (siteName.length > 10) {
-                    siteName = getLastNChars(siteName, 10)
-                }
-
-                if (reDbName.length > 5) {
-                    reDbName = getFirstNChars(reDbName, 5)
-                }
-                const resMessage = `${siteName}현장/${reDbName}님 접수! 번호:${receiverStr}`
+                const resMessage = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
                 console.log('문자 발송 부분!!!');
                 console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
                 console.log(`글자 수 : ${resMessage.length}`);
-                console.log(AuthData);
 
                 req.body = {
                     sender: '010-6628-6651',
                     receiver: managerPhone,
                     msg: resMessage,
-                    msg_type: 'SMS'
+                    msg_type: 'LMS'
                 }
 
-                // try {
-                //     const aligo_res = await aligoapi.send(req, AuthData)
-                //     console.log(aligo_res);
+                try {
+                    const aligo_res = await aligoapi.send(req, AuthData)
+                    console.log(aligo_res);
 
-                // } catch (err) {
-                //     console.error(err.message);
-                // }
+                } catch (err) {
+                    console.error(err.message);
+                }
             }
         }
 
@@ -445,6 +420,7 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         console.error(error);
+
         try {
             const getDataStr = JSON.stringify(req.body)
             const insertAuditWhdataSql = `INSERT INTO audit_webhook (audit_webhookdata) VALUES (?);`;
@@ -462,19 +438,9 @@ router.post('/', async (req, res) => {
 
 })
 
-// 뒤에서 n 글자수 가져오는 함수
-function getLastNChars(str, n) {
-    return str.slice(-n);
-}
 
-// 앞에서 n 글자수 가져오는 함수
-function getFirstNChars(str, n) {
-    return str.slice(0, n);
-}
 
-function removeSpecialChars(str) {
-    return str.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣\w\s]/g, ''); // 한글, 알파벳, 숫자, 공백을 제외한 모든 특수문자 제거
-}
+
 
 // router.post('/facebook', async (req, res) => {
 //     let getData = req.body
