@@ -206,13 +206,13 @@ router.post('/', async (req, res) => {
 
     console.log(req.body);
     
-    // try {
-    //     const aligo_res = await aligoapi.send(req, AuthData)
-    //     console.log(aligo_res);
-    // } catch (err) {
-    //     console.log('여기 에러 나는거야?!?!?');
-    //     console.error(err.message);
-    // }
+    try {
+        const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
+    } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
+        console.error(err.message);
+    }
 
     // try {
     //     const res = await aligoapi.send(req, AuthData)
