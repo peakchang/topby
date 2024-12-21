@@ -309,7 +309,7 @@ router.post('/', async (req, res) => {
             if (forVal) {
                 etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
                 etcValuesStr = etcValuesStr + `, '${forVal}'`;
-                addEtcMessage = addEtcMessage + `// 기타 정보 ${eidx} : ${forVal}`
+                addEtcMessage = addEtcMessage + `/기타정보${eidx} : ${removeSpecialChars(forVal)}`
             }
         }
         let getArr;
@@ -412,7 +412,7 @@ router.post('/', async (req, res) => {
                 if (reDbName.length > 5) {
                     reDbName = getFirstNChars(reDbName, 5)
                 }
-                const resMessage = `${siteName} 현장 / ${reDbName}님 접수! 번호 : ${receiverStr}`
+                const resMessage = `${siteName}현장/${reDbName}님 접수! 번호:${receiverStr}`
                 console.log('문자 발송 부분!!!');
                 console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
@@ -467,7 +467,9 @@ function getFirstNChars(str, n) {
     return str.slice(0, n);
 }
 
-
+function removeSpecialChars(str) {
+    return str.replace(/[^\w\s]/g, ''); // 알파벳, 숫자, 공백을 제외한 모든 문자를 제거
+}
 
 // router.post('/facebook', async (req, res) => {
 //     let getData = req.body
