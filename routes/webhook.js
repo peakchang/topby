@@ -200,10 +200,14 @@ router.post('/', async (req, res) => {
     req.body['msg_type'] = 'SMS'
 
     try {
+        console.log('일단 들어는 오지?!?!?');
+        
         const aligo_res = await aligoapi.send(req, AuthData)
         console.log(aligo_res);
 
     } catch (err) {
+        console.log(err);
+        
         console.log('여기 에러 나는거야?!?!?');
 
         console.error(err.message);
