@@ -496,6 +496,7 @@ router.post('/', async (req, res) => {
                 console.log(getSiteInfo.sl_site_name);
                 console.log(baseData.db_name);
                 console.log(receiverStr);
+                console.log(AuthData);
                 
                 
                 req.body['sender'] = '010-6628-6651'
