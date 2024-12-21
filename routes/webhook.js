@@ -211,18 +211,18 @@ router.post('/', async (req, res) => {
         let formData = await doRequest({ uri: formUrl });
 
 
-        var nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
         // console.log(getLeadsData);
         // console.log(getFormData);
-        console.log('1 옵션');
-        console.log(getLeadsData.field_data[0].values);
-        console.log('2 이름');
-        console.log(getLeadsData.field_data[1].values);
-        console.log('3 전번');
-        console.log(getLeadsData.field_data[2].values);
+        // console.log('1 옵션');
+        // console.log(getLeadsData.field_data[0].values);
+        // console.log('2 이름');
+        // console.log(getLeadsData.field_data[1].values);
+        // console.log('3 전번');
+        // console.log(getLeadsData.field_data[2].values);
 
 
 
@@ -243,125 +243,113 @@ router.post('/', async (req, res) => {
 
 
 
-        //     // 테스트로 새로 만들자!!
-        //     const leadsData = getLeadsData.field_data;
-        //     let baseData = {};
-        //     let etcCount = 0;
-        //     for (let i = 0; i < leadsData.length; i++) {
-        //         if (leadsData[i]['name'] == 'full_name') {
-        //             baseData['db_name'] = leadsData[i]['values'][0];
-        //         } else if (leadsData[i]['name'] == 'phone_number') {
-
-        //             var get_temp_phone = leadsData[i]['values'][0];
-
-        //             let get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
-        //             if (get_phone.charAt(0) != '0') {
-        //                 get_phone = `0${get_phone}`
-        //             }
-        //             baseData['db_phone'] = get_phone;
-        //         } else {
-        //             etcCount += 1;
-        //             baseData[`etc${etcCount}`] = leadsData[i]['values'][0];
-        //         }
-        //     }
+        // for문 돌려서 baseData 만들기!
+        const leadsData = getLeadsData.field_data;
+        let baseData = {};
+        let etcCount = 0;
+        for (let i = 0; i < leadsData.length; i++) {
+            if (leadsData[i]['name'] == 'full_name') {
+                baseData['db_name'] = leadsData[i]['values'][0];
+            } else if (leadsData[i]['name'] == 'phone_number') {
+                var get_temp_phone = leadsData[i]['values'][0];
+                let get_phone = get_temp_phone.replace('+82', '').replace(/[^0-9]/g, "");
+                if (get_phone.charAt(0) != '0') {
+                    get_phone = `0${get_phone}`
+                }
+                baseData['db_phone'] = get_phone;
+            } else {
+                etcCount += 1;
+                baseData[`etc${etcCount}`] = leadsData[i]['values'][0];
+            }
+        }
 
 
+        var get_form_name = getFormData.name
 
 
-        //     // 수신 내용이 리치분양일경우 여기서 발송하고 리턴 처리!!
+        var get_form_name = get_form_name.replace('분양', '')
+        var get_form_name = get_form_name.replace('투자', '')
 
-
-
-        //     let get_created_time = getLeadsData.created_time
-
-        //     var get_form_name = getFormData.name
-        //     var form_type_in = '분양'
-
-        //     var get_form_name = get_form_name.replace('분양', '')
-        //     var get_form_name = get_form_name.replace('투자', '')
-
-        //     if (get_form_name.includes('rich')) {
-        //         try {
-        //             const result = await axios.post('https://richby.co.kr/webhook/richhook', { baseData, leadsId, getFormData })
-        //             return res.sendStatus(200);
-        //         } catch (error) {
-        //             return res.sendStatus(200);
-        //         }
-        //     }
-        //     var reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
-
-
-        //     let chkFor2WeeksDataBool = true;
+        // 이건 리치에 발송하는건데 일단 냅두기!!!
+        // if (get_form_name.includes('rich')) {
         //     try {
-        //         const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
-        //         const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName, reFormName]);
-        //         if (chkFor2WeeksData[0].length > 0) {
-        //             chkFor2WeeksDataBool = false;
-        //         }
+        //         const result = await axios.post('https://richby.co.kr/webhook/richhook', { baseData, leadsId, getFormData })
+        //         return res.sendStatus(200);
         //     } catch (error) {
-
+        //         return res.sendStatus(200);
         //     }
+        // }
 
 
-        //     // if (!chkFor2WeeksDataBool) {
-        //     //     return res.sendStatus(200);
-        //     // }
+        // 최종적으로 baseData와 함께 체크 / 입력 / 발송될 데이터!!!
+        const nowDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+        const form_type_in = '분양'
+        const reFormName = get_form_name.replace(/[a-zA-Z\(\)\-\s]/g, '')
+
+        // 폰번호와 현장명 중복이 1달 이내에 있는경우 패스하기!!!
+        try {
+            const chkFor2WeeksDataQuery = "SELECT * FROM application_form WHERE af_mb_phone = ? AND af_form_name = ? AND af_created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);"
+            const chkFor2WeeksData = await mysql_conn.promise().query(chkFor2WeeksDataQuery, [baseData.db_phone, reFormName, reFormName]);
+
+            // 테스트 할때는 잠시 주석!!!
+            // if (chkFor2WeeksData[0].length > 0) {
+            //     return res.sendStatus(200);
+            // }
+        } catch (error) {
+
+        }
+
+        // 해당 폼 리스트의 site 이름 찾아서 있으면 쓰고~ 없으면 만들고~
+        try {
+            const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
+            const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
+            const chkFormInSiteList = chkFormInSiteListData[0][0]
+            if (!chkFormInSiteList) {
+                const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
+                await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
+            }
+        } catch (error) {
+
+        }
 
 
-        //     try {
-        //         // 해당 폼 리스트의 site 이름 찾아서 있으면 쓰고~ 없으면 만들고~
-        //         const chkFormInSiteListSql = `SELECT * FROM site_list WHERE sl_site_name = ?`;
-        //         const chkFormInSiteListData = await mysql_conn.promise().query(chkFormInSiteListSql, [reFormName]);
-        //         const chkFormInSiteList = chkFormInSiteListData[0][0]
-        //         if (!chkFormInSiteList) {
-        //             const addFormInSiteList = `INSERT INTO site_list (sl_site_name, sl_created_at) VALUES (?, ?)`
-        //             await mysql_conn.promise().query(addFormInSiteList, [reFormName, nowDateTime]);
-        //         }
-        //     } catch (error) {
-
-        //     }
+        // const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
+        // const getStatusText = await mysql_conn.promise().query(getStatusSql)
+        // const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
 
 
-        //     // const getStatusSql = `SELECT * FROM form_status WHERE fs_id=1;`;
-        //     // const getStatusText = await mysql_conn.promise().query(getStatusSql)
-        //     // const estate_status_list = getStatusText[0][0].fs_estate_status.split(',')
+        // 폼 저장하기!!!!!!!!!!
+        // etc 리스트 찾기
+        let etcInsertStr = '';
+        let etcValuesStr = '';
+        let addEtcMessage = '';
+        for (let eidx = 1; eidx < 5; eidx++) {
+            const forVal = baseData[`etc${eidx}`];
+            if (forVal) {
+                etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
+                etcValuesStr = etcValuesStr + `, '${forVal}'`;
+                addEtcMessage = addEtcMessage + `// 기타 정보 ${eidx} : ${forVal}`
+            }
+        }
+        let getArr;
+        let formInertSql = '';
+        try {
+            //  DB 집어넣기~~~!!
+            getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
+            formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
+            await mysql_conn.promise().query(formInertSql, getArr)
 
+        } catch (error) {
+            try {
+                // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
+                getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
+                formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
+                await mysql_conn.promise().query(formInertSql, getArr)
+            } catch (error) {
 
-        //     // 폼 저장하기
+            }
 
-        //     // etc 리스트 찾기
-        //     let etcInsertStr = '';
-        //     let etcValuesStr = '';
-        //     let addEtcMessage = '';
-        //     for (let eidx = 1; eidx < 5; eidx++) {
-        //         const forVal = baseData[`etc${eidx}`];
-        //         if (forVal) {
-        //             etcInsertStr = etcInsertStr + `, af_mb_etc${eidx}`;
-        //             etcValuesStr = etcValuesStr + `, '${forVal}'`;
-        //             addEtcMessage = addEtcMessage + `// 기타 정보 ${eidx} : ${forVal}`
-        //         }
-        //     }
-        //     let getArr;
-        //     let formInertSql = '';
-        //     try {
-        //         //  DB 집어넣기~~~!!
-        //         getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
-        //         formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id ${etcInsertStr}, af_created_at) VALUES (?,?,?,?,?,?,? ${etcValuesStr},?);`;
-
-        //         await mysql_conn.promise().query(formInertSql, getArr)
-
-        //     } catch (error) {
-
-        //         try {
-        //             // let getArr = [reFormName, form_type_in, 'FB', get_name, get_phone, "", leadsId, nowDateTime];
-        //             getArr = [reFormName, form_type_in, 'FB', baseData.db_name, baseData.db_phone, "", leadsId, nowDateTime];
-        //             formInertSql = `INSERT INTO application_form (af_form_name, af_form_type_in, af_form_location, af_mb_name, af_mb_phone, af_mb_status, af_lead_id, af_created_at) VALUES (?,?,?,?,?,?,?,?);`;
-        //             await mysql_conn.promise().query(formInertSql, getArr)
-        //         } catch (error) {
-
-        //         }
-
-        //     }
+        }
 
         //     // 발송을 위한 준비!!!!
 
