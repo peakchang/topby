@@ -30,6 +30,12 @@ var AuthData = {
 }
 
 router.get('/aligo_sms_test', async (req, res) => {
+
+    console.log(req.body);
+
+    // let datas = req.body;
+    // console.log(datas);
+
     req.body = {
         sender: '010-6628-6651',
         receiver: '010-2190-2197',
@@ -38,13 +44,33 @@ router.get('/aligo_sms_test', async (req, res) => {
     }
     try {
         const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
     } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
         console.error(err.message);
     }
     res.send('gogo')
 });
 
+router.post('/aligo_sms_test', async (req, res) => {
 
+    req.body['sender'] = '010-6628-6651'
+    req.body['receiver'] = "010-2190-2197"
+    req.body['msg'] = `테스트 메세지 고고고고!!!`
+    req.body['msg_type'] = 'SMS'
+
+    try {
+        const aligo_res = await aligoapi.send(req, AuthData)
+        console.log(aligo_res);
+
+    } catch (err) {
+        console.log('여기 에러 나는거야?!?!?');
+
+        console.error(err.message);
+
+    }
+    res.send('gogo')
+});
 
 
 // ************************ 테스트 끝!!!
@@ -60,11 +86,19 @@ router.post('/zap/', (req, res) => {
 
 
 router.use('/test_kakao_error', async (req, res) => {
+
     const text = "좋아 테스트 𝓐𝓱𝓷.𝓢𝓮𝓸𝓷𝓗𝓸 𝙎𝙨𝙪_ 🅔🅞🅝🅖🅜🅘🅝";
     // const text = "테스트 이름";
+
+
     let dbName = text
     const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
     const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
+
+
+
+
+
 
     let chkName = ""
 
@@ -73,11 +107,62 @@ router.use('/test_kakao_error', async (req, res) => {
     } else {
         chkName = '무명'
     }
+
+
+
+
+    // 정규식으로 특수 문자 제거
+    // const cleanText = text.replace(/[^\w\s.,]/g, '');
+
+
+
+    // const customerInfo = { userName: "🅔🅞🅝🅖🅜🅘🅝", form: '테스트 폼~' }
+    // // const customerInfo = { userName: "테슷흐", form: '테스트 폼~' }
+
+    // let data = {}
+    // let config = {}
+
+    // try {
+    //     data = qs.stringify({
+    //         'apikey': process.env.ALIGOKEY,
+    //         'userid': process.env.ALIGOID,
+    //         'senderkey': process.env.ALIGO_SENDERKEY,
+    //         'tpl_code': 'TU_1894',
+    //         'sender': '010-4478-1127',
+    //         'receiver_1': '010-2190-2197',
+    //         //'recvname_1': '수신자명을 입력합니다',
+    //         'subject_1': '분양정보 신청고객 알림톡',
+    //         'message_1': `${customerInfo.userName} 고객님\n${customerInfo.form} 상담은 잘 받으셨나요?\n\n추가적으로 다양한 부동산 정보\n(줍줍/미분양/청약 등)를\n아래 링크를 통해 알림 받아보세요 : )`,
+    //         'button_1': '{"button": [{"name": "부동산 정보 받으러가기","linkType": "WL","linkTypeName": "웹링크","linkPc":"https://open.kakao.com/o/gHJyFmpg","linkMo" : "https://open.kakao.com/o/gHJyFmpg"}]}'
+    //     });
+
+
+
+
+    //     config = {
+    //         method: 'post',
+    //         maxBodyLength: Infinity,
+    //         url: 'https://kakaoapi.aligo.in/akv10/alimtalk/send/',
+    //         headers: {},
+    //         data: data
+    //     };
+
+
+
+
+    //     const res = await axios.request(config);
+
+    // } catch (err) {
+    //     console.error(err.message);
+    // }
+
+
+
     res.send('웹훅 GET PAGE!!!!!')
 });
 
 
-// 핵심 함수 중 하나!!!! 절대 지우지마!!!
+
 doRequest = (url) => {
     return new Promise((resolve, reject) => {
         request(url, (error, response, body) => {
@@ -111,8 +196,10 @@ router.get('/test_rich_send', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
-    // 최초 데이터!!
+
     var getData = req.body
+    console.log(getData);
+
     try {
 
         // 핵심 부분!!! 페이스북에서 쏴주는거 제대로 받기!!!
@@ -128,9 +215,14 @@ router.post('/', async (req, res) => {
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        // console.log(getLeadsData.field_data[0].values); // 1. 옵션
-        // console.log(getLeadsData.field_data[1].values); // 2. 이름
-        // console.log(getLeadsData.field_data[2].values); // 3. 전번
+        // console.log(getLeadsData);
+        // console.log(getFormData);
+        // console.log('1 옵션');
+        // console.log(getLeadsData.field_data[0].values);
+        // console.log('2 이름');
+        // console.log(getLeadsData.field_data[1].values);
+        // console.log('3 전번');
+        // console.log(getLeadsData.field_data[2].values);
 
 
 
@@ -277,59 +369,59 @@ router.post('/', async (req, res) => {
 
 
 
+        if (getSiteInfo.sl_site_link) {
+            var siteList = getSiteInfo.sl_site_link
+        } else {
+            var siteList = '정보없음'
+        }
 
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
 
-        console.log(receiverStr);
-        console.log(reFormName);
-
-        // 이름 이상하게 들어오는거 거르기!!!
-        let reDbName = "";
-        let dbName = baseData.db_name
+        let reDbName = ""
+        const dbName = baseData.db_name
+        // const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/]/g, '');
         const cleanText = dbName.replace(/[^\w\s.,!@#$%^&*()_\-+=\[\]{}|;:'"<>?\\/가-힣]/g, '');
         const containsKoreanOrEnglish = /[A-Za-z\uAC00-\uD7A3]/.test(cleanText);
-
         if (containsKoreanOrEnglish) {
             reDbName = cleanText
         } else {
             reDbName = '무명'
         }
 
-
-
         // 관리자들에게 카톡 or 문자 발송
         for (let oo = 0; oo < findUser.length; oo++) {
 
-            const customerInfo = { ciName: reDbName, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
+            var customerInfo = { ciName: reDbName, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
-            console.log(customerInfo);
-            
-
+            // 담당자 폰 번호에 010이 들어가 있을 경우에만 발송!
             if (customerInfo.ciPhone.includes('010')) {
-                // 카톡 발송 부분!!!
-                try {
-                    // aligoKakaoNotification_formanager(req, customerInfo)
-                } catch (error) {
-                    console.log('kakao send is error!!!! T.T');
-                }
+                // 카톡 발송 부분!!! 잠시 스탑!!!
+                // try {
+                //     aligoKakaoNotification_formanager(req, customerInfo)
+                // } catch (error) {
+                //     console.log('kakao send is error!!!! T.T');
+                // }
 
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
 
+                const resMessage = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
+                console.log('문자 발송 부분!!!');
+                console.log(`receiver : ${findUser[oo].user_phone}`);
+                console.log(`msg : ${resMessage}`);
+                console.log(`글자 수 : ${resMessage.length}`);
+                console.log(AuthData);
 
                 // req.body['sender'] = '010-6628-6651'
                 // req.body['receiver'] = findUser[oo].user_phone
-                // req.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
-                // 고객 번호 : ${receiverStr}`
+                // req.body['msg'] = 
                 // req.body['msg_type'] = 'SMS'
 
                 // try {
                 //     const aligo_res = await aligoapi.send(req, AuthData)
-                //     console.log(aligo_res);
+
 
                 // } catch (err) {
-                //     console.log('여기 에러 나는거야?!?!?');
-
                 //     console.error(err.message);
 
                 // }
@@ -361,6 +453,7 @@ router.post('/', async (req, res) => {
             await mysql_conn.promise().query(insertAuditWhdataSql, [getDataStr])
         } catch (error) {
             console.log('audit_webhookdata error!!!!!!!!!!!');
+
         }
 
 
@@ -377,12 +470,17 @@ router.post('/', async (req, res) => {
 
 // router.post('/facebook', async (req, res) => {
 //     let getData = req.body
+//     console.log('Facebook request body:', getData);
+//     console.log('request header X-Hub-Signature validated');
+//     console.log(getData.entry[0].changes);
 //     setData = JSON.stringify(getData)
+//     console.log(setData);
 //     try {
 //         await Webhookdata.create({
 //             webhookdata : setData
 //         });
 //     } catch (error) {
+//         console.log('에러가 났습니다요~~~~~~~~');
 //     }
 
 //     // Process the Facebook updates here111111111111111111
@@ -391,6 +489,8 @@ router.post('/', async (req, res) => {
 // });
 
 // router.post('/instagram', (req, res) => {
+//     console.log('Instagram request body:');
+//     console.log(req.body);
 //     // Process the Instagram updates here
 //     // let getData = JSON.stringify(req.body)
 //     // await Webhookdata.create({
@@ -401,7 +501,9 @@ router.post('/', async (req, res) => {
 // });
 
 // router.post('/', (req, res) => {
+//     console.log('1st chk here!!!');
 //     for (const outPut in req) {
+//         console.log(`값 : ${outPut}`);
 //     }
 //     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 // });
@@ -409,14 +511,18 @@ router.post('/', async (req, res) => {
 
 
 // router.get(['/facebook', '/instagram'], (req, res) => {
-
+//     console.log('2nd chk here!!!');
+//     console.log(req.query['hub.mode']);
+//     console.log(req.query['hub.verify_token']);
 
 //     if (
 //         req.query['hub.mode'] == 'subscribe' &&
 //         req.query['hub.verify_token'] == token
 //     ) {
+//         console.log('3rd chk here!!! - is real true??');
 //         res.send(req.query['hub.challenge']);
 //     } else {
+//         console.log('3rd chk here!!! - is real false??');
 //         res.sendStatus(400);
 //     }
 // });
@@ -424,14 +530,20 @@ router.post('/', async (req, res) => {
 
 // router.get('/', async (req, res, next) => {
 //     let wh_datas = await Webhookdata.findAll();
+//     console.log(wh_datas);
 //     res.render('webhookdata', {wh_datas})
 // })
 
 // router.post('/', async (req, res, next) => {
+//     console.log(req.body);
 //     let receive_json = req.body;
 //     let string_json = JSON.stringify(receive_json);
+//     console.log(string_json);
 //     await Webhookdata.create({webhookdata: string_json})
+
+//     console.log('--------------------------');
 //     let wh_datas = await Webhookdata.findAll();
+//     console.log(wh_datas);
 //     res.render('webhookdata', {wh_datas})
 // })
 
