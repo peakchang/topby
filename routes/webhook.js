@@ -8,6 +8,7 @@ const { sendSms } = require('../db_lib/back_lib');
 var token = process.env.TOKEN || 'token';
 const axios = require('axios');
 const qs = require('qs');
+const aligoapi = require('aligoapi');
 var received_updates = [];
 
 
@@ -17,6 +18,84 @@ const moment = require('moment');
 const { log } = require('console');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
+
+
+// 알리고 문자 발송 테스트!!
+
+var AuthData = {
+    key: 'jt7j3tl1dopaogmoauhoc68wrry0wswc',
+    // 이곳에 발급받으신 api key를 입력하세요
+    user_id: 'adpeaka',
+    // 이곳에 userid를 입력하세요
+}
+
+const send = (req, res, user_info) => {
+    // 메시지 발송하기
+    aligoapi.send(req, AuthData)
+        .then((r) => {
+            res.send(r)
+        })
+        .catch((e) => {
+            res.send(e)
+        })
+}
+
+router.get('/aligo_sms_test', async (req, res) => {
+
+    // req.body = {
+    /*** 필수값입니다 ***/
+    //   sender: 발신자 전화번호  // (최대 16bytes)
+    //   receiver: 수신자 전화번호 // 컴마()분기 입력으로 최대 1천명
+    //   msg: 메시지 내용	// (1~2,000Byte)
+    /*** 필수값입니다 ***/
+    //   msg_type: SMS(단문), LMS(장문), MMS(그림문자)
+    //   title: 문자제목(LMS, MMS만 허용) // (1~44Byte)
+    //   destination: %고객명% 치환용 입력
+    //   rdate: 예약일(현재일이상) // YYYYMMDD
+    //   rtime: 예약시간-현재시간기준 10분이후 // HHMM
+    //   image: 첨부이미지 // JPEG, PNG, GIF
+    // }
+    // req.body 요청값 예시입니다.
+
+    req.body['sender'] = '010-3124-1105'
+    req.body['receiver'] = '010-2190-2197'
+    req.body['msg'] = '테스트 메세지 입니다!!'
+    req.body['msg_type'] = 'SMS'
+
+    try {
+        const res = await aligoapi.send(req, AuthData)
+        console.log(res);
+    } catch (error) {
+
+    }
+
+    res.send('gogo')
+
+    //  = {
+    //     /*** 필수값입니다 ***/
+    //     sender: '010-3124-1105',  // (최대 16bytes)
+    //     receiver: '010-2190-2197', // 컴마()분기 입력으로 최대 1천명
+    //     msg: '테스트 메세지 입니다!!',	// (1~2,000Byte)
+    //     /*** 필수값입니다 ***/
+    //     msg_type: 'SMS',
+    //     //   title: 문자제목(LMS, MMS만 허용) // (1~44Byte)
+    //     //   destination: %고객명% 치환용 입력
+    //     //   rdate: 예약일(현재일이상) // YYYYMMDD
+    //     //   rtime: 예약시간-현재시간기준 10분이후 // HHMM
+    //     //   image: 첨부이미지 // JPEG, PNG, GIF
+    // }
+    // aligoapi.send(req, AuthData)
+    //     .then((r) => {
+    //         res.send(r)
+    //     })
+    //     .catch((e) => {
+    //         res.send(e)
+    //     })
+});
+
+
+// ************************ 테스트 끝!!!
+
 
 router.post('/zap/', (req, res) => {
     res.send('웹훅 수신!')
@@ -39,8 +118,8 @@ router.use('/test_kakao_error', async (req, res) => {
 
     console.log(cleanText);
     console.log(containsKoreanOrEnglish);
-    
-    
+
+
 
 
     let chkName = ""
@@ -52,7 +131,7 @@ router.use('/test_kakao_error', async (req, res) => {
     }
 
     console.log(chkName);
-    
+
 
     // 정규식으로 특수 문자 제거
     // const cleanText = text.replace(/[^\w\s.,]/g, '');
@@ -416,6 +495,7 @@ router.post('/', async (req, res) => {
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
         console.log(reFormName);
 
+        // 관리자들에게 카톡 or 문자 발송
         for (let oo = 0; oo < findUser.length; oo++) {
 
             let dbName = baseData.db_name
@@ -430,27 +510,39 @@ router.post('/', async (req, res) => {
             }
 
             console.log(baseData.db_name);
-            
+
             var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
 
-            if (oo == 0) {
-                // aligoKakaoNotification(req, customerInfo)
-            }
-
-            try {
-
-            } catch (error) {
-
-            }
 
             if (customerInfo.ciPhone.includes('010')) {
+                // 카톡 발송 부분!!!
                 try {
-                    aligoKakaoNotification_formanager(req, customerInfo)
+                    // aligoKakaoNotification_formanager(req, customerInfo)
                 } catch (error) {
                     console.log('kakao send is error!!!! T.T');
                 }
+
+                // -------------------------------------------------------------------------------
+                // 문자 발송 부분!!
+                req.body['sender'] = '010-6628-6651'
+                req.body['receiver'] = findUser[oo].user_phone
+                req.body['msg'] = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${baseData.db_name}님 접수되었습니다.
+                고객 번호 : ${receiverStr}`
+                req.body['msg_type'] = 'SMS'
+
+                try {
+                    const aligo_res = await aligoapi.send(req, AuthData)
+                    console.log(aligo_res.message);
+
+                } catch (err) {
+                    console.error(err.message);
+
+                }
             }
+
+
+
         }
 
 
