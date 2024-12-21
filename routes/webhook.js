@@ -525,6 +525,8 @@ router.post('/', async (req, res) => {
                     console.log(aligo_res.message);
 
                 } catch (err) {
+                    console.log('여기 에러 나는거야?!?!?');
+                    
                     console.error(err.message);
 
                 }
