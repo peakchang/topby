@@ -236,7 +236,6 @@ router.post('/', async (req, res) => {
 
 
 
-        //     console.log(process.env.ACCESS_TOKEN);
 
 
         //     nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
@@ -262,22 +261,22 @@ router.post('/', async (req, res) => {
 
         let leadsId = getData.entry[0].changes[0].value.leadgen_id
 
-        console.log(`get leads Id is~~~ : ${leadsId}`);
+        // console.log(`get leads Id is~~~ : ${leadsId}`);
 
 
         let formId = getData.entry[0].changes[0].value.form_id
 
-        console.log(`get form Id is~~~ : ${formId}`);
+        // console.log(`get form Id is~~~ : ${formId}`);
 
         var nowDateTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
         let leadsUrl = `https://graph.facebook.com/v15.0/${leadsId}?access_token=${process.env.ACCESS_TOKEN}`
 
-        console.log(leadsUrl);
+        // console.log(leadsUrl);
 
         let formUrl = `https://graph.facebook.com/v15.0/${formId}?access_token=${process.env.ACCESS_TOKEN}`
 
-        console.log(formUrl);
+        // console.log(formUrl);
 
 
         let LeadsData = await doRequest({ uri: leadsUrl });
@@ -290,8 +289,8 @@ router.post('/', async (req, res) => {
         let getLeadsData = JSON.parse(LeadsData)
         let getFormData = JSON.parse(formData)
 
-        console.log(getLeadsData);
-        console.log(getFormData);
+        // console.log(getLeadsData);
+        // console.log(getFormData);
 
 
 
@@ -426,7 +425,6 @@ router.post('/', async (req, res) => {
 
         // try {
         //     if (getSiteInfo.sl_site_realname && getSiteInfo.sl_sms_content) {
-        //         // console.log('make sendMessageObj~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!');
         //         sendMessageObj['customerName'] = baseData.db_name
         //         sendMessageObj['siteRealName'] = getSiteInfo.sl_site_realname
         //         sendMessageObj['smsContent'] = getSiteInfo.sl_sms_content
@@ -438,9 +436,6 @@ router.post('/', async (req, res) => {
         //     console.error(error.message);
         // }
 
-        // console.log('////////////////////sendMessageObj////////////////////');
-        // console.log(sendMessageObj);
-        // console.log('////////////////////~~~~~~~~~~~~~~////////////////////');
 
 
 
@@ -474,7 +469,7 @@ router.post('/', async (req, res) => {
         }
 
         const receiverStr = `${baseData.db_phone} ${addEtcMessage}`
-        console.log(reFormName);
+        // console.log(reFormName);
 
         // 관리자들에게 카톡 or 문자 발송
         for (let oo = 0; oo < findUser.length; oo++) {
@@ -490,7 +485,6 @@ router.post('/', async (req, res) => {
                 baseData.db_name = '무명'
             }
 
-            console.log(baseData.db_name);
 
             var customerInfo = { ciName: baseData.db_name, ciCompany: '탑분양정보', ciSite: getSiteInfo.sl_site_name, ciPhone: findUser[oo].user_phone, ciSiteLink: siteList, ciReceiver: receiverStr }
 
