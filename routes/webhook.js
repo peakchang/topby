@@ -394,7 +394,7 @@ router.post('/', async (req, res) => {
                 // -------------------------------------------------------------------------------
                 // 문자 발송 부분!!
 
-                const resMessage = `고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
+                const resMessage = `탑분양 고객 인입 안내! ${getSiteInfo.sl_site_name} 현장 / ${reDbName}님 접수되었습니다! 고객 번호 : ${receiverStr}`
                 console.log('문자 발송 부분!!!');
                 console.log(`receiver : ${managerPhone}`);
                 console.log(`msg : ${resMessage}`);
