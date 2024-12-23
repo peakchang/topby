@@ -522,14 +522,12 @@ exports.aligoKakaoNotification_formanager_clean = async (req, customerInfo) => {
 
     req.body = {
       senderkey: process.env.ALIGO_SENDERKEY,
-      tpl_code: 'TT_9941',
+      tpl_code: 'TX_0208',
       token: result.token,
-      sender: '010-4478-1127',
+      sender: '010-6628-6651',
       receiver_1: customerInfo.ciPhone,
       subject_1: '분양정보 신청고객 알림톡',
-      message_1: `고객 인입 안내!
-${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.
-고객 번호 : ${customerInfo.ciReceiver}`,
+      message_1: `고객 인입 안내!\n${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.\n고객 번호 : ${customerInfo.ciReceiver}`,
     }
 
     // console.log(req.body);

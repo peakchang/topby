@@ -385,7 +385,7 @@ router.post('/', async (req, res) => {
 
                 // 카톡 발송 부분!!! 잠시 스탑!!!
                 try {
-                    aligoKakaoNotification_formanager(req, customerInfo)
+                    // aligoKakaoNotification_formanager(req, customerInfo)
                 } catch (error) {
                     console.log('kakao send is error!!!! T.T');
                 }
@@ -400,20 +400,20 @@ router.post('/', async (req, res) => {
                 // console.log(`msg : ${resMessage}`);
                 // console.log(`글자 수 : ${resMessage.length}`);
 
-                // req.body = {
-                //     sender: '010-6628-6651',
-                //     receiver: managerPhone,
-                //     msg: resMessage,
-                //     msg_type: 'LMS'
-                // }
+                req.body = {
+                    sender: '010-6628-6651',
+                    receiver: managerPhone,
+                    msg: resMessage,
+                    msg_type: 'LMS'
+                }
 
-                // try {
-                //     const aligo_res = await aligoapi.send(req, AuthData)
-                //     console.log(aligo_res);
+                try {
+                    const aligo_res = await aligoapi.send(req, AuthData)
+                    console.log(aligo_res);
 
-                // } catch (err) {
-                //     console.error(err.message);
-                // }
+                } catch (err) {
+                    console.error(err.message);
+                }
             }
         }
 
