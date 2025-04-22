@@ -442,14 +442,13 @@ exports.aligoKakaoNotification_formanager = async (req, customerInfo) => {
 
     req.body = {
       senderkey: process.env.ALIGO_SENDERKEY,
-      tpl_code: 'TM_5684',
+      tpl_code: 'TX_0641',
       token: result.token,
-      sender: '010-4478-1127',
+      sender: '010-6628-6651',
       receiver_1: customerInfo.ciPhone,
       subject_1: '분양정보 신청고객 알림톡',
-      message_1: `고객 인입 안내!
-${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
-고객 번호 : ${customerInfo.ciReceiver}`,
+      message_1: `고객 접수 안내!\n${customerInfo.ciSite} ${customerInfo.ciName} 접수되었습니다.\n고객 번호 : ${customerInfo.ciReceiver}`,
+
     }
 
     // console.log(req.body);
@@ -480,7 +479,7 @@ ${customerInfo.ciSite} ${customerInfo.ciName}님 접수되었습니다.
     // next(e);
     // console.error(e);
     console.log('kakao send is error!!!! (in back lib) T.T');
-    
+
   }
 }
 
